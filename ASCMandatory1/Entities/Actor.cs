@@ -13,6 +13,7 @@ namespace ASCMandatory1
         public bool isAlive { get; set; }
         public Item EquippedWeapon { get; set; }
         public List<Item> Inventory { get; set; }
+        public Position PendingMovement { get; set; }
         public Actor(int id, string name, char symbol, string color, double hp, double mana, int speed, double physres, double magres):base(id, name, symbol, color)
         {
             HP = hp;
