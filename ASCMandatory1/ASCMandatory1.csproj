@@ -4,4 +4,13 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="PresentationCore">
+      <HintPath>..\..\..\..\.nuget\packages\microsoft.windowsdesktop.app.ref\5.0.0\ref\net5.0\PresentationCore.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <HintPath>..\..\..\..\.nuget\packages\microsoft.windowsdesktop.app.ref\5.0.0\ref\net5.0\WindowsBase.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
