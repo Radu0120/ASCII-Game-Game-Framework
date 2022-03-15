@@ -10,19 +10,14 @@ namespace ASCMandatory1
 {
     public class Level
     {
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool SetConsoleMode(IntPtr hConsoleHandle, int mode);
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool GetConsoleMode(IntPtr handle, out int mode);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr GetStdHandle(int handle);
+        public string Name { get; set; }
         public Tile[,] Map { get; set; }
         public Position SpawnPoint { get; set; } = new Position();
         public List<Actor> Actors { get; set; }
         public Position Bounds { get; set; } = new Position();
-        public Level(int maxX, int maxY, int spawnX, int spawnY, Actor player)
+        public Level(string name, int maxX, int maxY, int spawnX, int spawnY, Actor player)
         {
+            Name = name;
             Map = new Tile[maxX, maxY];
             Bounds.X=maxX;
             Bounds.Y=maxY;
@@ -30,6 +25,14 @@ namespace ASCMandatory1
             SpawnPoint.Y=spawnY;
             this.Create(player);
         }
+        //public Level(string name, int maxX, int maxY, Actor cursor)
+        //{
+        //    Name = name;
+        //    Map = new Tile[maxX, maxY];
+        //    Bounds.X = maxX;
+        //    Bounds.Y = maxY;
+        //    this.Create(cursor);
+        //}
         private void Create(Actor player)
         {
             for (int i=0; i < Bounds.X; i++)
@@ -37,16 +40,17 @@ namespace ASCMandatory1
                 for (int j=0; j < Bounds.Y; j++)
                 {
                     //adding the player
-                    if(i == SpawnPoint.X && j == SpawnPoint.Y)
+                    if (i == SpawnPoint.X && j == SpawnPoint.Y)
                     {
                         Map[i, j] = Tile.Clone(Tile.tileIndex[0]);
-                        AddEntity(player, Map[i, j]);
+                        AddEntity(player, Position.Create(i,j));
                     }
+
                     //adding walls
-                    else if (i == Bounds.X - 1 || i == 0 ||  j == Bounds.Y - 1 || j == 0)
+                    else if (i == Bounds.X - 1 || i == 0 || j == Bounds.Y - 1 || j == 0)
                     {
                         Map[i, j] = Tile.Clone(Tile.tileIndex[0]);
-                        Map[i, j].Entity = Entity.Clone(Entity.entityIndex[0]);
+                        Map[i, j].Entities.Add(Entity.Clone(Entity.entityIndex[0]));
                     }
                     else Map[i, j] = Tile.Clone(Tile.tileIndex[0]);
                     
@@ -60,42 +64,88 @@ namespace ASCMandatory1
                 MoveEntity(actor, actor.PendingMovement);
                 actor.PendingMovement = null;
             }
+            if(actor.PendingAction != null)
+            {
+                DoAction(actor, actor.PendingAction);
+                actor.PendingAction = null;
+            }
         }
-        public void DrawLevel()
+        public string DrawLevel(bool designer, ref int count)
         {
+            string level = "";
             for (int i = 0; i < Bounds.X; i++)
             {
                 for (int j = 0; j < Bounds.Y; j++)
                 {
-                    if(Map[i, j].Entity!=null) Console.Write(Map[i, j].Color + Map[i, j].Entity.Color + Map[i,j].Entity.Symbol + " ");
-                    else Console.Write(Map[i, j].Color + Map[i, j].Symbol + " ");
+                    if (Map[i, j].Entities.Count >0)
+                    {
+                        if(Map[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively
+                        {
+                            if (count < 40)
+                            {
+                                level += Map[i, j].Color + Map[i, j].Entities[0].Color + Map[i, j].Entities[0].Symbol + " ";
+                            }
+                            else
+                            {
+                                level += Map[i, j].Color + Map[i, j].Entities[1].Color + Map[i, j].Entities[1].Symbol + " ";
+                            }
+                        }
+                        else // no extra entities present on the tile
+                        {
+                            level += Map[i, j].Color + Map[i, j].Entities[0].Color + Map[i, j].Entities[0].Symbol + " ";
+                        }
+                    }
+                    else level += Map[i, j].Color + Map[i, j].Symbol + " ";
                     
                 }
-                Console.WriteLine();
+                level += "\n";
             }
+            count++;
+            return level;
         }
         //tries to move the entity to the new position if the tile is empty
         public void MoveEntity(Entity entity, Position newposition)
         {
-            if (this.GetEntityFromPosition(newposition) == null)
+            bool valid = !(newposition.X > Bounds.X - 1 || newposition.X < 0 || newposition.Y > Bounds.Y - 1 || newposition.Y < 0);
+            if(valid)
             {
-                this.UpdateEntityPosition(entity, newposition);
+                if(this.GetEntityFromPosition(newposition) == null || entity.Attributes.Contains("Phase"))
+                {
+                    this.UpdateEntityPosition(entity, newposition);
+                }
             }
             else return;
-
+        }
+        public void DoAction(Entity entity, Action action)
+        {
+            switch (action.Type)
+            {
+                case Action.ActionType.Destroy:
+                    Designer.RemoveEntity(this, entity.Position);
+                    break;
+            }
         }
         //check if the specific position has an entity
         public Entity GetEntityFromPosition(Position position)
         {
-            if (Map[position.X, position.Y].Entity != null) return Map[position.X, position.Y].Entity;
+            if (Map[position.X, position.Y].Entities.Count>0) return Map[position.X, position.Y].Entities[0];
             else return null;
         }
         public void UpdateEntityPosition(Entity entity, Position position)
         {
-            Map[entity.Position.X, entity.Position.Y].Entity = null; //setting old tile's entity to null
-            entity.Position = position;
-            Map[position.X, position.Y].Entity = entity;
-            Map[position.X, position.Y].Entity.Position = position;
+            if (entity.Attributes.Contains("Phase"))
+            {
+                Map[entity.Position.X, entity.Position.Y].Entities.Remove(entity);
+                entity.Position = position;
+                Map[position.X, position.Y].Entities.Add(entity);
+            }
+            else
+            {
+                Map[entity.Position.X, entity.Position.Y].Entities.Clear(); //setting old tile's entity to null
+                entity.Position = position;
+                Map[position.X, position.Y].Entities.Add(entity);
+                //Map[position.X, position.Y].Entity.Position = position;
+            }
         }
         public Position GetPositionFromTile(Tile tile)
         {
@@ -108,15 +158,22 @@ namespace ASCMandatory1
                         Position position = new Position() { X = i, Y = j };
                         return position;
                     }
-                    
                 }
             }
             return null;
         }
-        public void AddEntity(Entity entity, Tile tile)
+        public Tile GetTileFromPosition(Position position)
         {
-            entity.Position = GetPositionFromTile(tile);
-            tile.Entity = entity;
+            return Map[position.X, position.Y];
+        }
+        public void AddEntity(Entity entity, Position position)
+        {
+            entity.Position = Position.Create(position.X, position.Y);
+            GetTileFromPosition(position).Entities.Add(entity);
+        }
+        public void RemoveEntity(Position position)
+        {
+            Map[position.X, position.Y].Entities.Remove(Map[position.X, position.Y].Entities[0]);
         }
     }
 }

@@ -10,16 +10,16 @@ namespace ASCMandatory1
 {
     public class Controls
     {
-        public static void Checkinput(ref Actor player)
+        public static void Checkinput(ref Actor player, ref Level level)
         {
             while (true)
             {
                 if (IsAnyKeyDown())
                 {
                     Move(ref player);
+                    DoActionDesigner(ref player, ref level);
                     int wait = Convert.ToInt32(1000 / player.Speed);
                     Thread.Sleep(wait);
-                    
                 }
             }
         }
@@ -28,50 +28,44 @@ namespace ASCMandatory1
             Position newposition = new Position() { X = actor.Position.X, Y = actor.Position.Y};
             if (Keyboard.IsKeyDown(Key.W))
             {
-                if (Keyboard.IsKeyDown(Key.A))
-                {
-                    newposition.X--;
-                    newposition.Y--;
-                }
-                else if (Keyboard.IsKeyDown(Key.D))
-                {
-                    newposition.X--;
-                    newposition.Y++;
-                }
-                else
-                {
-                    newposition.X--;
-                }
+                newposition.X--;
             }
-            else if (Keyboard.IsKeyDown(Key.A))
+            if (Keyboard.IsKeyDown(Key.S))
             {
-                if (Keyboard.IsKeyDown(Key.S))
-                {
-                    newposition.X++;
-                    newposition.Y--;
-                }
-                else
-                {
-                    newposition.Y--;
-                }
+                newposition.X++;
             }
-            else if (Keyboard.IsKeyDown(Key.S))
-            {
-                if (Keyboard.IsKeyDown(Key.D))
-                {
-                    newposition.X++;
-                    newposition.Y++;
-                }
-                else
-                {
-                    newposition.X++;
-                }
-            }
-            else if (Keyboard.IsKeyDown(Key.D))
+            if (Keyboard.IsKeyDown(Key.D))
             {
                 newposition.Y++;
             }
+            if (Keyboard.IsKeyDown(Key.A))
+            {
+                newposition.Y--;
+            }
             actor.PendingMovement = newposition;
+        }
+        public static void DoActionDesigner(ref Actor actor, ref Level level)
+        {
+            Action action = new Action();
+            if (Keyboard.IsKeyDown(Key.Back))
+            {
+                action.Type = Action.ActionType.Destroy;
+                action.Target = level.GetEntityFromPosition(actor.Position);
+            }
+            else if (Keyboard.IsKeyDown(Key.Enter))
+            {
+                action.Type = Action.ActionType.Build;
+                action.Position = actor.Position;
+            }
+            else if (Keyboard.IsKeyDown(Key.D))
+            {
+                
+            }
+            else if (Keyboard.IsKeyDown(Key.A))
+            {
+                
+            }
+            actor.PendingAction = action;
         }
         public static bool IsAnyKeyDown()
         {

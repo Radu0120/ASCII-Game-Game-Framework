@@ -13,7 +13,8 @@ namespace ASCMandatory1
         public int Id { get; set; }
         public List<string> Attributes { get; set; }
         public char Symbol { get; set; }
-        public Entity Entity { get; set; }
+        //public Entity Entity { get; set; }
+        public List<Entity> Entities { get; set; }
         public static Dictionary<int, Tile> tileIndex { get; } = new Dictionary<int, Tile>() { { 0, new Tile(0, "Void", ASCMandatory1.Color.Background(ASCMandatory1.Color.Gray), ' ') } };
         public Tile(int id, string name, string color, char symbol)
         {
@@ -21,7 +22,7 @@ namespace ASCMandatory1
             Name= name;
             Color= color;
             Symbol= symbol;
-            Entity = null;
+            Entities = new List<Entity>();
             Attributes = new List<string> { "None" };
         }
         public Tile(int id, string name, string color, char symbol, List<string>attributes)
@@ -30,7 +31,7 @@ namespace ASCMandatory1
             Name = name;
             Color = color;
             Symbol = symbol;
-            Entity = null;
+            Entities = new List<Entity>();
             Attributes = attributes;
         }
         public Tile() { }
@@ -42,7 +43,11 @@ namespace ASCMandatory1
             clone.Color = tile.Color;
             clone.Symbol = tile.Symbol;
             clone.Attributes = tile.Attributes;
-            clone.Entity = tile.Entity;
+            clone.Entities = new List<Entity>();
+            foreach (Entity entity in tile.Entities)
+            {
+                clone.Entities.Add(entity);
+            }
 
             return clone;
         }

@@ -14,6 +14,7 @@ namespace ASCMandatory1
         public Item EquippedWeapon { get; set; }
         public List<Item> Inventory { get; set; }
         public Position PendingMovement { get; set; }
+        public Action PendingAction { get; set; }
         public Actor(int id, string name, char symbol, string color, double hp, double mana, int speed, double physres, double magres):base(id, name, symbol, color)
         {
             HP = hp;

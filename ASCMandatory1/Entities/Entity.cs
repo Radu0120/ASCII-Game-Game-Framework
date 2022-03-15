@@ -13,9 +13,11 @@ namespace ASCMandatory1
         public char Symbol { get; set; }
         public string Color { get; set; }
         public Position Position { get; set; }
+        public List<string> Attributes { get; set; }
         public static Dictionary<int, Entity> entityIndex { get; } = new Dictionary<int, Entity>() { { 0, new Entity(0, "Wall", 'W', ASCMandatory1.Color.Foreground(ASCMandatory1.Color.Black)) } };
         public Entity(int id, string name, char symbol, string color)
         {
+            Attributes = new List<string>();
             Id = id;
             Name = name;
             Symbol = symbol;
