@@ -48,29 +48,31 @@ namespace Game
             int height = Int32.Parse(Console.ReadLine());
 
             Level newlevel = new Level(name, width, height, 10, 10, cursor);
+            Designer.Object = Entity.Clone(Entity.entityIndex[0]);
 
             RunGameLogic(newlevel, cursor);
         }
-        protected static void ClearConsole()
-        {
-            Console.CursorVisible = false;
-            if (clearBuffer == null)
-            {
-                var line = "".PadLeft(Console.WindowWidth, ' ');
-                var lines = new StringBuilder();
+        //protected static void ClearConsole()
+        //{
+        //    Console.CursorVisible = false;
+        //    if (clearBuffer == null)
+        //    {
+        //        var line = "".PadLeft(Console.WindowWidth, ' ');
+        //        var lines = new StringBuilder();
 
-                for (var i = 0; i < Console.WindowHeight; i++)
-                {
-                    lines.AppendLine(line);
-                }
+        //        for (var i = 0; i < Console.WindowHeight; i++)
+        //        {
+        //            lines.AppendLine(line);
+        //        }
 
-                clearBuffer = lines.ToString();
-            }
+        //        clearBuffer = lines.ToString();
+        //    }
 
-            Console.SetCursorPosition(0, 0);
-            Console.Write(clearBuffer);
-            Console.SetCursorPosition(0, 0);
-        }
+        //    Console.SetCursorPosition(0, 0);
+        //    Console.Write(clearBuffer);
+        //    Console.SetCursorPosition(0, 0);
+        //}
+
         private static void RunGameLogic(Level level, Actor player)
         {
             Thread thread = new Thread(() =>
@@ -78,14 +80,24 @@ namespace Game
                 );
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
+            Console.Clear();
             while (true)
             {
                 level.Update(player);
-                Program.ClearConsole();
-                Console.Write(level.DrawLevel(true, ref count));
-                Thread.Sleep(6);
-                if (count > 80) count = 1;
+                DrawGame(level);
+                if (count > 40) count = 1;
+                Thread.Sleep(16);
             }
+        }
+        private static void DrawGame(Level level)
+        {
+            Console.WindowHeight = level.Bounds.Y + 2 + 10;
+            Console.WindowWidth = level.Bounds.X * 2 + 4 + 40;
+            Console.CursorVisible = false;
+            //Console.SetCursorPosition(0, 0);
+            //Console.Write(level.UnDrawLevel());
+            Console.SetCursorPosition(2, 1);
+            Console.Write(level.DrawLevel(true, ref count));
         }
     }
 }

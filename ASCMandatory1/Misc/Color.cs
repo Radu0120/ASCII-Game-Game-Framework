@@ -70,7 +70,7 @@ namespace ASCMandatory1
         }
         public static int[] White
         {
-            get { int[] rgb = new int[] { 0, 0, 0 }; return rgb; }
+            get { int[] rgb = new int[] { 255, 255, 255 }; return rgb; }
         }
         public static int[] Pink
         {
@@ -82,7 +82,7 @@ namespace ASCMandatory1
         }
         public static int[] Black
         {
-            get { int[] rgb = new int[] { 255, 255, 255 }; return rgb; }
+            get { int[] rgb = new int[] { 12, 12, 12 }; return rgb; }
         }
     }
 }

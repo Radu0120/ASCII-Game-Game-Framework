@@ -8,6 +8,7 @@ namespace ASCMandatory1
 {
     public class Designer
     {
+        public static Entity Object { get; set; }
         public static void AddSpawnPoint(Level level, Position position)
         {
             level.SpawnPoint = Position.Create(position.X, position.Y);
@@ -22,6 +23,14 @@ namespace ASCMandatory1
             {
                 level.RemoveEntity(position);
             }
+        }
+        public static void AddDesignerObject(Entity entity)
+        {
+            Object = Entity.Clone(entity);
+        }
+        public static void RemoveDesignerObject(Entity entity)
+        {
+            Object = null;
         }
     }
 }

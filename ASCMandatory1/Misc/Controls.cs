@@ -17,7 +17,7 @@ namespace ASCMandatory1
                 if (IsAnyKeyDown())
                 {
                     Move(ref player);
-                    DoActionDesigner(ref player, ref level);
+                    DoDesignerAction(ref player, ref level);
                     int wait = Convert.ToInt32(1000 / player.Speed);
                     Thread.Sleep(wait);
                 }
@@ -44,7 +44,7 @@ namespace ASCMandatory1
             }
             actor.PendingMovement = newposition;
         }
-        public static void DoActionDesigner(ref Actor actor, ref Level level)
+        public static void DoDesignerAction(ref Actor actor, ref Level level)
         {
             Action action = new Action();
             if (Keyboard.IsKeyDown(Key.Back))
@@ -55,6 +55,7 @@ namespace ASCMandatory1
             else if (Keyboard.IsKeyDown(Key.Enter))
             {
                 action.Type = Action.ActionType.Build;
+                action.Entity = Designer.Object;
                 action.Position = actor.Position;
             }
             else if (Keyboard.IsKeyDown(Key.D))

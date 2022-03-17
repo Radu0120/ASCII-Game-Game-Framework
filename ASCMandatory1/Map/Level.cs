@@ -81,7 +81,7 @@ namespace ASCMandatory1
                     {
                         if(Map[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively
                         {
-                            if (count < 40)
+                            if (count < 20)
                             {
                                 level += Map[i, j].Color + Map[i, j].Entities[0].Color + Map[i, j].Entities[0].Symbol + " ";
                             }
@@ -98,7 +98,8 @@ namespace ASCMandatory1
                     else level += Map[i, j].Color + Map[i, j].Symbol + " ";
                     
                 }
-                level += "\n";
+                
+                level += Color.Background(Color.Black)+"\n"+"  ";
             }
             count++;
             return level;
@@ -116,12 +117,15 @@ namespace ASCMandatory1
             }
             else return;
         }
-        public void DoAction(Entity entity, Action action)
+        public void DoAction(Entity actor, Action action) //actor = entity doing the action
         {
             switch (action.Type)
             {
                 case Action.ActionType.Destroy:
-                    Designer.RemoveEntity(this, entity.Position);
+                    Designer.RemoveEntity(this, actor.Position);
+                    break;
+                case Action.ActionType.Build:
+                    Designer.AddEntity(this, action.Position, action.Entity);
                     break;
             }
         }
@@ -168,8 +172,26 @@ namespace ASCMandatory1
         }
         public void AddEntity(Entity entity, Position position)
         {
+            bool proceed;
             entity.Position = Position.Create(position.X, position.Y);
-            GetTileFromPosition(position).Entities.Add(entity);
+            if (GetTileFromPosition(position).Entities.Count > 0)
+            {
+                proceed = true;
+                foreach(Entity entityfromtile in GetTileFromPosition(position).Entities)
+                {
+                    if (entityfromtile.Attributes.Contains("Solid"))
+                    {
+                        proceed = false;
+                        break;
+                    }
+                }
+                if(proceed) GetTileFromPosition(position).Entities.Add(entity);
+            }
+            else
+            {
+                GetTileFromPosition(position).Entities.Add(entity);
+            }
+            
         }
         public void RemoveEntity(Position position)
         {

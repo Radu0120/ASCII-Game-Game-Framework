@@ -17,5 +17,6 @@ namespace ASCMandatory1
         public Item Item { get; set; }
         public Damage Damage { get; set; }
         public Position Position { get; set; }
+        public Entity Entity { get; set; }
     }
 }
