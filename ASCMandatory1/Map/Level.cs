@@ -10,6 +10,7 @@ namespace ASCMandatory1
 {
     public class Level
     {
+        public static int currententitytodraw = 0;
         public string Name { get; set; }
         public Tile[,] Map { get; set; }
         public Position SpawnPoint { get; set; } = new Position();
@@ -70,36 +71,42 @@ namespace ASCMandatory1
                 actor.PendingAction = null;
             }
         }
-        public string DrawLevel(bool designer, ref int count)
+        public List<string> DrawLevel(bool designer, ref int count, int blinkingtime)
         {
-            string level = "";
+            List<string> level = new List<string>();
             for (int i = 0; i < Bounds.X; i++)
             {
+                string line = "";
                 for (int j = 0; j < Bounds.Y; j++)
                 {
                     if (Map[i, j].Entities.Count >0)
                     {
                         if(Map[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively
                         {
-                            if (count < 20)
+                            if (count > blinkingtime)
                             {
-                                level += Map[i, j].Color + Map[i, j].Entities[0].Color + Map[i, j].Entities[0].Symbol + " ";
+                                if(currententitytodraw < Map[i, j].Entities.Count-1)
+                                {
+                                    currententitytodraw++;
+                                }
+                                else
+                                {
+                                    currententitytodraw=0;
+                                }
+                                count = 0;
                             }
-                            else
-                            {
-                                level += Map[i, j].Color + Map[i, j].Entities[1].Color + Map[i, j].Entities[1].Symbol + " ";
-                            }
+                            line += Map[i, j].Color + Map[i, j].Entities[currententitytodraw].Color + Map[i, j].Entities[currententitytodraw].Symbol + " ";
                         }
                         else // no extra entities present on the tile
                         {
-                            level += Map[i, j].Color + Map[i, j].Entities[0].Color + Map[i, j].Entities[0].Symbol + " ";
+                            line += Map[i, j].Color + Map[i, j].Entities[0].Color + Map[i, j].Entities[0].Symbol + " ";
                         }
                     }
-                    else level += Map[i, j].Color + Map[i, j].Symbol + " ";
+                    else line += Map[i, j].Color + Map[i, j].Symbol + " ";
                     
                 }
-                
-                level += Color.Background(Color.Black)+"\n"+"  ";
+                level.Add(line);
+                //level.Add(Color.Background(Color.Black)+"\n"+"  ");
             }
             count++;
             return level;
@@ -107,15 +114,26 @@ namespace ASCMandatory1
         //tries to move the entity to the new position if the tile is empty
         public void MoveEntity(Entity entity, Position newposition)
         {
-            bool valid = !(newposition.X > Bounds.X - 1 || newposition.X < 0 || newposition.Y > Bounds.Y - 1 || newposition.Y < 0);
-            if(valid)
+            int oldX;
+            if (CheckCollision(newposition, entity))
             {
-                if(this.GetEntityFromPosition(newposition) == null || entity.Attributes.Contains("Phase"))
-                {
-                    this.UpdateEntityPosition(entity, newposition);
-                }
+                UpdateEntityPosition(entity, newposition);
+                return;
             }
-            else return;
+            oldX = newposition.X;
+            newposition.X = entity.Position.X;
+            if(CheckCollision(newposition, entity))
+            {
+                UpdateEntityPosition(entity, newposition);
+                return;
+            }
+            newposition.X = oldX;
+            newposition.Y = entity.Position.Y;
+            if (CheckCollision(newposition, entity))
+            {
+                UpdateEntityPosition(entity, newposition);
+                return;
+            }
         }
         public void DoAction(Entity actor, Action action) //actor = entity doing the action
         {
@@ -169,6 +187,27 @@ namespace ASCMandatory1
         public Tile GetTileFromPosition(Position position)
         {
             return Map[position.X, position.Y];
+        }
+        public bool CheckCollision(Position position, Entity entity)
+        {
+            if(position.X > Bounds.X - 1 || position.X < 0 || position.Y > Bounds.Y - 1 || position.Y < 0) // check the map boundaries
+            {
+                return false;
+            }
+            if (this.GetEntityFromPosition(position) != null) //if there is an entity, check for phase
+            {
+                if (this.GetEntityFromPosition(position).Attributes.Contains("Phase") || entity.Attributes.Contains("Phase"))
+                {
+                    //this.UpdateEntityPosition(entity, position);
+                    return true;
+                }
+                return false;
+            }
+            else // no entity, can move in
+            {
+                //this.UpdateEntityPosition(entity, position);
+                return true;
+            }
         }
         public void AddEntity(Entity entity, Position position)
         {

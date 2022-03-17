@@ -6,8 +6,10 @@ namespace ASCMandatory1
     public class Actor:Entity
     {
         public double HP { get; set; }
+        public double MaxHP { get; set; }
         public int Speed { get; set; }
         public double Mana { get; set; }
+        public double MaxMana { get; set; }
         public double PhysRes { get; set; }
         public double MagRes { get; set; }
         public bool isAlive { get; set; }
@@ -17,8 +19,10 @@ namespace ASCMandatory1
         public Action PendingAction { get; set; }
         public Actor(int id, string name, char symbol, string color, double hp, double mana, int speed, double physres, double magres):base(id, name, symbol, color)
         {
-            HP = hp;
-            Mana = mana;
+            MaxHP = hp;
+            HP = MaxHP;
+            MaxMana = mana;
+            Mana = MaxMana;
             Speed = speed;
             PhysRes = physres;
             MagRes = magres;
