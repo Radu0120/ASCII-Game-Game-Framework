@@ -11,33 +11,42 @@ namespace Game
 {
     internal class Program
     {
-        protected static string clearBuffer = null; // Clear this if window size changes
+        //protected static string clearBuffer = null; // Clear this if window size changes
         static int count = 0;
-        const int blinkingtime = 20;
         [STAThread]
         static void Main(string[] args)
         {
             Console.WriteLine("Type play to start the game, or level to start the level designer");
             string input = Console.ReadLine().ToLower();
-            if(input == "play")
+            while (true)
             {
-                StartGame();
+                if (input == "play")
+                {
+                    StartGame();
+                }
+                else if (input == "level")
+                {
+                    StartDesigner();
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Type play to start the game, or level to start the level designer");
+                }
+                input = Console.ReadLine();
             }
-            else if(input == "level")
-            {
-                StartDesigner();
-            }
+            
         }
         public static void StartGame()
         {
-            Actor player = new Actor(1, "player", 'P', Color.Foreground(Color.Red), 100, 100, 10, 0, 0);
+            Actor player = new Actor(1, "player", 'P', Color.Foreground(Color.Red), 105, 100, 10, 0, 0);
             Level level = new Level("level1", 20, 20, 10, 10, player);
 
             RunGameLogic(level, player, false);
         }
         public static void StartDesigner()
         {
-            Actor cursor = new Actor(1, "player", 'X', Color.Foreground(Color.Red), 100, 100, 10, 0, 0);
+            Actor cursor = new Actor(1, "player", 'X', Color.Foreground(Color.Red), 105, 100, 10, 0, 0);
             cursor.Attributes.Add("Phase");
 
             Console.WriteLine("Type the name of the level");
@@ -49,32 +58,11 @@ namespace Game
             Console.WriteLine("Type the height of the level");
             int height = Int32.Parse(Console.ReadLine());
 
-            Level newlevel = new Level(name, width, height, 10, 10, cursor);
+            Level newlevel = new Level(name, width, height, 5, 5, cursor);
             Designer.Object = Entity.Clone(Entity.entityIndex[0]);
 
             RunGameLogic(newlevel, cursor, true);
         }
-        //protected static void ClearConsole()
-        //{
-        //    Console.CursorVisible = false;
-        //    if (clearBuffer == null)
-        //    {
-        //        var line = "".PadLeft(Console.WindowWidth, ' ');
-        //        var lines = new StringBuilder();
-
-        //        for (var i = 0; i < Console.WindowHeight; i++)
-        //        {
-        //            lines.AppendLine(line);
-        //        }
-
-        //        clearBuffer = lines.ToString();
-        //    }
-
-        //    Console.SetCursorPosition(0, 0);
-        //    Console.Write(clearBuffer);
-        //    Console.SetCursorPosition(0, 0);
-        //}
-
         private static void RunGameLogic(Level level, Actor player, bool designer)
         {
             Thread thread = new Thread(() =>
@@ -83,8 +71,10 @@ namespace Game
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             Console.Clear();
-            int WindowHeight = level.Bounds.Y + 2 + 10;
-            int WindowWidth = level.Bounds.X * 2 + 4 + 40;
+            int WindowHeight = level.Bounds.X + 2;
+            int WindowWidth = level.Bounds.Y * 2 + 4 + 40;
+            Console.WindowHeight = WindowHeight;
+            Console.WindowWidth = WindowWidth;
             while (true)
             {
                 if (Console.WindowHeight != WindowHeight || Console.WindowWidth != WindowWidth)
@@ -93,7 +83,7 @@ namespace Game
                     WindowWidth = Console.WindowWidth;
                     Console.Clear();
                 }
-                level.Update(player);
+                level.Update(player, ref count);
                 DrawGame(level, designer, player);
                 Thread.Sleep(16);
             }
@@ -105,9 +95,9 @@ namespace Game
             //Console.SetCursorPosition(0, 0);
             //Console.Write(level.UnDrawLevel());
             Console.SetCursorPosition(2, 1);
-            List<string> UI = ASCMandatory1.UI.DrawUI(player);
+            List<string> UI = ASCMandatory1.UI.DrawUI(player, designer);
             int UILine = 0;
-            foreach(string line in level.DrawLevel(designer, ref count, blinkingtime))
+            foreach(string line in level.DrawLevel(designer, ref count))
             {
                 Console.Write(line);
                 if (UILine <= UI.Count-1)
