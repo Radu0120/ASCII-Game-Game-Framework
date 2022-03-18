@@ -39,8 +39,8 @@ namespace Game
         }
         public static void StartGame()
         {
-            Actor player = new Actor(1, "player", 'P', Color.Foreground(Color.Red), 105, 100, 10, 0, 0);
-            Level level = new Level("level1", 20, 20, 10, 10, player);
+            Actor player = new Actor(1, "pedritu", 'P', Color.Foreground(Color.Red), 105, 100, 10, 0, 0);
+            Level level = new Level("level1", 80, 48, 10, 10, player);
 
             RunGameLogic(level, player, false);
         }
@@ -48,6 +48,7 @@ namespace Game
         {
             Actor cursor = new Actor(1, "player", 'X', Color.Foreground(Color.Red), 105, 100, 10, 0, 0);
             cursor.Attributes.Add("Phase");
+            cursor.Attributes.Add("Designer");
 
             Console.WriteLine("Type the name of the level");
             string name = Console.ReadLine();

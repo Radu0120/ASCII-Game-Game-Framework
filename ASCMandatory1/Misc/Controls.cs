@@ -46,27 +46,30 @@ namespace ASCMandatory1
         }
         public static void DoDesignerAction(ref Actor actor, ref Level level)
         {
-            Action action = new Action();
-            if (Keyboard.IsKeyDown(Key.Back))
+            if (actor.Attributes.Contains("Designer"))
             {
-                action.Type = Action.ActionType.Destroy;
-                action.Target = level.GetEntityFromPosition(actor.Position);
+                Action action = new Action();
+                if (Keyboard.IsKeyDown(Key.Back))
+                {
+                    action.Type = Action.ActionType.Destroy;
+                    action.Target = level.GetEntityFromPosition(actor.Position);
+                }
+                else if (Keyboard.IsKeyDown(Key.Enter))
+                {
+                    action.Type = Action.ActionType.Build;
+                    action.Entity = Designer.Object;
+                    action.Position = actor.Position;
+                }
+                else if (Keyboard.IsKeyDown(Key.D))
+                {
+
+                }
+                else if (Keyboard.IsKeyDown(Key.A))
+                {
+
+                }
+                actor.PendingAction = action;
             }
-            else if (Keyboard.IsKeyDown(Key.Enter))
-            {
-                action.Type = Action.ActionType.Build;
-                action.Entity = Designer.Object;
-                action.Position = actor.Position;
-            }
-            else if (Keyboard.IsKeyDown(Key.D))
-            {
-                
-            }
-            else if (Keyboard.IsKeyDown(Key.A))
-            {
-                
-            }
-            actor.PendingAction = action;
         }
         public static bool IsAnyKeyDown()
         {

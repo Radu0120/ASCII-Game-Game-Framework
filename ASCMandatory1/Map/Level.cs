@@ -84,7 +84,7 @@ namespace ASCMandatory1
                     {
                         if(Map[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively, newest first
                         {
-                            if (count >= blinkingtime)
+                            if (count >= blinkingtime) //if count is over the blinkingtime, draw the next entity
                             {
                                 if(currententitytodraw > 0)
                                 {

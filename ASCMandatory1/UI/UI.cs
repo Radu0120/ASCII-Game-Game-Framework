@@ -18,9 +18,15 @@ namespace ASCMandatory1
             UI.Add("");
             UI.Add(Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana));
 
+            PrintLines(ref UI, 10);
+
             if (!designer)
             {
-
+                UI.Add(Color.Background(Color.Black)+ PrintTiles(3) + Color.Foreground(Color.White) + PrintEquippedItem(player));
+            }
+            else
+            {
+                UI.Add(Color.Background(Color.Black)+ PrintTiles(3) + Color.Foreground(Color.White) + PrintBuildingItem(player));
             }
 
             return UI;
@@ -48,9 +54,20 @@ namespace ASCMandatory1
             }
             return bar;
         }
+        public static void PrintLines(ref List<string> UI,int amount)
+        {
+            for(int i = 1; i<=amount; i++)
+            {
+                UI.Add("");
+            }
+        }
         public static string PrintEquippedItem(Actor player)
         {
-            return "a";
+            return "♥";
+        }
+        public static string PrintBuildingItem(Actor player)
+        {
+            return "B";
         }
     }
 }
