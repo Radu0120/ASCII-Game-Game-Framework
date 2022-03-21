@@ -8,13 +8,14 @@ namespace ASCMandatory1
 {
     public class Item:Entity
     {
+        public static Dictionary<int, Item> itemIndex { get; set; } = new Dictionary<int, Item>();
         public Damage Damage { get; set; }
-        public Item(int id, string name, char symbol, string color, Damage damage) : base(id, name, symbol, color)
+        public Item(int id, string name, char symbol, int[] color, Damage damage) : base(id, name, symbol, color)
         {
             Id = id;
             Name = name;
             Symbol = symbol;
-            Color = color;
+            Color = ASCMandatory1.Color.Foreground(color);
             Damage = damage;
         }
     }

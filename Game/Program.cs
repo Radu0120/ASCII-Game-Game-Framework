@@ -16,22 +16,24 @@ namespace Game
         [STAThread]
         static void Main(string[] args)
         {
-            Console.WriteLine("Type play to start the game, or level to start the level designer");
+            Catalog.Populate();
+            string message = "Type 1 to start the game, or 2 to start the level designer";
+            Console.WriteLine(message);
             string input = Console.ReadLine().ToLower();
             while (true)
             {
-                if (input == "play")
+                if (input == "1")
                 {
                     StartGame();
                 }
-                else if (input == "level")
+                else if (input == "2")
                 {
                     StartDesigner();
                 }
                 else
                 {
                     Console.Clear();
-                    Console.WriteLine("Type play to start the game, or level to start the level designer");
+                    Console.WriteLine(message);
                 }
                 input = Console.ReadLine();
             }
@@ -39,14 +41,14 @@ namespace Game
         }
         public static void StartGame()
         {
-            Actor player = new Actor(1, "pedritu", 'P', Color.Foreground(Color.Red), 105, 100, 10, 0, 0);
+            Actor player = new Actor(1, "pedritu", 'P', Color.Red, 105, 100, 10, 0, 0);
             Level level = new Level("level1", 80, 48, 10, 10, player);
 
             RunGameLogic(level, player, false);
         }
         public static void StartDesigner()
         {
-            Actor cursor = new Actor(1, "player", 'X', Color.Foreground(Color.Red), 105, 100, 10, 0, 0);
+            Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 10, 0, 0);
             cursor.Attributes.Add("Phase");
             cursor.Attributes.Add("Designer");
 
@@ -60,7 +62,9 @@ namespace Game
             int height = Int32.Parse(Console.ReadLine());
 
             Level newlevel = new Level(name, width, height, 5, 5, cursor);
-            Designer.Object = Entity.Clone(Entity.entityIndex[0]);
+            //Designer.Object = Entity.Clone(Entity.entityIndex[0]);
+            //Designer.Tile = Tile.Clone(Tile.tileIndex[0]);
+            Designer.CurrentState = Designer.State.Menu;
 
             RunGameLogic(newlevel, cursor, true);
         }
@@ -93,17 +97,15 @@ namespace Game
         {
             
             Console.CursorVisible = false;
-            //Console.SetCursorPosition(0, 0);
-            //Console.Write(level.UnDrawLevel());
             Console.SetCursorPosition(2, 1);
-            List<string> UI = ASCMandatory1.UI.DrawUI(player, designer);
+            Dictionary<int,string> UI = ASCMandatory1.UI.DrawUI(player, designer);
             int UILine = 0;
             foreach(string line in level.DrawLevel(designer, ref count))
             {
                 Console.Write(line);
                 if (UILine <= UI.Count-1)
                 {
-                    Console.Write(UI[UILine]);
+                    Console.Write(UI[UILine]+"   ");
                     UILine++;
                 }
                 Console.Write(Color.Background(Color.Black) + "\n" + "  ");

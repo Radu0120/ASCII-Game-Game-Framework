@@ -17,7 +17,8 @@ namespace ASCMandatory1
         public List<Item> Inventory { get; set; }
         public Position PendingMovement { get; set; }
         public Action PendingAction { get; set; }
-        public Actor(int id, string name, char symbol, string color, double hp, double mana, int speed, double physres, double magres):base(id, name, symbol, color)
+        public static Dictionary<int, Actor> actorIndex { get; set; } = new Dictionary<int, Actor>();
+        public Actor(int id, string name, char symbol, int[] color, double hp, double mana, int speed, double physres, double magres):base(id, name, symbol, color)
         {
             MaxHP = hp;
             HP = MaxHP;
@@ -29,7 +30,7 @@ namespace ASCMandatory1
             Id = id;
             Name = name;
             Symbol = symbol;
-            Color = color;
+            Color = ASCMandatory1.Color.Foreground(color);
         }
         public double ComputeDamage(Damage damage)
         {

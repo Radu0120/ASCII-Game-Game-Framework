@@ -8,7 +8,13 @@ namespace ASCMandatory1
 {
     public class Designer
     {
+        public enum State
+        {
+            Tile, WorldOject, Item, Actor, Menu
+        }
         public static Entity Object { get; set; }
+        public static Tile Tile { get; set; }
+        public static State CurrentState { get; set; }
         public static void AddSpawnPoint(Level level, Position position)
         {
             level.SpawnPoint = Position.Create(position.X, position.Y);
@@ -24,13 +30,27 @@ namespace ASCMandatory1
                 level.RemoveEntity(position);
             }
         }
+        public static void AddTile(Level level, Position position, Tile tile)
+        {
+            level.AddTile(tile, position);
+        }
+        public static void RemoveTile(Level level, Position position)
+        {
+            level.RemoveTile(position);
+        }
+        //designer object = equipped item to build copies of
         public static void AddDesignerObject(Entity entity)
         {
             Object = Entity.Clone(entity);
         }
-        public static void RemoveDesignerObject(Entity entity)
+        public static void AddDesignerObject(Tile tile)
+        {
+            Tile = Tile.Clone(tile);
+        }
+        public static void RemoveDesignerObject()
         {
             Object = null;
+            Tile = null;
         }
     }
 }

@@ -9,26 +9,24 @@ namespace ASCMandatory1
     public class UI
     {
         public const int AmountPerBar = 5;
-        public static List<string> DrawUI(Actor player, bool designer)
+        public static Dictionary<int, string> DrawUI(Actor player, bool designer)
         {
-            List<string> UI = new List<string>();
-            UI.Add(Color.Background(Color.Black) + PrintTiles(5) + Color.Foreground(Color.Yellow) + $" {player.Name}");
-            UI.Add("");
-            UI.Add(Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.Red)+"Health: " +PrintBar(player.HP));
-            UI.Add("");
-            UI.Add(Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana));
-
-            PrintLines(ref UI, 10);
+            Dictionary<int, string> UI = new Dictionary<int, string>();
+            UI.Add(1,Color.Background(Color.Black) + PrintTiles(5) + Color.Foreground(Color.Yellow) + $" {player.Name}");
+            UI.Add(3,Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.Red)+"Health: " +PrintBar(player.HP));
+            UI.Add(5,Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana));
 
             if (!designer)
             {
-                UI.Add(Color.Background(Color.Black)+ PrintTiles(3) + Color.Foreground(Color.White) + PrintEquippedItem(player));
+                UI.Add(15,Color.Background(Color.Black)+ PrintTiles(3) + Color.Foreground(Color.White) + PrintEquippedItem(player));
             }
             else
             {
-                UI.Add(Color.Background(Color.Black)+ PrintTiles(3) + Color.Foreground(Color.White) + PrintBuildingItem(player));
+                PrintLines(UI, 14);
+                PrintDesignerUI(UI);
+                PrintDesignerObject(UI);
             }
-
+            FillUI(UI);
             return UI;
         }
         public static string PrintTiles(int number)
@@ -54,20 +52,116 @@ namespace ASCMandatory1
             }
             return bar;
         }
-        public static void PrintLines(ref List<string> UI,int amount)
+        public static void FillUI(Dictionary<int, string> UI)
         {
-            for(int i = 1; i<=amount; i++)
+            for(int i = 0; i < 41 ; i++)
             {
-                UI.Add("");
+                if (!UI.ContainsKey(i))
+                {
+                    PrintLines(UI, i);
+                }
             }
+        }
+        public static void PrintLines(Dictionary<int, string> UI, int position)
+        {
+            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + "                          ");
         }
         public static string PrintEquippedItem(Actor player)
         {
-            return "♥";
+            if(player.EquippedWeapon != null)
+            {
+                return player.EquippedWeapon.Name;
+            }
+            else
+            {
+                return "No equipped item";
+            }
         }
-        public static string PrintBuildingItem(Actor player)
+        public static void PrintDesignerUI(Dictionary<int, string> UI)
         {
-            return "B";
+            switch (Designer.CurrentState)
+            {
+                case Designer.State.Menu:
+                    PrintDesignerMenu(UI);
+                    break;
+                case Designer.State.Actor:
+                    PrintDesignerItemIndex(Actor.actorIndex, UI);
+                    break;
+                case Designer.State.Item:
+                    PrintDesignerItemIndex(Item.itemIndex, UI);
+                    break;
+                case Designer.State.WorldOject:
+                    PrintDesignerItemIndex(WorldObject.worldobjectIndex, UI);
+                    break;
+                case Designer.State.Tile:
+                    PrintDesignerItemIndex(Tile.tileIndex, UI);
+                    break;
+                default:
+                    break;
+            }
+            UI.Add(MaxKey(UI)+2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back    ");
+        }
+        public static void PrintDesignerObject(Dictionary<int, string> UI)
+        {
+            if (Designer.Object == null)
+            {
+                if(Designer.Tile == null)
+                {
+                    UI.Add(15, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "None    ");
+                    return;
+                }
+                UI.Add(15, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + Designer.Tile.Name+ "    ");
+                return;
+            }
+            UI.Add(15, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + Designer.Object.Name+ "    ");
+        }
+        public static void PrintDesignerMenu(Dictionary<int, string> UI)
+        {
+            UI.Add(17, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Z : Actor menu    ");
+            UI.Add(18, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "X : Item menu    ");
+            UI.Add(19, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "C : WorldObject menu    ");
+            UI.Add(20, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "V : Tile menu    ");
+        }
+        public static void PrintDesignerItemIndex(Dictionary<int, Actor> index, Dictionary<int, string> UI)
+        {
+            int end = index.Count;
+            for (int i = 1; i <= end; i++)
+            {
+                UI.Add(17 + i - 1,Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + $"{i} : {index[i - 1].Name}         "); ;
+            }
+        }
+        public static void PrintDesignerItemIndex(Dictionary<int, Item> index, Dictionary<int, string> UI)
+        {
+            int end = index.Count;
+            for (int i = 1; i <= end; i++)
+            {
+                UI.Add(17 + i - 1, Color.Background(Color.Black)+Color.Foreground(Color.White)+ PrintTiles(2) + $"{i} : {index[i - 1].Name}          ");
+            }
+        }
+        public static void PrintDesignerItemIndex(Dictionary<int, WorldObject> index, Dictionary<int, string> UI)
+        {
+            int end = index.Count;
+            for (int i = 1; i <= end; i++)
+            {
+                UI.Add(17 + i - 1, Color.Background(Color.Black)+Color.Foreground(Color.White)+ PrintTiles(2) + $"{i} : {index[i - 1].Name}          ");
+            }
+        }
+        public static void PrintDesignerItemIndex(Dictionary<int, Tile> index, Dictionary<int, string> UI)
+        {
+            int end = index.Count;
+            for (int i = 1; i <= end; i++)
+            {
+                UI.Add(17 + i - 1, Color.Background(Color.Black)+Color.Foreground(Color.White)+ PrintTiles(2) + $"{i} : {index[i - 1].Name}          ");
+            }
+        }
+        public static int MaxKey(Dictionary<int, string> dict)
+        {
+            int max = 0;
+            foreach(var keyValuePair in dict)
+            {
+                if(keyValuePair.Key>max) max = keyValuePair.Key;
+            }
+            return max;
         }
     }
 }

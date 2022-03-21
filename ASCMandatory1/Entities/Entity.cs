@@ -17,18 +17,18 @@ namespace ASCMandatory1
         public static Dictionary<int, Entity> entityIndex { get; } = new Dictionary<int, Entity>()
         { 
             { 
-                0, new Entity(0, "Wall", 'W', ASCMandatory1.Color.Foreground(ASCMandatory1.Color.Black), new List<string>(){"Solid"}) 
+                0, new Entity(0, "Wall", 'W', ASCMandatory1.Color.Black, new List<string>(){"Solid"}) 
             } 
         };
-        public Entity(int id, string name, char symbol, string color)
+        public Entity(int id, string name, char symbol, int[] color)
         {
             Attributes = new List<string>();
             Id = id;
             Name = name;
             Symbol = symbol;
-            Color = color;
+            Color = ASCMandatory1.Color.Foreground(color);
         }
-        public Entity(int id, string name, char symbol, string color, List<string> attributes)
+        public Entity(int id, string name, char symbol, int[] color, List<string> attributes)
         {
             Attributes = new List<string>();
             foreach (string attribute in attributes)
@@ -38,7 +38,7 @@ namespace ASCMandatory1
             Id = id;
             Name = name;
             Symbol = symbol;
-            Color = color;
+            Color = ASCMandatory1.Color.Foreground(color);
         }
         public Entity()
         {

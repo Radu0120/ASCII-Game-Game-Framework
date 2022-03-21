@@ -8,12 +8,13 @@ namespace ASCMandatory1
 {
     public class WorldObject:Entity
     {
-        public WorldObject(int id, string name, char symbol, string color) : base(id, name, symbol, color)
+        public static Dictionary<int, WorldObject> worldobjectIndex { get; set; } = new Dictionary<int, WorldObject>();
+        public WorldObject(int id, string name, char symbol, int[] color) : base(id, name, symbol, color)
         {
             Id = id;
             Name = name;
             Symbol = symbol;
-            Color = color;
+            Color = ASCMandatory1.Color.Foreground(color);
         }
     }
 }

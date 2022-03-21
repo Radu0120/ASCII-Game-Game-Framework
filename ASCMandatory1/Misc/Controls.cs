@@ -12,14 +12,31 @@ namespace ASCMandatory1
     {
         public static void Checkinput(ref Actor player, ref Level level)
         {
-            while (true)
+            if (player.Attributes.Contains("Designer"))
             {
-                if (IsAnyKeyDown())
+                while (true)
                 {
-                    Move(ref player);
-                    DoDesignerAction(ref player, ref level);
-                    int wait = Convert.ToInt32(1000 / player.Speed);
-                    Thread.Sleep(wait);
+                    if (IsAnyKeyDown())
+                    {
+                        Move(ref player);
+                        ChangeDesignerMenu();
+                        ChooseDesignerMenu();
+                        DoDesignerAction(ref player, ref level);
+                        int wait = Convert.ToInt32(1000 / player.Speed);
+                        Thread.Sleep(wait);
+                    }
+                }
+            }
+            else
+            {
+                while (true)
+                {
+                    if (IsAnyKeyDown())
+                    {
+                        Move(ref player);
+                        int wait = Convert.ToInt32(1000 / player.Speed);
+                        Thread.Sleep(wait);
+                    }
                 }
             }
         }
@@ -46,7 +63,7 @@ namespace ASCMandatory1
         }
         public static void DoDesignerAction(ref Actor actor, ref Level level)
         {
-            if (actor.Attributes.Contains("Designer"))
+            
             {
                 Action action = new Action();
                 if (Keyboard.IsKeyDown(Key.Back))
@@ -57,20 +74,137 @@ namespace ASCMandatory1
                 else if (Keyboard.IsKeyDown(Key.Enter))
                 {
                     action.Type = Action.ActionType.Build;
-                    action.Entity = Designer.Object;
+                    if(Designer.CurrentState == Designer.State.Menu)
+                    {
+                        return;
+                    }
+                    if (Designer.Object == null)
+                    {
+                        if(Designer.Tile == null)
+                        {
+                            return;
+                        }
+                    }
+                    else if(Designer.CurrentState == Designer.State.Tile)
+                    {
+                        action.Tile = Tile.Clone(Designer.Tile);
+                    }
+                    else
+                    {
+                        action.Entity = Entity.Clone(Designer.Object);
+                    }
                     action.Position = actor.Position;
-                }
-                else if (Keyboard.IsKeyDown(Key.D))
-                {
-
-                }
-                else if (Keyboard.IsKeyDown(Key.A))
-                {
-
                 }
                 actor.PendingAction = action;
             }
         }
+        public static void ChangeDesignerMenu()
+        {
+            if (Keyboard.IsKeyDown(Key.Escape))
+            {
+                Designer.CurrentState = Designer.State.Menu;
+                Designer.RemoveDesignerObject();
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.Z))
+            {
+                Designer.CurrentState = Designer.State.Actor;
+                Designer.RemoveDesignerObject();
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.X))
+            {
+                Designer.CurrentState = Designer.State.Item;
+                Designer.RemoveDesignerObject();
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.C))
+            {
+                Designer.CurrentState = Designer.State.WorldOject;
+                Designer.RemoveDesignerObject();
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.V))
+            {
+                Designer.CurrentState = Designer.State.Tile;
+                Designer.RemoveDesignerObject();
+                return;
+            }
+        }
+        public static void ChooseDesignerMenu()
+        {
+            switch (Designer.CurrentState)
+            {
+                case Designer.State.Actor:
+                    SelectDesignerItem(Actor.actorIndex);
+                    break;
+                case Designer.State.Item:
+                    SelectDesignerItem(Item.itemIndex);
+                    break;
+                case Designer.State.WorldOject:
+                    SelectDesignerItem(WorldObject.worldobjectIndex);
+                    break;
+                case Designer.State.Tile:
+                    SelectDesignerItem(Tile.tileIndex);
+                    break;
+                default:
+                    break;
+            }
+        }
+        #region SelectDesignerItem
+        public static void SelectDesignerItem(Dictionary<int, Actor> index)
+        {
+            int end = index.Count;
+            for (int i = 1; i <= end; i++)
+            {
+                Key key = (Key)(i + 34);
+                if (Keyboard.IsKeyDown(key))
+                {
+                    Designer.AddDesignerObject(Actor.actorIndex[i - 1]);
+                    return;
+                }
+            }
+        }
+        public static void SelectDesignerItem(Dictionary<int, Item> index)
+        {
+            int end = index.Count;
+            for (int i = 1; i <=end ; i++)
+            {
+                Key key = (Key)(i+34);
+                if (Keyboard.IsKeyDown(key))
+                {
+                    Designer.AddDesignerObject(Item.itemIndex[i - 1]);
+                    return;
+                }
+            }
+        }
+        public static void SelectDesignerItem(Dictionary<int, WorldObject> index)
+        {
+            int end = index.Count;
+            for (int i = 1; i <= end; i++)
+            {
+                Key key = (Key)(i + 34);
+                if (Keyboard.IsKeyDown(key))
+                {
+                    Designer.AddDesignerObject(WorldObject.worldobjectIndex[i - 1]);
+                    return;
+                }
+            }
+        }
+        public static void SelectDesignerItem(Dictionary<int, Tile> index)
+        {
+            int end = index.Count;
+            for (int i = 1; i <= end; i++)
+            {
+                Key key = (Key)(i + 34);
+                if (Keyboard.IsKeyDown(key))
+                {
+                    Designer.AddDesignerObject(Tile.tileIndex[i - 1]);
+                    return;
+                }
+            }
+        }
+        #endregion
         public static bool IsAnyKeyDown()
         {
             var values = Enum.GetValues(typeof(Key));

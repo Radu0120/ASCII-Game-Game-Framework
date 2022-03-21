@@ -13,23 +13,22 @@ namespace ASCMandatory1
         public int Id { get; set; }
         public List<string> Attributes { get; set; }
         public char Symbol { get; set; }
-        //public Entity Entity { get; set; }
         public List<Entity> Entities { get; set; }
-        public static Dictionary<int, Tile> tileIndex { get; } = new Dictionary<int, Tile>() { { 0, new Tile(0, "Void", ASCMandatory1.Color.Background(ASCMandatory1.Color.Gray), ' ') } };
-        public Tile(int id, string name, string color, char symbol)
+        public static Dictionary<int, Tile> tileIndex { get; set; } = new Dictionary<int, Tile>() { { 0, new Tile(0, "Void", ASCMandatory1.Color.Gray, ' ') } };
+        public Tile(int id, string name, int[] color, char symbol)
         {
             Id= id;
             Name= name;
-            Color= color;
+            Color = ASCMandatory1.Color.Background(color);
             Symbol= symbol;
             Entities = new List<Entity>();
             Attributes = new List<string> { "None" };
         }
-        public Tile(int id, string name, string color, char symbol, List<string>attributes)
+        public Tile(int id, string name, int[] color, char symbol, List<string>attributes)
         {
             Id= id;
             Name = name;
-            Color = color;
+            Color = ASCMandatory1.Color.Background(color);
             Symbol = symbol;
             Entities = new List<Entity>();
             Attributes = attributes;

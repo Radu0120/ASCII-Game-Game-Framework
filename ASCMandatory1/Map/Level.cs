@@ -27,14 +27,7 @@ namespace ASCMandatory1
             SpawnPoint.Y=spawnY;
             this.Create(player);
         }
-        //public Level(string name, int maxX, int maxY, Actor cursor)
-        //{
-        //    Name = name;
-        //    Map = new Tile[maxX, maxY];
-        //    Bounds.X = maxX;
-        //    Bounds.Y = maxY;
-        //    this.Create(cursor);
-        //}
+        #region Rendering
         private void Create(Actor player)
         {
             for (int i=0; i < Bounds.X; i++)
@@ -112,6 +105,10 @@ namespace ASCMandatory1
             count++;
             return level;
         }
+        #endregion
+
+
+        #region UpdateLevel
         //tries to move the entity to the new position if the tile is empty
         public void MoveEntity(Entity entity, Position newposition, ref int count)
         {
@@ -140,16 +137,28 @@ namespace ASCMandatory1
         }
         public void DoAction(Entity actor, Action action) //actor = entity doing the action
         {
+            
             switch (action.Type)
             {
                 case Action.ActionType.Destroy:
                     Designer.RemoveEntity(this, actor.Position);
                     break;
                 case Action.ActionType.Build:
-                    Designer.AddEntity(this, action.Position, action.Entity);
+                    if(Designer.CurrentState == Designer.State.Tile)
+                    {
+                        Designer.AddTile(this, action.Position, action.Tile);
+                    }
+                    else
+                    {
+                        Designer.AddEntity(this, action.Position, action.Entity);
+                    }
                     break;
             }
         }
+        #endregion
+
+
+        #region Misc Methods
         //check if the specific position has an entity
         public Entity GetEntityFromPosition(Position position)
         {
@@ -235,11 +244,26 @@ namespace ASCMandatory1
             {
                 GetTileFromPosition(position).Entities.Add(entity);
             }
-            
         }
         public void RemoveEntity(Position position)
         {
             Map[position.X, position.Y].Entities.Remove(Map[position.X, position.Y].Entities[0]);
         }
+        public void AddTile(Tile tile, Position position)
+        {
+            foreach (Entity entity in Map[position.X, position.Y].Entities)
+            {
+                if(entity!=null)
+                tile.Entities.Add(entity);
+            }
+            Map[position.X, position.Y] = null;
+            Map[position.X, position.Y] = Tile.Clone(tile);
+        }
+        public void RemoveTile(Position position)
+        {
+            Map[position.X, position.Y] = null;
+            Map[position.X, position.Y] = Tile.Clone(Tile.tileIndex[0]);
+        }
+        #endregion
     }
 }
