@@ -8,47 +8,51 @@ namespace ASCMandatory1
 {
     public class Tile
     {
+        public int currententitytodraw = 0;
         public string Name { get; set; }
         public string Color { get; set; }
         public int Id { get; set; }
         public List<string> Attributes { get; set; }
-        public char Symbol { get; set; }
         public List<Entity> Entities { get; set; }
-        public static Dictionary<int, Tile> tileIndex { get; set; } = new Dictionary<int, Tile>() { { 0, new Tile(0, "Void", ASCMandatory1.Color.Gray, ' ') } };
-        public Tile(int id, string name, int[] color, char symbol)
+        public static Dictionary<int, Tile> tileIndex { get; set; } = new Dictionary<int, Tile>() { { 0, new Tile(0, "Void", ASCMandatory1.Color.Gray) } };
+        public Tile(int id, string name, int[] color)
         {
             Id= id;
             Name= name;
             Color = ASCMandatory1.Color.Background(color);
-            Symbol= symbol;
+            //Symbol= symbol;
             Entities = new List<Entity>();
             Attributes = new List<string> { "None" };
         }
-        public Tile(int id, string name, int[] color, char symbol, List<string>attributes)
+        public Tile(int id, string name, int[] color, List<string>attributes)
         {
             Id= id;
             Name = name;
             Color = ASCMandatory1.Color.Background(color);
-            Symbol = symbol;
             Entities = new List<Entity>();
-            Attributes = attributes;
+            foreach (string attribute in attributes)
+            {
+                Attributes.Add(attribute);
+            }
         }
         public Tile() { }
-        public static Tile Clone(Tile tile)
+        public void Blink(int blinkingtime, long frame) //method to calculate which entity the tile should show in case there is more than 1
         {
-            Tile clone = new Tile();
-            clone.Id = tile.Id;
-            clone.Name = tile.Name;
-            clone.Color = tile.Color;
-            clone.Symbol = tile.Symbol;
-            clone.Attributes = tile.Attributes;
-            clone.Entities = new List<Entity>();
-            foreach (Entity entity in tile.Entities)
+            if(currententitytodraw > this.Entities.Count - 1)
             {
-                clone.Entities.Add(entity);
+                currententitytodraw = this.Entities.Count - 1;
             }
-
-            return clone;
+            if(frame % blinkingtime == 0)
+            {
+                if (currententitytodraw>0)
+                {
+                    currententitytodraw--;
+                }
+                else
+                {
+                    currententitytodraw = this.Entities.Count-1;
+                }
+            }
         }
 
     }

@@ -77,7 +77,7 @@ namespace Game
             thread.Start();
             Console.Clear();
             int WindowHeight = level.Bounds.X + 2;
-            int WindowWidth = level.Bounds.Y * 2 + 4 + 40;
+            int WindowWidth = level.Bounds.Y * 2 + 4 + 60;
             Console.WindowHeight = WindowHeight;
             Console.WindowWidth = WindowWidth;
             while (true)
@@ -88,7 +88,7 @@ namespace Game
                     WindowWidth = Console.WindowWidth;
                     Console.Clear();
                 }
-                level.Update(player, ref count);
+                level.Update();
                 DrawGame(level, designer, player);
                 Thread.Sleep(16);
             }

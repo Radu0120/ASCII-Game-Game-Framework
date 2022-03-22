@@ -22,6 +22,10 @@ namespace Game
             Actor goblin = new Actor(1, "Goblin", 'G', Color.LawnGreen, 30, 20, 8, 1, 1);
             Actor chimera = new Actor(2, "Chimera", 'C', Color.Cyan, 150, 100, 9, 10, 20);
 
+            goblin.Attributes.Add("Phase");
+            bandit.Attributes.Add("Solid");
+            chimera.Attributes.Add("Solid");
+
             Actor.actorIndex.Add(bandit.Id, bandit);
             Actor.actorIndex.Add(goblin.Id, goblin);
             Actor.actorIndex.Add(chimera.Id, chimera);
@@ -36,7 +40,13 @@ namespace Game
         }
         public static void CreateTiles()
         {
+            Tile redtile = new Tile(1, "Red", Color.Red);
+            Tile yellowtile = new Tile(2, "Yellow", Color.Yellow);
+            Tile greentile = new Tile(3, "Green", Color.Green);
 
+            Tile.tileIndex.Add(redtile.Id, redtile);
+            Tile.tileIndex.Add(yellowtile.Id, yellowtile);
+            Tile.tileIndex.Add(greentile.Id, greentile);
         }
     }
 }

@@ -63,39 +63,42 @@ namespace ASCMandatory1
         }
         public static void DoDesignerAction(ref Actor actor, ref Level level)
         {
-            
+            Action action = new Action();
+            if (Keyboard.IsKeyDown(Key.Back))
             {
-                Action action = new Action();
-                if (Keyboard.IsKeyDown(Key.Back))
+                action.Type = Action.ActionType.Destroy;
+                action.Target = level.GetEntityFromPosition(actor.Position);
+                actor.PendingAction = action;
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.Enter))
+            {
+                action.Type = Action.ActionType.Build;
+                if(Designer.CurrentState == Designer.State.Menu)
                 {
-                    action.Type = Action.ActionType.Destroy;
-                    action.Target = level.GetEntityFromPosition(actor.Position);
+                    return;
                 }
-                else if (Keyboard.IsKeyDown(Key.Enter))
+                if (Designer.Object == null)
                 {
-                    action.Type = Action.ActionType.Build;
-                    if(Designer.CurrentState == Designer.State.Menu)
+                    if(Designer.Tile == null)
                     {
                         return;
                     }
-                    if (Designer.Object == null)
-                    {
-                        if(Designer.Tile == null)
-                        {
-                            return;
-                        }
-                    }
-                    else if(Designer.CurrentState == Designer.State.Tile)
-                    {
-                        action.Tile = Tile.Clone(Designer.Tile);
-                    }
-                    else
-                    {
-                        action.Entity = Entity.Clone(Designer.Object);
-                    }
-                    action.Position = actor.Position;
                 }
-                actor.PendingAction = action;
+                if(Designer.CurrentState == Designer.State.Tile)
+                {
+                    action.Tile = Clone<Tile>.CloneObject(Designer.Tile);
+                    action.Position = actor.Position;
+                    actor.PendingAction = action;
+                    return;
+                }
+                else
+                {
+                    action.Entity = Clone<Entity>.CloneObject(Designer.Object);
+                    action.Position = actor.Position;
+                    actor.PendingAction = action;
+                    return;
+                }
             }
         }
         public static void ChangeDesignerMenu()

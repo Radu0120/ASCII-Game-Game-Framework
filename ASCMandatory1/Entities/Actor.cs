@@ -30,6 +30,8 @@ namespace ASCMandatory1
             Id = id;
             Name = name;
             Symbol = symbol;
+            PendingAction = null;
+            PendingMovement = null;
             Color = ASCMandatory1.Color.Foreground(color);
         }
         public double ComputeDamage(Damage damage)

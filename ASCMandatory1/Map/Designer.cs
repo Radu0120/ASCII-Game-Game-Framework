@@ -41,11 +41,11 @@ namespace ASCMandatory1
         //designer object = equipped item to build copies of
         public static void AddDesignerObject(Entity entity)
         {
-            Object = Entity.Clone(entity);
+            Object = Clone<Entity>.CloneObject(entity);
         }
         public static void AddDesignerObject(Tile tile)
         {
-            Tile = Tile.Clone(tile);
+            Tile = Clone<Tile>.CloneObject(tile);
         }
         public static void RemoveDesignerObject()
         {
