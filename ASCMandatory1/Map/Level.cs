@@ -65,18 +65,6 @@ namespace ASCMandatory1
                     {
                         if(Map[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively, newest first
                         {
-                            //if (count >= blinkingtime) //if count is over the blinkingtime, draw the next entity
-                            //{
-                            //    if(currententitytodraw > 0)
-                            //    {
-                            //        currententitytodraw--;
-                            //    }
-                            //    else
-                            //    {
-                            //        currententitytodraw=Map[i,j].Entities.Count-1;
-                            //    }
-                            //    count = 0;
-                            //}
                             Map[i, j].Blink(blinkingtime, frame);
                             line += Map[i, j].Color + Map[i, j].Entities[Map[i, j].currententitytodraw].Color + Map[i, j].Entities[Map[i, j].currententitytodraw].Symbol + " ";
                         }
@@ -89,7 +77,6 @@ namespace ASCMandatory1
                     
                 }
                 level.Add(line);
-                //level.Add(Color.Background(Color.Black)+"\n"+"  ");
             }
             //count++;
             return level;
@@ -187,7 +174,6 @@ namespace ASCMandatory1
                 Map[entity.Position.X, entity.Position.Y].Entities.Clear(); //setting old tile's entity to null
                 entity.Position = position;
                 Map[position.X, position.Y].Entities.Add(entity);
-                //Map[position.X, position.Y].Entity.Position = position;
             }
             
         }
@@ -220,14 +206,12 @@ namespace ASCMandatory1
             {
                 if (this.GetEntityFromPosition(position).Attributes.Contains("Phase") || entity.Attributes.Contains("Phase"))
                 {
-                    //this.UpdateEntityPosition(entity, position);
                     return true;
                 }
                 return false;
             }
             else // no entity, can move in
             {
-                //this.UpdateEntityPosition(entity, position);
                 return true;
             }
         }
