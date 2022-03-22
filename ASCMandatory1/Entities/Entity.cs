@@ -61,8 +61,6 @@ namespace ASCMandatory1
                     clone.Attributes.Add(attribute);
                 }
             }
-
-
             return clone;
         }
     }

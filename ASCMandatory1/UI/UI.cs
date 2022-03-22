@@ -12,9 +12,9 @@ namespace ASCMandatory1
         public static Dictionary<int, string> DrawUI(Actor player, bool designer)
         {
             Dictionary<int, string> UI = new Dictionary<int, string>();
-            UI.Add(1,Color.Background(Color.Black) + PrintTiles(5) + Color.Foreground(Color.Yellow) + $" {player.Name}");
-            UI.Add(3,Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.Red)+"Health: " +PrintBar(player.HP));
-            UI.Add(5,Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana));
+            UI.Add(1,Color.Background(Color.Black) + PrintTiles(5) + Color.Foreground(Color.Yellow) + $" {player.Name}       ");
+            UI.Add(3,Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.Red)+"Health: " +PrintBar(player.HP)+"           ");
+            UI.Add(5,Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana)+"          ");
 
             if (!designer)
             {
