@@ -14,6 +14,7 @@ namespace ASCMandatory1
         public string Color { get; set; }
         public Position Position { get; set; }
         public List<string> Attributes { get; set; }
+        public Level.Direction Direction { get; set; }
         public static Dictionary<int, Entity> entityIndex { get; } = new Dictionary<int, Entity>()
         { 
             { 

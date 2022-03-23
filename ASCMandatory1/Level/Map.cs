@@ -8,25 +8,34 @@ using System.Threading.Tasks;
 
 namespace ASCMandatory1
 {
-    public class Level
+    public class Map
     {
         //public static int currententitytodraw = 0;
         const int blinkingtime = 20;
         static long frame = 0;
-        public string Name { get; set; }
-        public Tile[,] Map { get; set; }
+        public int LevelID { get; set; }
+        public Position MapPosition { get; set; }
+        public Tile[,] PlayableMap { get; set; }
         public Position SpawnPoint { get; set; } = new Position();
         public List<Actor> Actors { get; set; }
         public Position Bounds { get; set; } = new Position();
-        public Level(string name, int maxX, int maxY, int spawnX, int spawnY, Actor player)
+        public Map(int maxX, int maxY, int spawnX, int spawnY, Actor player, int levelid)
         {
-            Name = name;
+            LevelID = levelid;
             Bounds.X = maxY;
             Bounds.Y= maxX;
-            Map = new Tile[Bounds.X, Bounds.Y];
+            PlayableMap = new Tile[Bounds.X, Bounds.Y];
             SpawnPoint.X=spawnX;
             SpawnPoint.Y=spawnY;
             this.Create(player);
+        }
+        public Map(int maxX, int maxY, int levelid)
+        {
+            LevelID = levelid;
+            Bounds.X = maxY;
+            Bounds.Y = maxX;
+            PlayableMap = new Tile[Bounds.X, Bounds.Y];
+            this.Create();
         }
         #region Rendering
         private void Create(Actor player)
@@ -38,56 +47,66 @@ namespace ASCMandatory1
                     //adding the player
                     if (i == SpawnPoint.Y && j == SpawnPoint.X)
                     {
-                        Map[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
+                        PlayableMap[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
                         AddEntity(player, Position.Create(i,j));
                     }
 
                     //adding walls
                     else if (i == Bounds.X - 1 || i == 0 || j == Bounds.Y - 1 || j == 0)
                     {
-                        Map[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
-                        Map[i, j].Entities.Add(Clone<Entity>.CloneObject(Entity.entityIndex[0]));
+                        PlayableMap[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
+                        PlayableMap[i, j].Entities.Add(Clone<Entity>.CloneObject(Entity.entityIndex[0]));
                     }
-                    else Map[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
+                    else PlayableMap[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
                     
                 }
             }
         }
-        public List<string> DrawLevel(bool designer, ref int count)
+        private void Create()
         {
-            List<string> level = new List<string>();
+            for (int i = 0; i < Bounds.X; i++)
+            {
+                for (int j = 0; j < Bounds.Y; j++)
+                {
+                   PlayableMap[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
+                }
+            }
+        }
+        public List<string> DrawMap(bool designer, ref int count)
+        {
+            List<string> map = new List<string>();
             for (int i = 0; i < Bounds.X; i++)
             {
                 string line = "";
                 for (int j = 0; j < Bounds.Y; j++)
                 {
-                    if (Map[i, j].Entities.Count >0)
+                    if (PlayableMap[i, j].Entities.Count >0)
                     {
-                        if(Map[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively, newest first
+                        if(PlayableMap[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively, newest first
                         {
-                            Map[i, j].Blink(blinkingtime, frame);
-                            line += Map[i, j].Color + Map[i, j].Entities[Map[i, j].currententitytodraw].Color + Map[i, j].Entities[Map[i, j].currententitytodraw].Symbol + " ";
+                            PlayableMap[i, j].Blink(blinkingtime, frame);
+                            line += PlayableMap[i, j].Color + PlayableMap[i, j].Entities[PlayableMap[i, j].currententitytodraw].Color + PlayableMap[i, j].Entities[PlayableMap[i, j].currententitytodraw].Symbol + " ";
                         }
                         else // no extra entities present on the tile
                         {
-                            line += Map[i, j].Color + Map[i, j].Entities[0].Color + Map[i, j].Entities[0].Symbol + " ";
+                            line += PlayableMap[i, j].Color + PlayableMap[i, j].Entities[0].Color + PlayableMap[i, j].Entities[0].Symbol + " ";
                         }
                     }
-                    else line += Map[i, j].Color + " " + " ";
+                    else line += PlayableMap[i, j].Color + " " + " ";
                     
                 }
-                level.Add(line);
+                map.Add(line);
             }
             //count++;
-            return level;
+            return map;
         }
         #endregion
 
 
-        #region UpdateLevel
+        #region UpdateMap
         public void Update()
         {
-            foreach(Entity entity in GetEntitiesFromMap(this))
+            foreach(Entity entity in GetEntitiesFromPlayableMap(this))
             {
                 if(entity is Actor)
                 {
@@ -109,22 +128,49 @@ namespace ASCMandatory1
         //tries to move the entity to the new position if the tile is empty
         public void MoveEntity(Entity entity, Position newposition)
         {
+            bool changemap = false;
             int oldX;
-            if (CheckCollision(newposition, entity))
+            if (CheckCollision(newposition, entity, ref changemap))
             {
+                if (changemap)
+                {
+                    Position newmapposition = new Position();
+                    switch (entity.Direction)
+                    {
+                        case Level.Direction.Up:
+                            newmapposition.X = Bounds.X;
+                            newmapposition.Y = entity.Position.Y;
+                            break;
+                        case Level.Direction.Down:
+                            newmapposition.X = 0;
+                            newmapposition.Y = entity.Position.Y;
+                            break;
+                        case Level.Direction.Left:
+                            newmapposition.X = entity.Position.X;
+                            newmapposition.Y = Bounds.Y;
+                            break;
+                        case Level.Direction.Right:
+                            newmapposition.X = entity.Position.X;
+                            newmapposition.Y = 0;
+                            break;
+                        default:
+                            break;
+                    }
+                    entity.Position = Position.Create(newmapposition.X, newmapposition.Y);
+                }
                 UpdateEntityPosition(entity, newposition);
                 return;
             }
             oldX = newposition.X;
             newposition.X = entity.Position.X;
-            if(CheckCollision(newposition, entity))
+            if(CheckCollision(newposition, entity, ref changemap))
             {
                 UpdateEntityPosition(entity, newposition);
                 return;
             }
             newposition.X = oldX;
             newposition.Y = entity.Position.Y;
-            if (CheckCollision(newposition, entity))
+            if (CheckCollision(newposition, entity, ref changemap))
             {
                 UpdateEntityPosition(entity, newposition);
                 return;
@@ -157,23 +203,23 @@ namespace ASCMandatory1
         //check if the specific position has an entity
         public Entity GetEntityFromPosition(Position position)
         {
-            if (Map[position.X, position.Y].Entities.Count>0) return Map[position.X, position.Y].Entities[0];
+            if (PlayableMap[position.X, position.Y].Entities.Count>0) return PlayableMap[position.X, position.Y].Entities[0];
             else return null;
         }
         public void UpdateEntityPosition(Entity entity, Position position)
         {
             if (entity.Attributes.Contains("Phase"))
             {
-                Map[entity.Position.X, entity.Position.Y].Entities.Remove(entity);
+                PlayableMap[entity.Position.X, entity.Position.Y].Entities.Remove(entity);
                 entity.Position = position;
-                Map[position.X, position.Y].Entities.Add(entity);
-                Map[position.X, position.Y].currententitytodraw = Map[position.X, position.Y].Entities.Count-1;
+                PlayableMap[position.X, position.Y].Entities.Add(entity);
+                PlayableMap[position.X, position.Y].currententitytodraw = PlayableMap[position.X, position.Y].Entities.Count-1;
             }
             else
             {
-                Map[entity.Position.X, entity.Position.Y].Entities.Clear(); //setting old tile's entity to null
+                PlayableMap[entity.Position.X, entity.Position.Y].Entities.Clear(); //setting old tile's entity to null
                 entity.Position = position;
-                Map[position.X, position.Y].Entities.Add(entity);
+                PlayableMap[position.X, position.Y].Entities.Add(entity);
             }
             
         }
@@ -183,7 +229,7 @@ namespace ASCMandatory1
             {
                 for (int j = 0; j < Bounds.Y; j++)
                 {
-                    if(Map[i, j] == tile)
+                    if(PlayableMap[i, j] == tile)
                     {
                         Position position = new Position() { X = i, Y = j };
                         return position;
@@ -194,13 +240,18 @@ namespace ASCMandatory1
         }
         public Tile GetTileFromPosition(Position position)
         {
-            return Map[position.X, position.Y];
+            return PlayableMap[position.X, position.Y];
         }
-        public bool CheckCollision(Position position, Entity entity)
+        public bool CheckCollision(Position position, Entity entity, ref bool changemap)
         {
             if(position.X > Bounds.X - 1 || position.X < 0 || position.Y > Bounds.Y - 1 || position.Y < 0) // check the map boundaries
             {
-                return false;
+                if (CheckMapBounds(entity))
+                {
+                    changemap = true;
+                    return true;
+                }
+                else return false;
             }
             if (this.GetEntityFromPosition(position) != null) //if there is an entity, check for phase
             {
@@ -214,6 +265,10 @@ namespace ASCMandatory1
             {
                 return true;
             }
+        }
+        public bool CheckMapBounds(Entity entity)
+        {
+            return Level.levelIndex[this.LevelID].CheckNextMap(entity.Direction);
         }
         public void AddEntity(Entity entity, Position position)
         {
@@ -244,33 +299,33 @@ namespace ASCMandatory1
         }
         public void RemoveEntity(Position position)
         {
-            Map[position.X, position.Y].Entities.Remove(Map[position.X, position.Y].Entities[0]);
-            Map[position.X, position.Y].currententitytodraw--;
+            PlayableMap[position.X, position.Y].Entities.Remove(PlayableMap[position.X, position.Y].Entities[0]);
+            PlayableMap[position.X, position.Y].currententitytodraw--;
         }
         public void AddTile(Tile tile, Position position)
         {
-            foreach (Entity entity in Map[position.X, position.Y].Entities)
+            foreach (Entity entity in PlayableMap[position.X, position.Y].Entities)
             {
                 tile.Entities.Add(entity);
             }
-            Map[position.X, position.Y] = null;
-            Map[position.X, position.Y] = tile;
+            PlayableMap[position.X, position.Y] = null;
+            PlayableMap[position.X, position.Y] = tile;
         }
         public void RemoveTile(Position position)
         {
-            Map[position.X, position.Y] = null;
-            Map[position.X, position.Y] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
+            PlayableMap[position.X, position.Y] = null;
+            PlayableMap[position.X, position.Y] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
         }
-        public List<Entity> GetEntitiesFromMap(Level level)
+        public List<Entity> GetEntitiesFromPlayableMap(Map level)
         {
             List<Entity> entities = new List<Entity>();
             for (int i = 0; i < Bounds.X; i++)
             {
                 for (int j = 0; j < Bounds.Y; j++)
                 {
-                    if (Map[i, j].Entities.Count>0)
+                    if (PlayableMap[i, j].Entities.Count>0)
                     {
-                        foreach(Entity entity in Map[i, j].Entities)
+                        foreach(Entity entity in PlayableMap[i, j].Entities)
                         {
                             entities.Add(entity);
                         }

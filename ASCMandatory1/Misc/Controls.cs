@@ -10,7 +10,7 @@ namespace ASCMandatory1
 {
     public class Controls
     {
-        public static void Checkinput(ref Actor player, ref Level level)
+        public static void Checkinput(ref Actor player, ref Map level)
         {
             if (player.Attributes.Contains("Designer"))
             {
@@ -46,22 +46,26 @@ namespace ASCMandatory1
             if (Keyboard.IsKeyDown(Key.W))
             {
                 newposition.X--;
+                actor.Direction = Level.Direction.Up;
             }
             if (Keyboard.IsKeyDown(Key.S))
             {
                 newposition.X++;
+                actor.Direction = Level.Direction.Down;
             }
             if (Keyboard.IsKeyDown(Key.D))
             {
                 newposition.Y++;
+                actor.Direction = Level.Direction.Right;
             }
             if (Keyboard.IsKeyDown(Key.A))
             {
                 newposition.Y--;
+                actor.Direction = Level.Direction.Left;
             }
             actor.PendingMovement = newposition;
         }
-        public static void DoDesignerAction(ref Actor actor, ref Level level)
+        public static void DoDesignerAction(ref Actor actor, ref Map level)
         {
             Action action = new Action();
             if (Keyboard.IsKeyDown(Key.Back))

@@ -9,20 +9,20 @@ namespace ASCMandatory1
     public class UI
     {
         public const int AmountPerBar = 5;
-        public static Dictionary<int, string> DrawUI(Actor player, bool designer)
+        public static Dictionary<int, string> DrawUI(Actor player, bool designer, int mapend)
         {
             Dictionary<int, string> UI = new Dictionary<int, string>();
-            UI.Add(1,Color.Background(Color.Black) + PrintTiles(5) + Color.Foreground(Color.Yellow) + $" {player.Name}       ");
-            UI.Add(3,Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.Red)+"Health: " +PrintBar(player.HP)+"           ");
-            UI.Add(5,Color.Background(Color.Black) + PrintTiles(3) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana)+"          ");
+            UI.Add(1,Color.Background(Color.Black) + PrintTiles(2) + Color.Foreground(Color.Yellow) + $" {player.Name}       ");
+            UI.Add(3,Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.Red)+"Health: " +PrintBar(player.HP)+"           ");
+            UI.Add(5,Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana)+"          ");
 
             if (!designer)
             {
-                UI.Add(15,Color.Background(Color.Black)+ PrintTiles(3) + Color.Foreground(Color.White) + PrintEquippedItem(player));
+                UI.Add(15,Color.Background(Color.Black)+ PrintTiles(1) + Color.Foreground(Color.White) + PrintEquippedItem(player));
             }
             else
             {
-                int position = 15;
+                int position = mapend/2;
                 PrintDesignerObject(UI, position);
                 PrintDesignerUI(UI, position);
             }
@@ -107,13 +107,13 @@ namespace ASCMandatory1
             {
                 if(Designer.Tile == null)
                 {
-                    UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "None    ");
+                    UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: None    ");
                     return;
                 }
-                UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + Designer.Tile.Name+ "    ");
+                UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + Designer.Tile.Name+ "    ");
                 return;
             }
-            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + Designer.Object.Name+ "    ");
+            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + Designer.Object.Name+ "    ");
         }
         public static void PrintDesignerMenu(Dictionary<int, string> UI, int position)
         {

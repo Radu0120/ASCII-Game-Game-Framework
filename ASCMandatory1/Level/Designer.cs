@@ -15,28 +15,28 @@ namespace ASCMandatory1
         public static Entity Object { get; set; }
         public static Tile Tile { get; set; }
         public static State CurrentState { get; set; }
-        public static void AddSpawnPoint(Level level, Position position)
+        public static void AddSpawnPoint(Map map, Position position)
         {
-            level.SpawnPoint = Position.Create(position.X, position.Y);
+            map.SpawnPoint = Position.Create(position.X, position.Y);
         }
-        public static void AddEntity(Level level, Position position, Entity entity)
+        public static void AddEntity(Map map, Position position, Entity entity)
         {
-            level.AddEntity(entity, position);
+            map.AddEntity(entity, position);
         }
-        public static void RemoveEntity(Level level, Position position)
+        public static void RemoveEntity(Map map, Position position)
         {
-            if(level.Map[position.X, position.Y].Entities.Count > 1)
+            if(map.PlayableMap[position.X, position.Y].Entities.Count > 1)
             {
-                level.RemoveEntity(position);
+                map.RemoveEntity(position);
             }
         }
-        public static void AddTile(Level level, Position position, Tile tile)
+        public static void AddTile(Map map, Position position, Tile tile)
         {
-            level.AddTile(tile, position);
+            map.AddTile(tile, position);
         }
-        public static void RemoveTile(Level level, Position position)
+        public static void RemoveTile(Map map, Position position)
         {
-            level.RemoveTile(position);
+            map.RemoveTile(position);
         }
         //designer object = equipped item to build copies of
         public static void AddDesignerObject(Entity entity)

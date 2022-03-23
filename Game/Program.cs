@@ -42,9 +42,9 @@ namespace Game
         public static void StartGame()
         {
             Actor player = new Actor(1, "pedritu", 'P', Color.Red, 105, 100, 10, 0, 0);
-            Level level = new Level("level1", 80, 48, 10, 10, player);
+            Map map = new Map(80, 48, 10, 10, player);
 
-            RunGameLogic(level, player, false);
+            RunGameLogic(map, player, false);
         }
         public static void StartDesigner()
         {
@@ -52,32 +52,32 @@ namespace Game
             cursor.Attributes.Add("Phase");
             cursor.Attributes.Add("Designer");
 
-            Console.WriteLine("Type the name of the level");
+            Console.WriteLine("Type the name of the map");
             string name = Console.ReadLine();
 
-            Console.WriteLine("Type the width of the level");
+            Console.WriteLine("Type the width of the map");
             int width = Int32.Parse(Console.ReadLine());
 
-            Console.WriteLine("Type the height of the level");
+            Console.WriteLine("Type the height of the map");
             int height = Int32.Parse(Console.ReadLine());
 
-            Level newlevel = new Level(name, width, height, 5, 5, cursor);
+            Map newmap = new Map(width, height, 5, 5, cursor);
             //Designer.Object = Entity.Clone(Entity.entityIndex[0]);
             //Designer.Tile = Tile.Clone(Tile.tileIndex[0]);
             Designer.CurrentState = Designer.State.Menu;
 
-            RunGameLogic(newlevel, cursor, true);
+            RunGameLogic(newmap, cursor, true);
         }
-        private static void RunGameLogic(Level level, Actor player, bool designer)
+        private static void RunGameLogic(Map map, Actor player, bool designer)
         {
-            Thread thread = new Thread(() =>
-                        Controls.Checkinput(ref player, ref level)
+            Thread threadPlayer = new Thread(() =>
+                        Controls.Checkinput(ref player, ref map)
                 );
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
+            threadPlayer.SetApartmentState(ApartmentState.STA);
+            threadPlayer.Start();
             Console.Clear();
-            int WindowHeight = level.Bounds.X + 2;
-            int WindowWidth = level.Bounds.Y * 2 + 4 + 60;
+            int WindowHeight = map.Bounds.X + 2;
+            int WindowWidth = map.Bounds.Y * 2 + 4 + 45;
             Console.WindowHeight = WindowHeight;
             Console.WindowWidth = WindowWidth;
             while (true)
@@ -88,19 +88,19 @@ namespace Game
                     WindowWidth = Console.WindowWidth;
                     Console.Clear();
                 }
-                level.Update();
-                DrawGame(level, designer, player);
+                map.Update();
+                DrawGame(map, designer, player);
                 Thread.Sleep(16);
             }
         }
-        private static void DrawGame(Level level, bool designer, Actor player)
+        private static void DrawGame(Map map, bool designer, Actor player)
         {
             
             Console.CursorVisible = false;
             Console.SetCursorPosition(2, 1);
-            Dictionary<int,string> UI = ASCMandatory1.UI.DrawUI(player, designer);
+            Dictionary<int,string> UI = ASCMandatory1.UI.DrawUI(player, designer, map.Bounds.X);
             int UILine = 0;
-            foreach(string line in level.DrawLevel(designer, ref count))
+            foreach(string line in map.DrawMap(designer, ref count))
             {
                 Console.Write(line);
                 if (UILine <= UI.Count-1)
