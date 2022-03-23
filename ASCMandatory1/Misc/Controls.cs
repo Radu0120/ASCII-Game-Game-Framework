@@ -154,8 +154,7 @@ namespace ASCMandatory1
                     break;
             }
         }
-        #region SelectDesignerItem
-        public static void SelectDesignerItem(Dictionary<int, Actor> index)
+        public static void SelectDesignerItem<T>(Dictionary<int, T> index)
         {
             int end = index.Count;
             for (int i = 1; i <= end; i++)
@@ -163,51 +162,27 @@ namespace ASCMandatory1
                 Key key = (Key)(i + 34);
                 if (Keyboard.IsKeyDown(key))
                 {
-                    Designer.AddDesignerObject(Actor.actorIndex[i - 1]);
+                    switch (index[0])
+                    {
+                        case Actor:
+                            Designer.AddDesignerObject(Actor.actorIndex[i - 1]);
+                            break;
+                        case Item:
+                            Designer.AddDesignerObject(Item.itemIndex[i - 1]);
+                            break;
+                        case WorldObject:
+                            Designer.AddDesignerObject(WorldObject.worldobjectIndex[i - 1]);
+                            break;
+                        case Tile:
+                            Designer.AddDesignerObject(Tile.tileIndex[i - 1]);
+                            break;
+                        default:
+                            break;
+                    }
                     return;
                 }
             }
         }
-        public static void SelectDesignerItem(Dictionary<int, Item> index)
-        {
-            int end = index.Count;
-            for (int i = 1; i <=end ; i++)
-            {
-                Key key = (Key)(i+34);
-                if (Keyboard.IsKeyDown(key))
-                {
-                    Designer.AddDesignerObject(Item.itemIndex[i - 1]);
-                    return;
-                }
-            }
-        }
-        public static void SelectDesignerItem(Dictionary<int, WorldObject> index)
-        {
-            int end = index.Count;
-            for (int i = 1; i <= end; i++)
-            {
-                Key key = (Key)(i + 34);
-                if (Keyboard.IsKeyDown(key))
-                {
-                    Designer.AddDesignerObject(WorldObject.worldobjectIndex[i - 1]);
-                    return;
-                }
-            }
-        }
-        public static void SelectDesignerItem(Dictionary<int, Tile> index)
-        {
-            int end = index.Count;
-            for (int i = 1; i <= end; i++)
-            {
-                Key key = (Key)(i + 34);
-                if (Keyboard.IsKeyDown(key))
-                {
-                    Designer.AddDesignerObject(Tile.tileIndex[i - 1]);
-                    return;
-                }
-            }
-        }
-        #endregion
         public static bool IsAnyKeyDown()
         {
             var values = Enum.GetValues(typeof(Key));
