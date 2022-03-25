@@ -10,7 +10,7 @@ namespace ASCMandatory1
     {
         public enum State
         {
-            Tile, WorldOject, Item, Actor, Menu
+            Tile, WorldOject, Item, Actor, BuildMenu, MainMenu
         }
         public static Entity Object { get; set; }
         public static Tile Tile { get; set; }
@@ -27,7 +27,10 @@ namespace ASCMandatory1
         {
             if(map.PlayableMap[position.X, position.Y].Entities.Count > 1)
             {
-                map.RemoveEntity(position);
+                if(map.PlayableMap[position.X, position.Y].Entities[0] is Actor){
+                    map.RemoveEntity(position, map.PlayableMap[position.X, position.Y].Entities[0]);
+                }
+                
             }
         }
         public static void AddTile(Map map, Position position, Tile tile)
@@ -37,6 +40,14 @@ namespace ASCMandatory1
         public static void RemoveTile(Map map, Position position)
         {
             map.RemoveTile(position);
+        }
+        public static void AddMap(Level level, Position position)
+        {
+            level.AddMap(position);
+        }
+        public static void RemoveMap(Level level, Position position)
+        {
+            level.RemoveMap(position);
         }
         //designer object = equipped item to build copies of
         public static void AddDesignerObject(Entity entity)

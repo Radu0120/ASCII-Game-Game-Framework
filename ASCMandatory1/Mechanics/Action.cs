@@ -13,7 +13,6 @@ namespace ASCMandatory1
             Attack, Block, Build, Use, Destroy, Move
         }
         public ActionType Type { get; set; }
-        public Entity Target { get; set; }
         public Item Item { get; set; }
         public Damage Damage { get; set; }
         public Position Position { get; set; }

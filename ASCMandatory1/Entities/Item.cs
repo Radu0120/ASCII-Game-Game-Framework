@@ -18,5 +18,6 @@ namespace ASCMandatory1
             Color = ASCMandatory1.Color.Foreground(color);
             Damage = damage;
         }
+        public Item() { }
     }
 }

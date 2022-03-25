@@ -41,10 +41,10 @@ namespace Game
         }
         public static void StartGame()
         {
-            Actor player = new Actor(1, "pedritu", 'P', Color.Red, 105, 100, 10, 0, 0);
-            Map map = new Map(80, 48, 10, 10, player);
+            //Actor player = new Actor(1, "pedritu", 'P', Color.Red, 105, 100, 10, 0, 0);
+            //Map map = new Map(80, 48, 10, 10, player, 1);
 
-            RunGameLogic(map, player, false);
+            //RunGameLogic(map, player, false);
         }
         public static void StartDesigner()
         {
@@ -52,32 +52,57 @@ namespace Game
             cursor.Attributes.Add("Phase");
             cursor.Attributes.Add("Designer");
 
-            Console.WriteLine("Type the name of the map");
-            string name = Console.ReadLine();
+            string input = "";
+            Level chosenlevel = new Level();
+            while (input != "close")
+            {
+                Console.Clear();
+                Console.WriteLine("Pick one of the levels below to edit, or type 'new' to create a new level, or 'close' to exit the game");
+                for(int i = 0; i < Level.levelIndex.Count; i++)
+                {
+                    Console.WriteLine(Level.levelIndex[i]);
+                }
+                input = Console.ReadLine();
+                if(input == "new")
+                {
+                    Console.WriteLine("What should your level be named?");
+                    input = Console.ReadLine();
+                    chosenlevel = new Level(Level.levelIndex.Count, input, cursor);
+                    break;
+                }
+                else
+                {
+                    foreach (Level level in Level.levelIndex.Values)
+                    {
+                        if (input == level.Name)
+                        {
+                            chosenlevel = level;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (input == "close")
+            {
+                return;
+            }
 
-            Console.WriteLine("Type the width of the map");
-            int width = Int32.Parse(Console.ReadLine());
+            Designer.CurrentState = Designer.State.BuildMenu;
 
-            Console.WriteLine("Type the height of the map");
-            int height = Int32.Parse(Console.ReadLine());
-
-            Map newmap = new Map(width, height, 5, 5, cursor);
-            //Designer.Object = Entity.Clone(Entity.entityIndex[0]);
-            //Designer.Tile = Tile.Clone(Tile.tileIndex[0]);
-            Designer.CurrentState = Designer.State.Menu;
-
-            RunGameLogic(newmap, cursor, true);
+            RunGameLogic(cursor, true, chosenlevel);
         }
-        private static void RunGameLogic(Map map, Actor player, bool designer)
+        private static void RunGameLogic(Actor player, bool designer, Level level)
         {
+            Level.CurrentLevel = level.ID;
             Thread threadPlayer = new Thread(() =>
-                        Controls.Checkinput(ref player, ref map)
+                        Controls.CheckInput(ref player)
                 );
             threadPlayer.SetApartmentState(ApartmentState.STA);
             threadPlayer.Start();
             Console.Clear();
-            int WindowHeight = map.Bounds.X + 2;
-            int WindowWidth = map.Bounds.Y * 2 + 4 + 45;
+            
+            int WindowHeight = level.GetCurrentMap().Bounds.X + 2;
+            int WindowWidth = level.GetCurrentMap().Bounds.Y * 2 + 4 + 45;
             Console.WindowHeight = WindowHeight;
             Console.WindowWidth = WindowWidth;
             while (true)
@@ -88,8 +113,8 @@ namespace Game
                     WindowWidth = Console.WindowWidth;
                     Console.Clear();
                 }
-                map.Update();
-                DrawGame(map, designer, player);
+                level.GetCurrentMap().Update();
+                DrawGame(level.GetCurrentMap(), designer, player);
                 Thread.Sleep(16);
             }
         }

@@ -8,6 +8,7 @@ namespace ASCMandatory1
 {
     public class Level
     {
+        public static int CurrentLevel { get; set; }
         public static Dictionary<int, Level> levelIndex = new Dictionary<int, Level>();
         public const int MapBoundX = 80;
         public const int MapBoundY = 48;
@@ -19,8 +20,8 @@ namespace ASCMandatory1
         public Map[,] Maps { get; set; }
         public Position CurrentMap { get; set; }
         public Position StartingMap { get; set; }
-        public int MaxX { get; set; }
-        public int MaxY { get; set; }
+        public static int MaxX = 10;
+        public static int MaxY = 10;
         public string Name { get; set; }
         public bool Completed { get; set; }
         public Level(int id, string name, Actor player)
@@ -28,14 +29,18 @@ namespace ASCMandatory1
             ID = id;
             Name = name;
             Completed = false;
+            Maps = new Map[MaxX,MaxY];
+            StartingMap = new Position();
+            CurrentMap = new Position();
             this.Initialize(player);
             levelIndex.Add(id, this);
         }
+        public Level() { }
         public void Initialize(Actor player)
         {
-            for (int i = 0; i <= MaxX; i++)
+            for (int i = 0; i < MaxX; i++)
             {
-                for (int j = 0; j <= MaxY; j++)
+                for (int j = 0; j < MaxY; j++)
                 {
                     Maps[i, j] = null;
                 }
@@ -45,9 +50,16 @@ namespace ASCMandatory1
             StartingMap.Y = MaxY / 2;
             CurrentMap.X = 0;
             CurrentMap.Y = MaxY / 2;
+            Maps[0, (MaxY / 2) +1] = new Map(MapBoundX, MapBoundY, this.ID);
+            Maps[1, (MaxY / 2) + 1] = new Map(MapBoundX, MapBoundY, this.ID);
+            Maps[0, (MaxY / 2) - 1] = new Map(MapBoundX, MapBoundY, this.ID);
         }
         public void AddMap(Position position)
         {
+            if(position.X < 0 || position.X >= MaxX || position.Y <0 || position.Y >= MaxY)
+            {
+                return;
+            }
             if(Maps[position.X, position.Y] == null)
             Maps[position.X, position.Y] = new Map(MapBoundX, MapBoundY, this.ID);
         }
@@ -60,37 +72,55 @@ namespace ASCMandatory1
             switch (direction)
             {
                 case Direction.Up:
-                    if (Maps[CurrentMap.X - 1, CurrentMap.Y] != null)
-                    {
-                        CurrentMap.X--;
-                        return true;
+                    try{
+                        if (Maps[CurrentMap.X - 1, CurrentMap.Y] != null)
+                        {
+                            return true;
+                        }
+                        throw new Exception(message:"OutofBounds");
                     }
+                    catch (Exception e) { }
                     break;
                 case Direction.Down:
-                    if (Maps[CurrentMap.X + 1, CurrentMap.Y] != null)
+
+                    try
                     {
-                        CurrentMap.X++;
-                        return true;
+                        if (Maps[CurrentMap.X + 1, CurrentMap.Y] != null)
+                        {
+                            return true;
+                        }
+                        throw new Exception();
                     }
+                    catch (Exception e) { }
                     break;
                 case Direction.Left:
-                    if (Maps[CurrentMap.X, CurrentMap.Y - 1] != null)
-                    {
-                        CurrentMap.Y--;
-                        return true;
+                    try{
+                        if (Maps[CurrentMap.X, CurrentMap.Y - 1] != null)
+                        {
+                            return true;
+                        }
+                        throw new Exception();
                     }
+                    catch (Exception e) { }
                     break;
                 case Direction.Right:
-                    if (Maps[CurrentMap.X, CurrentMap.Y + 1] != null)
-                    {
-                        CurrentMap.Y++;
-                        return true;
+                    try{
+                        if (Maps[CurrentMap.X, CurrentMap.Y + 1] != null)
+                        {
+                            return true;
+                        }
+                        throw new Exception();
                     }
+                    catch (Exception e) { }
                     break;
                 default:
                     return false;
             }
             return false;
+        }
+        public Map GetCurrentMap()
+        {
+            return Maps[CurrentMap.X, CurrentMap.Y];
         }
     }
 }

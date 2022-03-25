@@ -15,12 +15,12 @@ namespace ASCMandatory1
         public Position Position { get; set; }
         public List<string> Attributes { get; set; }
         public Level.Direction Direction { get; set; }
-        public static Dictionary<int, Entity> entityIndex { get; } = new Dictionary<int, Entity>()
-        { 
-            { 
-                0, new Entity(0, "Wall", 'W', ASCMandatory1.Color.Black, new List<string>(){"Solid"}) 
-            } 
-        };
+        //public static Dictionary<int, Entity> entityIndex { get; } = new Dictionary<int, Entity>()
+        //{ 
+        //    { 
+        //        0, new Entity(0, "Wall", 'W', ASCMandatory1.Color.Black, new List<string>(){"Solid"}) 
+        //    } 
+        //};
         public Entity(int id, string name, char symbol, int[] color)
         {
             Attributes = new List<string>();
@@ -45,24 +45,6 @@ namespace ASCMandatory1
         {
             Symbol = 'W';
             Color = ASCMandatory1.Color.Foreground(ASCMandatory1.Color.Black);
-        }
-        public static Entity Clone(Entity entity)
-        {
-            Entity clone = new Entity();
-            clone.Id = entity.Id;
-            clone.Name = entity.Name;
-            clone.Color = entity.Color;
-            clone.Symbol = entity.Symbol;
-            clone.Position = entity.Position;
-            clone.Attributes = new List<string>();
-            if (entity.Attributes != null)
-            {
-                foreach (string attribute in entity.Attributes)
-                {
-                    clone.Attributes.Add(attribute);
-                }
-            }
-            return clone;
         }
     }
 }

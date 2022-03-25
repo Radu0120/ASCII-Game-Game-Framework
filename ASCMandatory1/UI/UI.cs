@@ -81,8 +81,8 @@ namespace ASCMandatory1
         {
             switch (Designer.CurrentState)
             {
-                case Designer.State.Menu:
-                    PrintDesignerMenu(UI, position);
+                case Designer.State.BuildMenu:
+                    PrintDesignerBuildMenu(UI, position);
                     break;
                 case Designer.State.Actor:
                     PrintDesignerItemIndex(Actor.actorIndex, UI, position);
@@ -99,6 +99,7 @@ namespace ASCMandatory1
                 default:
                     break;
             }
+            if(Designer.CurrentState != Designer.State.BuildMenu)
             UI.Add(MaxKey(UI)+2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back    ");
         }
         public static void PrintDesignerObject(Dictionary<int, string> UI, int position)
@@ -115,7 +116,7 @@ namespace ASCMandatory1
             }
             UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + Designer.Object.Name+ "    ");
         }
-        public static void PrintDesignerMenu(Dictionary<int, string> UI, int position)
+        public static void PrintDesignerBuildMenu(Dictionary<int, string> UI, int position)
         {
             UI.Add(position + 2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Z : Actor menu    ");
             UI.Add(position + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "X : Item menu    ");

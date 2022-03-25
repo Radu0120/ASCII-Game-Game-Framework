@@ -10,7 +10,7 @@ namespace ASCMandatory1
 {
     public class Controls
     {
-        public static void Checkinput(ref Actor player, ref Map level)
+        public static void CheckInput(ref Actor player)
         {
             if (player.Attributes.Contains("Designer"))
             {
@@ -19,9 +19,12 @@ namespace ASCMandatory1
                     if (IsAnyKeyDown())
                     {
                         Move(ref player);
-                        ChangeDesignerMenu();
-                        ChooseDesignerMenu();
-                        DoDesignerAction(ref player, ref level);
+                        if(Designer.CurrentState != Designer.State.MainMenu)
+                        {
+                            ChangeDesignerBuildMenu();
+                            ChooseDesignerItem();
+                        }
+                        DoDesignerAction(ref player);
                         int wait = Convert.ToInt32(1000 / player.Speed);
                         Thread.Sleep(wait);
                     }
@@ -65,20 +68,20 @@ namespace ASCMandatory1
             }
             actor.PendingMovement = newposition;
         }
-        public static void DoDesignerAction(ref Actor actor, ref Map level)
+        public static void DoDesignerAction(ref Actor actor)
         {
             Action action = new Action();
             if (Keyboard.IsKeyDown(Key.Back))
             {
                 action.Type = Action.ActionType.Destroy;
-                action.Target = level.GetEntityFromPosition(actor.Position);
+                action.Position = Clone<Position>.CloneObject(actor.Position);
                 actor.PendingAction = action;
                 return;
             }
             else if (Keyboard.IsKeyDown(Key.Enter))
             {
                 action.Type = Action.ActionType.Build;
-                if(Designer.CurrentState == Designer.State.Menu)
+                if(Designer.CurrentState == Designer.State.BuildMenu)
                 {
                     return;
                 }
@@ -105,11 +108,11 @@ namespace ASCMandatory1
                 }
             }
         }
-        public static void ChangeDesignerMenu()
+        public static void ChangeDesignerBuildMenu()
         {
             if (Keyboard.IsKeyDown(Key.Escape))
             {
-                Designer.CurrentState = Designer.State.Menu;
+                Designer.CurrentState = Designer.State.BuildMenu;
                 Designer.RemoveDesignerObject();
                 return;
             }
@@ -138,7 +141,7 @@ namespace ASCMandatory1
                 return;
             }
         }
-        public static void ChooseDesignerMenu()
+        public static void ChooseDesignerItem()
         {
             switch (Designer.CurrentState)
             {

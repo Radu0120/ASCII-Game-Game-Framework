@@ -55,10 +55,9 @@ namespace ASCMandatory1
                     else if (i == Bounds.X - 1 || i == 0 || j == Bounds.Y - 1 || j == 0)
                     {
                         PlayableMap[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
-                        PlayableMap[i, j].Entities.Add(Clone<Entity>.CloneObject(Entity.entityIndex[0]));
+                        PlayableMap[i, j].Entities.Add(Clone<Entity>.CloneObject(WorldObject.worldobjectIndex[0]));
                     }
                     else PlayableMap[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
-                    
                 }
             }
         }
@@ -134,29 +133,8 @@ namespace ASCMandatory1
             {
                 if (changemap)
                 {
-                    Position newmapposition = new Position();
-                    switch (entity.Direction)
-                    {
-                        case Level.Direction.Up:
-                            newmapposition.X = Bounds.X;
-                            newmapposition.Y = entity.Position.Y;
-                            break;
-                        case Level.Direction.Down:
-                            newmapposition.X = 0;
-                            newmapposition.Y = entity.Position.Y;
-                            break;
-                        case Level.Direction.Left:
-                            newmapposition.X = entity.Position.X;
-                            newmapposition.Y = Bounds.Y;
-                            break;
-                        case Level.Direction.Right:
-                            newmapposition.X = entity.Position.X;
-                            newmapposition.Y = 0;
-                            break;
-                        default:
-                            break;
-                    }
-                    entity.Position = Position.Create(newmapposition.X, newmapposition.Y);
+                    GoToNextMap(entity);
+                    return;
                 }
                 UpdateEntityPosition(entity, newposition);
                 return;
@@ -270,6 +248,38 @@ namespace ASCMandatory1
         {
             return Level.levelIndex[this.LevelID].CheckNextMap(entity.Direction);
         }
+        public void GoToNextMap(Entity entity)
+        {
+            Position newmapposition = new Position();
+            switch (entity.Direction)
+            {
+                case Level.Direction.Up:
+                    newmapposition.X = Bounds.X-1;
+                    newmapposition.Y = entity.Position.Y;
+                    Level.levelIndex[LevelID].CurrentMap.X--;
+                    break;
+                case Level.Direction.Down:
+                    newmapposition.X = 0;
+                    newmapposition.Y = entity.Position.Y;
+                    Level.levelIndex[LevelID].CurrentMap.X++;
+                    break;
+                case Level.Direction.Left:
+                    newmapposition.X = entity.Position.X;
+                    newmapposition.Y = Bounds.Y-1;
+                    Level.levelIndex[LevelID].CurrentMap.Y--;
+                    break;
+                case Level.Direction.Right:
+                    newmapposition.X = entity.Position.X;
+                    newmapposition.Y = 0;
+                    Level.levelIndex[LevelID].CurrentMap.Y++;
+                    break;
+                default:
+                    break;
+            }
+            this.RemoveEntity(entity.Position, entity);
+            entity.Position = Position.Create(newmapposition.X, newmapposition.Y);
+            Level.levelIndex[LevelID].GetCurrentMap().AddEntity(entity, newmapposition);
+        }
         public void AddEntity(Entity entity, Position position)
         {
             bool proceed;
@@ -297,10 +307,13 @@ namespace ASCMandatory1
                 GetTileFromPosition(position).Entities.Add(entity);
             }
         }
-        public void RemoveEntity(Position position)
+        public void RemoveEntity(Position position, Entity entity)
         {
-            PlayableMap[position.X, position.Y].Entities.Remove(PlayableMap[position.X, position.Y].Entities[0]);
-            PlayableMap[position.X, position.Y].currententitytodraw--;
+            PlayableMap[position.X, position.Y].Entities.Remove(entity);
+            if(PlayableMap[position.X, position.Y].currententitytodraw != 0)
+            {
+                PlayableMap[position.X, position.Y].currententitytodraw--;
+            }
         }
         public void AddTile(Tile tile, Position position)
         {
