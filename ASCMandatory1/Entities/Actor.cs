@@ -35,6 +35,7 @@ namespace ASCMandatory1
             PendingMovement = null;
             Color = ASCMandatory1.Color.Foreground(color);
         }
+        public Actor() { }
         public double ComputeDamage(Damage damage)
         {
             if(damage.DamageType == Damage.Type.Physical)

@@ -19,9 +19,13 @@ namespace ASCMandatory1
                     if (IsAnyKeyDown())
                     {
                         Move(ref player);
-                        if(Designer.CurrentState != Designer.State.MainMenu)
+                        if(Designer.CurrentState == Designer.State.MainMenu)
                         {
-                            ChangeDesignerBuildMenu();
+                            NavigateMainMenu();
+                        }
+                        else if(Designer.CurrentState != Designer.State.Maps)
+                        {
+                            NavigateBuildMenu();
                             ChooseDesignerItem();
                         }
                         DoDesignerAction(ref player);
@@ -78,21 +82,35 @@ namespace ASCMandatory1
                 actor.PendingAction = action;
                 return;
             }
-            else if (Keyboard.IsKeyDown(Key.Enter))
+            switch (Designer.CurrentState)
+            {
+                case Designer.State.BuildMenu:
+                    Build(ref actor, ref action);
+                    break;
+                case Designer.State.Maps:
+                    BuildMap();
+                    break;
+                default:
+                    break;
+            }
+        }
+        public static void Build(ref Actor actor, ref Action action)
+        {
+            if (Keyboard.IsKeyDown(Key.Enter))
             {
                 action.Type = Action.ActionType.Build;
-                if(Designer.CurrentState == Designer.State.BuildMenu)
+                if (Designer.CurrentState == Designer.State.BuildMenu)
                 {
                     return;
                 }
                 if (Designer.Object == null)
                 {
-                    if(Designer.Tile == null)
+                    if (Designer.Tile == null)
                     {
                         return;
                     }
                 }
-                if(Designer.CurrentState == Designer.State.Tile)
+                if (Designer.CurrentState == Designer.State.Tile)
                 {
                     action.Tile = Clone<Tile>.CloneObject(Designer.Tile);
                     action.Position = actor.Position;
@@ -101,22 +119,65 @@ namespace ASCMandatory1
                 }
                 else
                 {
-                    action.Entity = Clone<Entity>.CloneObject(Designer.Object);
+                    action.Entity = Designer.Object;
                     action.Position = actor.Position;
                     actor.PendingAction = action;
                     return;
                 }
             }
         }
-        public static void ChangeDesignerBuildMenu()
+        public static void BuildMap()
         {
-            if (Keyboard.IsKeyDown(Key.Escape))
+            if (Keyboard.IsKeyDown(Key.I))
             {
-                Designer.CurrentState = Designer.State.BuildMenu;
-                Designer.RemoveDesignerObject();
-                return;
+                Position position = Level.levelIndex[Level.CurrentLevel].CurrentMap;
+                position.X--;
+                Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
             }
-            else if (Keyboard.IsKeyDown(Key.Z))
+            else if (Keyboard.IsKeyDown(Key.K))
+            {
+                Position position = Level.levelIndex[Level.CurrentLevel].CurrentMap;
+                position.X++;
+                Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
+            }
+            else if (Keyboard.IsKeyDown(Key.J))
+            {
+                Position position = Level.levelIndex[Level.CurrentLevel].CurrentMap;
+                position.Y--;
+                Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
+            }
+            else if (Keyboard.IsKeyDown(Key.L))
+            {
+                Position position = Level.levelIndex[Level.CurrentLevel].CurrentMap;
+                position.Y++;
+                Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
+            }
+            else if (Keyboard.IsKeyDown(Key.Escape))
+            {
+                Designer.CurrentState = Designer.State.MainMenu;
+            }
+        }
+        public static void NavigateBuildMenu()
+        {
+            if(Designer.CurrentState != Designer.State.BuildMenu)
+            {
+                if (Keyboard.IsKeyDown(Key.Escape))
+                {
+                    Designer.CurrentState = Designer.State.BuildMenu;
+                    Designer.RemoveDesignerObject();
+                    return;
+                }
+            }
+            else
+            {
+                if (Keyboard.IsKeyDown(Key.Escape))
+                {
+                    Designer.CurrentState = Designer.State.MainMenu;
+                    Designer.RemoveDesignerObject();
+                    return;
+                }
+            }
+            if (Keyboard.IsKeyDown(Key.Z))
             {
                 Designer.CurrentState = Designer.State.Actor;
                 Designer.RemoveDesignerObject();
@@ -188,6 +249,31 @@ namespace ASCMandatory1
                     }
                     return;
                 }
+            }
+        }
+        public static void NavigateMainMenu()
+        {
+            if (Keyboard.IsKeyDown(Key.Z))
+            {
+                Designer.CurrentState = Designer.State.BuildMenu;
+                Designer.RemoveDesignerObject();
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.X))
+            {
+                Designer.CurrentState = Designer.State.Maps;
+                Designer.RemoveDesignerObject();
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.X) && Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                //save level
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.Escape))
+            {
+                //exit game
+                return;
             }
         }
         public static bool IsAnyKeyDown()

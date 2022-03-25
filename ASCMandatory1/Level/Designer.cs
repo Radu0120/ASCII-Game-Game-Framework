@@ -10,9 +10,9 @@ namespace ASCMandatory1
     {
         public enum State
         {
-            Tile, WorldOject, Item, Actor, BuildMenu, MainMenu
+            Tile, WorldOject, Item, Actor, BuildMenu, MainMenu, Maps
         }
-        public static Entity Object { get; set; }
+        public static object Object { get; set; }
         public static Tile Tile { get; set; }
         public static State CurrentState { get; set; }
         public static void AddSpawnPoint(Map map, Position position)
@@ -27,10 +27,8 @@ namespace ASCMandatory1
         {
             if(map.PlayableMap[position.X, position.Y].Entities.Count > 1)
             {
-                if(map.PlayableMap[position.X, position.Y].Entities[0] is Actor){
-                    map.RemoveEntity(position, map.PlayableMap[position.X, position.Y].Entities[0]);
-                }
-                
+                 Entity actor = (Entity)map.PlayableMap[position.X, position.Y].Entities[0];
+                 map.RemoveEntity(position, actor);
             }
         }
         public static void AddTile(Map map, Position position, Tile tile)
@@ -50,9 +48,9 @@ namespace ASCMandatory1
             level.RemoveMap(position);
         }
         //designer object = equipped item to build copies of
-        public static void AddDesignerObject(Entity entity)
+        public static void AddDesignerObject<T>(T entity) where T : class
         {
-            Object = Clone<Entity>.CloneObject(entity);
+            Object = Clone<T>.CloneObject(entity);
         }
         public static void AddDesignerObject(Tile tile)
         {

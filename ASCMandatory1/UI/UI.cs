@@ -81,6 +81,12 @@ namespace ASCMandatory1
         {
             switch (Designer.CurrentState)
             {
+                case Designer.State.MainMenu:
+                    PrintDesignerMainMenu(UI, position);
+                    break;
+                case Designer.State.Maps:
+                    PrintDesignerMapsMenu(UI, position);
+                    break;
                 case Designer.State.BuildMenu:
                     PrintDesignerBuildMenu(UI, position);
                     break;
@@ -104,17 +110,21 @@ namespace ASCMandatory1
         }
         public static void PrintDesignerObject(Dictionary<int, string> UI, int position)
         {
-            if (Designer.Object == null)
+            if(Designer.CurrentState != Designer.State.BuildMenu && Designer.CurrentState != Designer.State.Maps && Designer.CurrentState != Designer.State.MainMenu)
             {
-                if(Designer.Tile == null)
+                if (Designer.Object == null)
                 {
-                    UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: None    ");
+                    if (Designer.Tile == null)
+                    {
+                        UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: None    ");
+                        return;
+                    }
+                    UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + Designer.Tile.Name + "    ");
                     return;
                 }
-                UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + Designer.Tile.Name+ "    ");
-                return;
+                Entity entity = (Entity)Designer.Object;
+                UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + entity.Name + "    ");
             }
-            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + Designer.Object.Name+ "    ");
         }
         public static void PrintDesignerBuildMenu(Dictionary<int, string> UI, int position)
         {
@@ -164,6 +174,21 @@ namespace ASCMandatory1
                 }
             }
             
+        }
+        public static void PrintDesignerMainMenu(Dictionary<int, string> UI, int position)
+        {
+            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Z : Build menu      ");
+            UI.Add(position + 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "X : Maps menu      ");
+            UI.Add(position + 2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Ctrl + S : Save level      ");
+            UI.Add(position + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Exit      ");
+        }
+        public static void PrintDesignerMapsMenu(Dictionary<int, string> UI, int position)
+        {
+            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "I : Add map up      ");
+            UI.Add(position + 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "K : Add map down      ");
+            UI.Add(position + 2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "J : Add map left      ");
+            UI.Add(position + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "L : Add map right      ");
+            UI.Add(position + 5, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back      ");
         }
         public static int MaxKey(Dictionary<int, string> dict)
         {

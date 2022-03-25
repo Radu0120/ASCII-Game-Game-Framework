@@ -55,7 +55,7 @@ namespace ASCMandatory1
                     else if (i == Bounds.X - 1 || i == 0 || j == Bounds.Y - 1 || j == 0)
                     {
                         PlayableMap[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
-                        PlayableMap[i, j].Entities.Add(Clone<Entity>.CloneObject(WorldObject.worldobjectIndex[0]));
+                        PlayableMap[i, j].Entities.Add(Clone<WorldObject>.CloneObject(WorldObject.worldobjectIndex[0]));
                     }
                     else PlayableMap[i, j] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
                 }
@@ -71,7 +71,7 @@ namespace ASCMandatory1
                 }
             }
         }
-        public List<string> DrawMap(bool designer, ref int count)
+        public List<string> DrawMap(bool designer)
         {
             List<string> map = new List<string>();
             for (int i = 0; i < Bounds.X; i++)
@@ -83,12 +83,18 @@ namespace ASCMandatory1
                     {
                         if(PlayableMap[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively, newest first
                         {
+                            if(PlayableMap[i, j].currententitytodraw>= PlayableMap[i, j].Entities.Count)
+                            {
+                                PlayableMap[i, j].currententitytodraw = PlayableMap[i, j].Entities.Count - 1;
+                            }
+                            Entity entity = (Entity)PlayableMap[i, j].Entities[PlayableMap[i, j].currententitytodraw];
                             PlayableMap[i, j].Blink(blinkingtime, frame);
-                            line += PlayableMap[i, j].Color + PlayableMap[i, j].Entities[PlayableMap[i, j].currententitytodraw].Color + PlayableMap[i, j].Entities[PlayableMap[i, j].currententitytodraw].Symbol + " ";
+                            line += PlayableMap[i, j].Color + entity.Color + entity.Symbol + " ";
                         }
                         else // no extra entities present on the tile
                         {
-                            line += PlayableMap[i, j].Color + PlayableMap[i, j].Entities[0].Color + PlayableMap[i, j].Entities[0].Symbol + " ";
+                            Entity entity = (Entity)PlayableMap[i, j].Entities[0];
+                            line += PlayableMap[i, j].Color + entity.Color + entity.Symbol + " ";
                         }
                     }
                     else line += PlayableMap[i, j].Color + " " + " ";
@@ -96,7 +102,6 @@ namespace ASCMandatory1
                 }
                 map.Add(line);
             }
-            //count++;
             return map;
         }
         #endregion
@@ -169,7 +174,8 @@ namespace ASCMandatory1
                     }
                     else
                     {
-                        Designer.AddEntity(this, action.Position, action.Entity);
+                        Entity entity = (Entity)action.Entity;
+                        Designer.AddEntity(this, action.Position, entity);
                     }
                     break;
             }
@@ -178,8 +184,7 @@ namespace ASCMandatory1
 
 
         #region Misc Methods
-        //check if the specific position has an entity
-        public Entity GetEntityFromPosition(Position position)
+        public object GetEntityFromPosition(Position position)
         {
             if (PlayableMap[position.X, position.Y].Entities.Count>0) return PlayableMap[position.X, position.Y].Entities[0];
             else return null;
@@ -233,7 +238,8 @@ namespace ASCMandatory1
             }
             if (this.GetEntityFromPosition(position) != null) //if there is an entity, check for phase
             {
-                if (this.GetEntityFromPosition(position).Attributes.Contains("Phase") || entity.Attributes.Contains("Phase"))
+                Entity thisentity = (Entity)this.GetEntityFromPosition(position);
+                if (thisentity.Attributes.Contains("Phase") || entity.Attributes.Contains("Phase"))
                 {
                     return true;
                 }

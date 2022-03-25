@@ -11,11 +11,10 @@ namespace Game
 {
     internal class Program
     {
-        //protected static string clearBuffer = null; // Clear this if window size changes
-        static int count = 0;
         [STAThread]
         static void Main(string[] args)
         {
+            Console.Clear();
             Catalog.Populate();
             string message = "Type 1 to start the game, or 2 to start the level designer";
             Console.WriteLine(message);
@@ -68,6 +67,7 @@ namespace Game
                     Console.WriteLine("What should your level be named?");
                     input = Console.ReadLine();
                     chosenlevel = new Level(Level.levelIndex.Count, input, cursor);
+                    Level.CurrentLevel = chosenlevel.ID;
                     break;
                 }
                 else
@@ -87,7 +87,7 @@ namespace Game
                 return;
             }
 
-            Designer.CurrentState = Designer.State.BuildMenu;
+            Designer.CurrentState = Designer.State.MainMenu;
 
             RunGameLogic(cursor, true, chosenlevel);
         }
@@ -125,7 +125,7 @@ namespace Game
             Console.SetCursorPosition(2, 1);
             Dictionary<int,string> UI = ASCMandatory1.UI.DrawUI(player, designer, map.Bounds.X);
             int UILine = 0;
-            foreach(string line in map.DrawMap(designer, ref count))
+            foreach(string line in map.DrawMap(designer))
             {
                 Console.Write(line);
                 if (UILine <= UI.Count-1)
