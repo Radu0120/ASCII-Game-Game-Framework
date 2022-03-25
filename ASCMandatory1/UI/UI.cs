@@ -9,6 +9,7 @@ namespace ASCMandatory1
     public class UI
     {
         public const int AmountPerBar = 5;
+        public const int MaxUILenght = 60;
         public static Dictionary<int, string> DrawUI(Actor player, bool designer, int mapend)
         {
             Dictionary<int, string> UI = new Dictionary<int, string>();
@@ -60,6 +61,14 @@ namespace ASCMandatory1
                 {
                     PrintLines(UI, i);
                 }
+                else if (UI[i].Length < MaxUILenght)
+                {
+                    int amount = MaxUILenght - UI[i].Length;
+                    for(int j = 0; j <= amount; j++)
+                    {
+                        UI[i] += " "; 
+                    }
+                }
             }
         }
         public static void PrintLines(Dictionary<int, string> UI, int position)
@@ -105,8 +114,6 @@ namespace ASCMandatory1
                 default:
                     break;
             }
-            if(Designer.CurrentState != Designer.State.BuildMenu)
-            UI.Add(MaxKey(UI)+2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back    ");
         }
         public static void PrintDesignerObject(Dictionary<int, string> UI, int position)
         {
@@ -132,6 +139,7 @@ namespace ASCMandatory1
             UI.Add(position + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "X : Item menu    ");
             UI.Add(position + 4, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "C : WorldObject menu    ");
             UI.Add(position + 5, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "V : Tile menu    ");
+            UI.Add(position + 7, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back    ");
         }
         public static void PrintDesignerItemIndex<T>(Dictionary<int, T> index, Dictionary<int, string> UI, int position)
         {
@@ -173,14 +181,15 @@ namespace ASCMandatory1
 
                 }
             }
-            
+            UI.Add(position + end + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back      ");
+
         }
         public static void PrintDesignerMainMenu(Dictionary<int, string> UI, int position)
         {
             UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Z : Build menu      ");
             UI.Add(position + 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "X : Maps menu      ");
             UI.Add(position + 2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Ctrl + S : Save level      ");
-            UI.Add(position + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Exit      ");
+            UI.Add(position + 4, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Exit      ");
         }
         public static void PrintDesignerMapsMenu(Dictionary<int, string> UI, int position)
         {
