@@ -10,8 +10,10 @@ namespace ASCMandatory1
     {
         public static int CurrentLevel { get; set; }
         public static Dictionary<int, Level> levelIndex = new Dictionary<int, Level>();
-        public const int MapBoundX = 80;
-        public const int MapBoundY = 48;
+
+        public const int MapBoundHeight = 48;
+
+        public const int MapBoundWidth = 80;
         public enum Direction
         {
             Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight
@@ -45,14 +47,14 @@ namespace ASCMandatory1
                     Maps[i, j] = null;
                 }
             }
-            Maps[0, MaxY/2] = new Map(MapBoundX, MapBoundY, 10, 10, player, this.ID);
+            Maps[0, MaxY/2] = new Map(MapBoundWidth, MapBoundHeight, 10, 10, player, this.ID);
             StartingMap.X = 0;
             StartingMap.Y = MaxY / 2;
             CurrentMap.X = 0;
             CurrentMap.Y = MaxY / 2;
-            Maps[0, (MaxY / 2) +1] = new Map(MapBoundX, MapBoundY, this.ID);
-            Maps[1, (MaxY / 2) + 1] = new Map(MapBoundX, MapBoundY, this.ID);
-            Maps[0, (MaxY / 2) - 1] = new Map(MapBoundX, MapBoundY, this.ID);
+            Maps[0, (MaxY / 2) +1] = new Map(MapBoundWidth, MapBoundHeight, this.ID);
+            Maps[1, (MaxY / 2) + 1] = new Map(MapBoundWidth, MapBoundHeight, this.ID);
+            Maps[0, (MaxY / 2) - 1] = new Map(MapBoundWidth, MapBoundHeight, this.ID);
         }
         public void AddMap(Position position)
         {
@@ -61,66 +63,87 @@ namespace ASCMandatory1
                 return;
             }
             if(Maps[position.X, position.Y] == null)
-            Maps[position.X, position.Y] = new Map(MapBoundX, MapBoundY, this.ID);
+            Maps[position.X, position.Y] = new Map(MapBoundWidth, MapBoundHeight, this.ID);
         }
         public void RemoveMap(Position position)
         {
             Maps[position.X, position.Y] = null;
         }
-        public bool CheckNextMap(Direction direction)
+        public bool CheckNextMap(Position position)
         {
-            switch (direction)
+            if(position.X < 0 && position.Y < 0)
             {
-                case Direction.Up:
-                    try{
-                        if (Maps[CurrentMap.X - 1, CurrentMap.Y] != null)
-                        {
-                            return true;
-                        }
-                        throw new Exception(message:"OutofBounds");
-                    }
-                    catch (Exception e) { }
-                    break;
-                case Direction.Down:
-
-                    try
+                return false;
+            }
+            else if(position.X > MapBoundHeight - 1 && position.Y > MapBoundWidth - 1)
+            {
+                return false;
+            }
+            else if(position.X < 0 && position.Y > MapBoundWidth - 1)
+            {
+                return false;
+            }
+            else if(position.X > MapBoundHeight-1 && position.Y < 0)
+            {
+                return false;
+            }
+            if (position.X < 0) //up
+            {
+                try
+                {
+                    if (Maps[CurrentMap.X - 1, CurrentMap.Y] != null)
                     {
-                        if (Maps[CurrentMap.X + 1, CurrentMap.Y] != null)
-                        {
-                            return true;
-                        }
-                        throw new Exception();
+                        return true;
                     }
-                    catch (Exception e) { }
-                    break;
-                case Direction.Left:
-                    try{
-                        if (Maps[CurrentMap.X, CurrentMap.Y - 1] != null)
-                        {
-                            return true;
-                        }
-                        throw new Exception();
-                    }
-                    catch (Exception e) { }
-                    break;
-                case Direction.Right:
-                    try{
-                        if (Maps[CurrentMap.X, CurrentMap.Y + 1] != null)
-                        {
-                            return true;
-                        }
-                        throw new Exception();
-                    }
-                    catch (Exception e) { }
-                    break;
-                default:
                     return false;
+                }
+                catch(IndexOutOfRangeException e) { }
+            }
+            if(position.X > MapBoundHeight-1) // down
+            {
+                try
+                {
+                    if (Maps[CurrentMap.X + 1, CurrentMap.Y] != null)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                catch { }
+            }
+            if (position.Y < 0) //left
+            {
+                try
+                {
+                    if (Maps[CurrentMap.X, CurrentMap.Y - 1] != null)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                catch { }
+            }
+            if (position.Y > MapBoundWidth-1) // right
+            {
+                try
+                {
+                    if (Maps[CurrentMap.X, CurrentMap.Y + 1] != null)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                catch { }
             }
             return false;
         }
         public Map GetCurrentMap()
         {
-            return Maps[CurrentMap.X, CurrentMap.Y];
+            try
+            {
+                return Maps[CurrentMap.X, CurrentMap.Y];
+            }
+            catch (IndexOutOfRangeException e) { return null; }
         }
     }
 }

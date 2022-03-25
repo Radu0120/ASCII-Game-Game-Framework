@@ -19,11 +19,11 @@ namespace ASCMandatory1
         public Position SpawnPoint { get; set; } = new Position();
         public List<Actor> Actors { get; set; }
         public Position Bounds { get; set; } = new Position();
-        public Map(int maxX, int maxY, int spawnX, int spawnY, Actor player, int levelid)
+        public Map(int maxWidth, int maxHeight, int spawnX, int spawnY, Actor player, int levelid)
         {
             LevelID = levelid;
-            Bounds.X = maxY;
-            Bounds.Y= maxX;
+            Bounds.X = maxHeight;
+            Bounds.Y= maxWidth;
             PlayableMap = new Tile[Bounds.X, Bounds.Y];
             SpawnPoint.X=spawnX;
             SpawnPoint.Y=spawnY;
@@ -138,7 +138,7 @@ namespace ASCMandatory1
             {
                 if (changemap)
                 {
-                    GoToNextMap(entity);
+                    GoToNextMap(entity, newposition);
                     return;
                 }
                 UpdateEntityPosition(entity, newposition);
@@ -148,6 +148,11 @@ namespace ASCMandatory1
             newposition.X = entity.Position.X;
             if(CheckCollision(newposition, entity, ref changemap))
             {
+                if (changemap)
+                {
+                    GoToNextMap(entity, newposition);
+                    return;
+                }
                 UpdateEntityPosition(entity, newposition);
                 return;
             }
@@ -155,6 +160,11 @@ namespace ASCMandatory1
             newposition.Y = entity.Position.Y;
             if (CheckCollision(newposition, entity, ref changemap))
             {
+                if (changemap)
+                {
+                    GoToNextMap(entity, newposition);
+                    return;
+                }
                 UpdateEntityPosition(entity, newposition);
                 return;
             }
@@ -229,7 +239,7 @@ namespace ASCMandatory1
         {
             if(position.X > Bounds.X - 1 || position.X < 0 || position.Y > Bounds.Y - 1 || position.Y < 0) // check the map boundaries
             {
-                if (CheckMapBounds(entity))
+                if (CheckMapBounds(position))
                 {
                     changemap = true;
                     return true;
@@ -250,37 +260,36 @@ namespace ASCMandatory1
                 return true;
             }
         }
-        public bool CheckMapBounds(Entity entity)
+        public bool CheckMapBounds(Position position)
         {
-            return Level.levelIndex[this.LevelID].CheckNextMap(entity.Direction);
+            return Level.levelIndex[this.LevelID].CheckNextMap(position);
         }
-        public void GoToNextMap(Entity entity)
+        public void GoToNextMap(Entity entity, Position position)
         {
             Position newmapposition = new Position();
-            switch (entity.Direction)
+            if (position.X < 0)
             {
-                case Level.Direction.Up:
-                    newmapposition.X = Bounds.X-1;
-                    newmapposition.Y = entity.Position.Y;
-                    Level.levelIndex[LevelID].CurrentMap.X--;
-                    break;
-                case Level.Direction.Down:
-                    newmapposition.X = 0;
-                    newmapposition.Y = entity.Position.Y;
-                    Level.levelIndex[LevelID].CurrentMap.X++;
-                    break;
-                case Level.Direction.Left:
-                    newmapposition.X = entity.Position.X;
-                    newmapposition.Y = Bounds.Y-1;
-                    Level.levelIndex[LevelID].CurrentMap.Y--;
-                    break;
-                case Level.Direction.Right:
-                    newmapposition.X = entity.Position.X;
-                    newmapposition.Y = 0;
-                    Level.levelIndex[LevelID].CurrentMap.Y++;
-                    break;
-                default:
-                    break;
+                newmapposition.X = Bounds.X - 1;
+                newmapposition.Y = entity.Position.Y;
+                Level.levelIndex[LevelID].CurrentMap.X--;
+            }
+            if (position.X > Level.MapBoundHeight -1)
+            {
+                newmapposition.X = 0;
+                newmapposition.Y = entity.Position.Y;
+                Level.levelIndex[LevelID].CurrentMap.X++;
+            }
+            if (position.Y < 0)
+            {
+                newmapposition.Y = Bounds.Y - 1;
+                newmapposition.X = entity.Position.X;
+                Level.levelIndex[LevelID].CurrentMap.Y--;
+            }
+            if (position.Y > Level.MapBoundWidth - 1)
+            {
+                newmapposition.Y = 0;
+                newmapposition.X = entity.Position.X;
+                Level.levelIndex[LevelID].CurrentMap.Y++;
             }
             this.RemoveEntity(entity.Position, entity);
             entity.Position = Position.Create(newmapposition.X, newmapposition.Y);

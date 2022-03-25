@@ -84,7 +84,10 @@ namespace ASCMandatory1
             }
             switch (Designer.CurrentState)
             {
-                case Designer.State.BuildMenu:
+                case Designer.State.Actor:
+                case Designer.State.Item:
+                case Designer.State.WorldOject:
+                case Designer.State.Tile:
                     Build(ref actor, ref action);
                     break;
                 case Designer.State.Maps:
@@ -128,27 +131,24 @@ namespace ASCMandatory1
         }
         public static void BuildMap()
         {
+            Position position = Clone<Position>.CloneObject(Level.levelIndex[Level.CurrentLevel].CurrentMap);
             if (Keyboard.IsKeyDown(Key.I))
             {
-                Position position = Level.levelIndex[Level.CurrentLevel].CurrentMap;
                 position.X--;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
             }
             else if (Keyboard.IsKeyDown(Key.K))
             {
-                Position position = Level.levelIndex[Level.CurrentLevel].CurrentMap;
                 position.X++;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
             }
             else if (Keyboard.IsKeyDown(Key.J))
             {
-                Position position = Level.levelIndex[Level.CurrentLevel].CurrentMap;
                 position.Y--;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
             }
             else if (Keyboard.IsKeyDown(Key.L))
             {
-                Position position = Level.levelIndex[Level.CurrentLevel].CurrentMap;
                 position.Y++;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
             }
@@ -253,27 +253,30 @@ namespace ASCMandatory1
         }
         public static void NavigateMainMenu()
         {
-            if (Keyboard.IsKeyDown(Key.Z))
+            if(Designer.CurrentState == Designer.State.MainMenu)
             {
-                Designer.CurrentState = Designer.State.BuildMenu;
-                Designer.RemoveDesignerObject();
-                return;
-            }
-            else if (Keyboard.IsKeyDown(Key.X))
-            {
-                Designer.CurrentState = Designer.State.Maps;
-                Designer.RemoveDesignerObject();
-                return;
-            }
-            else if (Keyboard.IsKeyDown(Key.X) && Keyboard.IsKeyDown(Key.LeftCtrl))
-            {
-                //save level
-                return;
-            }
-            else if (Keyboard.IsKeyDown(Key.Escape))
-            {
-                //exit game
-                return;
+                if (Keyboard.IsKeyDown(Key.Z))
+                {
+                    Designer.CurrentState = Designer.State.BuildMenu;
+                    Designer.RemoveDesignerObject();
+                    return;
+                }
+                else if (Keyboard.IsKeyDown(Key.X))
+                {
+                    Designer.CurrentState = Designer.State.Maps;
+                    Designer.RemoveDesignerObject();
+                    return;
+                }
+                else if (Keyboard.IsKeyDown(Key.X) && Keyboard.IsKeyDown(Key.LeftCtrl))
+                {
+                    //save level
+                    return;
+                }
+                else if (Keyboard.IsKeyDown(Key.Escape))
+                {
+                    //exit game
+                    return;
+                }
             }
         }
         public static bool IsAnyKeyDown()
