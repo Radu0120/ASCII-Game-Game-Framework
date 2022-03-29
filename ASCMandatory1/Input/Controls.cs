@@ -10,18 +10,17 @@ namespace ASCMandatory1
 {
     public class Controls
     {
-        public static void CheckInput(ref Actor player)
+        public static void CheckInput(ref Actor player, ref bool playing)
         {
             if (player.Attributes.Contains("Designer"))
             {
-                while (true)
+                while (playing)
                 {
                     if (IsAnyKeyDown())
                     {
-                        Move(ref player);
                         if(Designer.CurrentState == Designer.State.MainMenu)
                         {
-                            NavigateMainMenu();
+                            NavigateMainMenu(ref playing);
                         }
                         else if(Designer.CurrentState != Designer.State.Maps)
                         {
@@ -29,8 +28,7 @@ namespace ASCMandatory1
                             ChooseDesignerItem();
                         }
                         DoDesignerAction(ref player);
-                        int wait = Convert.ToInt32(1000 / player.Speed);
-                        Thread.Sleep(wait);
+                        Thread.Sleep(16);
                     }
                 }
             }
@@ -40,10 +38,20 @@ namespace ASCMandatory1
                 {
                     if (IsAnyKeyDown())
                     {
-                        Move(ref player);
-                        int wait = Convert.ToInt32(1000 / player.Speed);
-                        Thread.Sleep(wait);
+                        Thread.Sleep(16);
                     }
+                }
+            }
+        }
+        public static void CheckMovement(ref Actor player, ref bool playing)
+        {
+            while (playing)
+            {
+                if (IsAnyKeyDown())
+                {
+                    Move(ref player);
+                    int wait = Convert.ToInt32(1000 / player.Speed);
+                    Thread.Sleep(wait);
                 }
             }
         }
@@ -53,22 +61,18 @@ namespace ASCMandatory1
             if (Keyboard.IsKeyDown(Key.W))
             {
                 newposition.X--;
-                actor.Direction = Level.Direction.Up;
             }
             if (Keyboard.IsKeyDown(Key.S))
             {
                 newposition.X++;
-                actor.Direction = Level.Direction.Down;
             }
             if (Keyboard.IsKeyDown(Key.D))
             {
                 newposition.Y++;
-                actor.Direction = Level.Direction.Right;
             }
             if (Keyboard.IsKeyDown(Key.A))
             {
                 newposition.Y--;
-                actor.Direction = Level.Direction.Left;
             }
             actor.PendingMovement = newposition;
         }
@@ -165,6 +169,7 @@ namespace ASCMandatory1
                 {
                     Designer.CurrentState = Designer.State.BuildMenu;
                     Designer.RemoveDesignerObject();
+                    while (Keyboard.IsKeyDown(Key.Escape)) { }
                     return;
                 }
             }
@@ -174,6 +179,7 @@ namespace ASCMandatory1
                 {
                     Designer.CurrentState = Designer.State.MainMenu;
                     Designer.RemoveDesignerObject();
+                    while (Keyboard.IsKeyDown(Key.Escape)) { }
                     return;
                 }
             }
@@ -251,7 +257,7 @@ namespace ASCMandatory1
                 }
             }
         }
-        public static void NavigateMainMenu()
+        public static void NavigateMainMenu(ref bool playing)
         {
             if(Designer.CurrentState == Designer.State.MainMenu)
             {
@@ -259,22 +265,25 @@ namespace ASCMandatory1
                 {
                     Designer.CurrentState = Designer.State.BuildMenu;
                     Designer.RemoveDesignerObject();
+                    while (Keyboard.IsKeyDown(Key.Z)) { }
                     return;
                 }
                 else if (Keyboard.IsKeyDown(Key.X))
                 {
                     Designer.CurrentState = Designer.State.Maps;
                     Designer.RemoveDesignerObject();
+                    while (Keyboard.IsKeyDown(Key.X)) { }
                     return;
                 }
-                else if (Keyboard.IsKeyDown(Key.X) && Keyboard.IsKeyDown(Key.LeftCtrl))
+                else if (Keyboard.IsKeyDown(Key.S) && Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
-                    //save level
+                    Save<Level>.SaveToJson(Level.GetCurrentLevel());
+                    while (Keyboard.IsKeyDown(Key.S) && Keyboard.IsKeyDown(Key.LeftCtrl)) { }
                     return;
                 }
                 else if (Keyboard.IsKeyDown(Key.Escape))
                 {
-                    //exit game
+                    playing = false;
                     return;
                 }
             }

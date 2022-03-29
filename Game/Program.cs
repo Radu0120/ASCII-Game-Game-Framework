@@ -11,6 +11,7 @@ namespace Game
 {
     internal class Program
     {
+        public static bool playing = true;
         [STAThread]
         static void Main(string[] args)
         {
@@ -18,25 +19,33 @@ namespace Game
             Catalog.Populate();
             string message = "Type 1 to start the game, or 2 to start the level designer";
             Console.WriteLine(message);
+
+            bool stop = false;
+
             string input = Console.ReadLine().ToLower();
-            while (true)
+            while (!stop)
             {
                 if (input == "1")
                 {
                     StartGame();
+                    stop = true;
                 }
                 else if (input == "2")
                 {
                     StartDesigner();
+                    stop = true;
                 }
                 else
                 {
                     Console.Clear();
                     Console.WriteLine(message);
                 }
-                input = Console.ReadLine();
+                if(!stop) input = Console.ReadLine();
             }
-            
+            Console.Clear();
+            Console.WriteLine("Thank you for playing, press any key to exit.");
+            Console.ReadLine();
+            Environment.Exit(0);
         }
         public static void StartGame()
         {
@@ -47,7 +56,7 @@ namespace Game
         }
         public static void StartDesigner()
         {
-            Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 10, 0, 0);
+            Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0);
             cursor.Attributes.Add("Phase");
             cursor.Attributes.Add("Designer");
 
@@ -94,18 +103,24 @@ namespace Game
         private static void RunGameLogic(Actor player, bool designer, Level level)
         {
             Level.CurrentLevel = level.ID;
-            Thread threadPlayer = new Thread(() =>
-                        Controls.CheckInput(ref player)
+            Thread ActionsThread = new Thread(() =>
+                        Controls.CheckInput(ref player, ref playing)
                 );
-            threadPlayer.SetApartmentState(ApartmentState.STA);
-            threadPlayer.Start();
+            ActionsThread.SetApartmentState(ApartmentState.STA);
+            ActionsThread.Start();
+            Thread MovementThread = new Thread(() =>
+                        Controls.CheckMovement(ref player, ref playing)
+                );
+            MovementThread.SetApartmentState(ApartmentState.STA);
+            MovementThread.Start();
             Console.Clear();
             
             int WindowHeight = level.GetCurrentMap().Bounds.X + 2;
             int WindowWidth = level.GetCurrentMap().Bounds.Y * 2 + 4 + 45;
             Console.WindowHeight = WindowHeight;
             Console.WindowWidth = WindowWidth;
-            while (true)
+
+            while (playing)
             {
                 if (Console.WindowHeight != WindowHeight || Console.WindowWidth != WindowWidth)
                 {
@@ -120,7 +135,6 @@ namespace Game
         }
         private static void DrawGame(Map map, bool designer, Actor player)
         {
-            
             Console.CursorVisible = false;
             Console.SetCursorPosition(2, 1);
             Dictionary<int,string> UI = ASCMandatory1.UI.DrawUI(player, designer, map.Bounds.X);

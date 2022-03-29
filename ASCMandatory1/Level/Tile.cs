@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ASCMandatory1
 {
+    [Serializable]
     public class Tile
     {
         public int currententitytodraw = 0;

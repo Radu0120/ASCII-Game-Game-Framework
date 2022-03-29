@@ -8,19 +8,23 @@ using System.Threading.Tasks;
 
 namespace ASCMandatory1
 {
+    [Serializable]
     public class Map
     {
         //public static int currententitytodraw = 0;
         const int blinkingtime = 20;
         static long frame = 0;
+        public static Dictionary<int,Map> mapIndex = new Dictionary<int,Map>();
+        public int ID { get; set; }
         public int LevelID { get; set; }
-        public Position MapPosition { get; set; }
+        public Position LevelPosition { get; set; }
         public Tile[,] PlayableMap { get; set; }
         public Position SpawnPoint { get; set; } = new Position();
-        public List<Actor> Actors { get; set; }
         public Position Bounds { get; set; } = new Position();
-        public Map(int maxWidth, int maxHeight, int spawnX, int spawnY, Actor player, int levelid)
+        public Map(int id, int maxWidth, int maxHeight, int spawnX, int spawnY, Actor player, int levelid, Position levelposition)
         {
+            LevelPosition = Clone<Position>.CloneObject(levelposition);
+            ID = id;
             LevelID = levelid;
             Bounds.X = maxHeight;
             Bounds.Y= maxWidth;
@@ -29,14 +33,17 @@ namespace ASCMandatory1
             SpawnPoint.Y=spawnY;
             this.Create(player);
         }
-        public Map(int maxX, int maxY, int levelid)
+        public Map(int id, int maxX, int maxY, int levelid, Position levelposition)
         {
+            LevelPosition = Clone<Position>.CloneObject(levelposition);
+            ID=id;
             LevelID = levelid;
             Bounds.X = maxY;
             Bounds.Y = maxX;
             PlayableMap = new Tile[Bounds.X, Bounds.Y];
             this.Create();
         }
+        public Map() { }
         #region Rendering
         private void Create(Actor player)
         {

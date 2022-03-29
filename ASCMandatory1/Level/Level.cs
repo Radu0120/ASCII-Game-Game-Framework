@@ -47,14 +47,14 @@ namespace ASCMandatory1
                     Maps[i, j] = null;
                 }
             }
-            Maps[0, MaxY/2] = new Map(MapBoundWidth, MapBoundHeight, 10, 10, player, this.ID);
+            Maps[0, MaxY/2] = new Map(0, MapBoundWidth, MapBoundHeight, 10, 10, player, this.ID, new Position(0, MaxY/2));
             StartingMap.X = 0;
             StartingMap.Y = MaxY / 2;
             CurrentMap.X = 0;
             CurrentMap.Y = MaxY / 2;
-            Maps[0, (MaxY / 2) +1] = new Map(MapBoundWidth, MapBoundHeight, this.ID);
-            Maps[1, (MaxY / 2) + 1] = new Map(MapBoundWidth, MapBoundHeight, this.ID);
-            Maps[0, (MaxY / 2) - 1] = new Map(MapBoundWidth, MapBoundHeight, this.ID);
+            Maps[0, (MaxY / 2) +1] = new Map(1, MapBoundWidth, MapBoundHeight, this.ID, new Position(0, (MaxY / 2) + 1));
+            Maps[1, (MaxY / 2) + 1] = new Map(2, MapBoundWidth, MapBoundHeight, this.ID, new Position(1, (MaxY / 2) + 1));
+            Maps[0, (MaxY / 2) - 1] = new Map(3, MapBoundWidth, MapBoundHeight, this.ID, new Position(0, (MaxY / 2) - 1));
         }
         public void AddMap(Position position)
         {
@@ -63,7 +63,7 @@ namespace ASCMandatory1
                 return;
             }
             if(Maps[position.X, position.Y] == null)
-            Maps[position.X, position.Y] = new Map(MapBoundWidth, MapBoundHeight, this.ID);
+            Maps[position.X, position.Y] = new Map(Maps.Length, MapBoundWidth, MapBoundHeight, this.ID, position);
         }
         public void RemoveMap(Position position)
         {
@@ -144,6 +144,10 @@ namespace ASCMandatory1
                 return Maps[CurrentMap.X, CurrentMap.Y];
             }
             catch (IndexOutOfRangeException e) { return null; }
+        }
+        public static Level GetCurrentLevel()
+        {
+            return levelIndex[CurrentLevel];
         }
     }
 }
