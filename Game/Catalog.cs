@@ -15,12 +15,13 @@ namespace Game
             CreateItems();
             CreateTiles();
             CreateWorldItems();
+            ReadLevels();
         }
         public static void CreateActors()
         {
-            Actor bandit = new Actor(0, "Bandit", 'B', Color.Yellow, 50, 10, 7, 2, 2);
-            Actor goblin = new Actor(1, "Goblin", 'G', Color.LawnGreen, 30, 20, 8, 1, 1);
-            Actor chimera = new Actor(2, "Chimera", 'C', Color.Cyan, 150, 100, 9, 10, 20);
+            Actor bandit = new Actor(0, "Bandit", 'B', Color.Yellow, 50, 10, 7, 2, 2, Entity.Type.Actor);
+            Actor goblin = new Actor(1, "Goblin", 'G', Color.LawnGreen, 30, 20, 8, 1, 1, Entity.Type.Actor);
+            Actor chimera = new Actor(2, "Chimera", 'C', Color.Cyan, 150, 100, 9, 10, 20, Entity.Type.Actor);
 
             goblin.Attributes.Add("Phase");
             bandit.Attributes.Add("Solid");
@@ -47,6 +48,11 @@ namespace Game
             Tile.tileIndex.Add(redtile.Id, redtile);
             Tile.tileIndex.Add(yellowtile.Id, yellowtile);
             Tile.tileIndex.Add(greentile.Id, greentile);
+        }
+        public static void ReadLevels()
+        {
+            Map.mapIndex = Save<Map>.ReadJsonMap(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json");
+            Level.levelIndex = Save<Level>.ReadJsonLevel(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Levels.json");
         }
     }
 }

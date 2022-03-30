@@ -158,6 +158,7 @@ namespace ASCMandatory1
             }
             else if (Keyboard.IsKeyDown(Key.Escape))
             {
+                while (Keyboard.IsKeyDown(Key.Escape)) { }
                 Designer.CurrentState = Designer.State.MainMenu;
             }
         }

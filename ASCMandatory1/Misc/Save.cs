@@ -40,8 +40,12 @@ namespace ASCMandatory1
 
             //File.WriteAllText(JsonFileName, output);
         }
-        public static void SaveMap(Map map)
+        public static void SaveMap(Map map) //maps are complex objects with multidimensional arrays of other objects, need custom serialization
         {
+            string serializedmapindex = File.ReadAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json");
+            Dictionary<int, SerializableMap> intermediaryindex = JsonSerializer.Deserialize<Dictionary<int, SerializableMap>>(serializedmapindex);
+
+            //converting from matrix to list of lists so it can be serialized
             List<List<Tile>> tiles = new List<List<Tile>>();
             for (int i = 0; i < map.Bounds.X; i++)
             {
@@ -49,19 +53,34 @@ namespace ASCMandatory1
                 for (int j = 0; j < map.Bounds.Y; j++)
                 {
                     tileList.Add(map.PlayableMap[i, j]);
+                    if(map.PlayableMap[i,j].Entities.Count > 0)
+                    {
+
+                    }
                 }
                 tiles.Add(tileList);
             }
 
-            var serializablemap = new { ID = map.ID, LevelID = map.LevelID, LevelPosition = map.LevelPosition, SpawnPoint = map.SpawnPoint, Bounds = map.Bounds, Tiles = tiles };
+            //building custom object
+            SerializableMap serializablemap = new SerializableMap(map.ID, map.LevelID, map.LevelPosition, map.SpawnPoint, map.Bounds, tiles);
+            if (intermediaryindex.ContainsKey(serializablemap.ID))
+            {
+                intermediaryindex.Remove(serializablemap.ID);
+            }
+            intermediaryindex.Add(serializablemap.ID, serializablemap);
 
-            string output = JsonSerializer.Serialize(serializablemap);
+            string output = JsonSerializer.Serialize(intermediaryindex);
 
-            File.AppendAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json", output);
+            File.WriteAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json", output);
         }
-        public static void SaveLevel(Level level)
+        public static void SaveLevel(Level level) //levels are complex objects with multidimensional arrays of other objects, need custom serialization
         {
+            string serializedlevelindex = File.ReadAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Levels.json");
+            Dictionary<int, SerializableLevel> intermediaryindex = JsonSerializer.Deserialize<Dictionary<int, SerializableLevel>>(serializedlevelindex);
+
             List<List<int>> mapslist = new List<List<int>>();
+
+            //converting from matrix to list of lists so it can be serialized
             for (int i = 0; i < Level.MaxX; i++)
             {
                 List<int> maplist = new List<int>();
@@ -69,6 +88,7 @@ namespace ASCMandatory1
                 {
                     if (level.Maps[i, j] != null)
                     {
+                        SaveMap(level.Maps[i, j]);
                         maplist.Add(level.Maps[i, j].ID);
                     }
                     else maplist.Add(-1);
@@ -76,11 +96,18 @@ namespace ASCMandatory1
                 mapslist.Add(maplist);
             }
 
-            var serializablelevel = new { ID = level.ID, Name = level.Name, CurrentMap = level.CurrentMap, StartingMap = level.StartingMap, Maps = mapslist };
+            //building custom object
+            SerializableLevel serializablelevel = new SerializableLevel(level.ID, level.Name, level.CurrentMap, level.StartingMap, mapslist);
 
-            string output = JsonSerializer.Serialize(serializablelevel);
+            if (intermediaryindex.ContainsKey(serializablelevel.ID))
+            {
+                intermediaryindex.Remove(serializablelevel.ID);
+            }
+            intermediaryindex.Add(serializablelevel.ID, serializablelevel);
 
-            File.AppendAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Levels.json", output);
+            string output = JsonSerializer.Serialize(intermediaryindex);
+
+            File.WriteAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Levels.json", output);
         }
 
         public static Dictionary<int, T> ReadJson(string JsonFileName)
@@ -91,15 +118,15 @@ namespace ASCMandatory1
         public static Dictionary<int, Map> ReadJsonMap(string JsonFileName)
         {
             string jsonString = File.ReadAllText(JsonFileName);
-            Dictionary<int, dynamic> intermediaryindex =  JsonSerializer.Deserialize<Dictionary<int, dynamic>>(jsonString);
+            Dictionary<int, SerializableMap> intermediaryindex =  JsonSerializer.Deserialize<Dictionary<int, SerializableMap>>(jsonString);
             Dictionary<int, Map> mapIndex = new Dictionary<int,Map>();
             foreach(var map in intermediaryindex.Values)
             {
                 Map newmap = new Map();
-                newmap.Bounds = map.Bounds;
                 newmap.ID = map.ID;
                 newmap.LevelID = map.LevelID;
                 newmap.LevelPosition = map.LevelPosition;
+                newmap.Bounds = map.Bounds;
                 newmap.SpawnPoint = map.SpawnPoint;
                 newmap.PlayableMap = new Tile[newmap.Bounds.X,newmap.Bounds.Y];
                 for(int i = 0; i < map.Tiles.Count; i++)
@@ -107,6 +134,34 @@ namespace ASCMandatory1
                     for(int j = 0; j < map.Tiles[i].Count; j++)
                     {
                         newmap.PlayableMap[i,j] = map.Tiles[i][j];
+                        if(newmap.PlayableMap[i, j].Entities.Count > 0)
+                        {
+                            List<object> entities = new List<object>();
+                            foreach(object entity in newmap.PlayableMap[i, j].Entities)
+                            {
+                                string newentity = entity.ToString();
+                                if (newentity.Contains("ObjectType\":2"))
+                                {
+                                    WorldObject newobj = JsonSerializer.Deserialize<WorldObject>(newentity);
+                                    newobj.Position = new Position(i, j);
+                                    entities.Add(newobj);
+                                }
+                                else if (newentity.Contains("ObjectType\":1"))
+                                {
+                                    Item newobj = JsonSerializer.Deserialize<Item>(newentity);
+                                    newobj.Position = new Position(i, j);
+                                    entities.Add(newobj);
+                                }
+                                else if (newentity.Contains("ObjectType\":0"))
+                                {
+                                    Actor newobj = JsonSerializer.Deserialize<Actor>(newentity);
+                                    newobj.Position = new Position(i, j);
+                                    entities.Add(newobj);
+                                }
+                            }
+                            newmap.PlayableMap[i, j].Entities.Clear();
+                            newmap.PlayableMap[i, j].Entities = entities;
+                        }
                     }
                 }
                 mapIndex.Add(newmap.ID, newmap);
@@ -116,7 +171,7 @@ namespace ASCMandatory1
         public static Dictionary<int, Level> ReadJsonLevel(string JsonFileName)
         {
             string jsonString = File.ReadAllText(JsonFileName);
-            Dictionary<int, dynamic> intermediaryindex = JsonSerializer.Deserialize<Dictionary<int, dynamic>>(jsonString);
+            Dictionary<int, SerializableLevel> intermediaryindex = JsonSerializer.Deserialize<Dictionary<int, SerializableLevel>>(jsonString);
             Dictionary<int, Level> levelIndex = new Dictionary<int, Level>();
 
             foreach(var level in intermediaryindex.Values)

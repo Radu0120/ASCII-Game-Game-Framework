@@ -19,8 +19,9 @@ namespace ASCMandatory1
         public Action PendingAction { get; set; }
         
         public static Dictionary<int, Actor> actorIndex { get; set; } = new Dictionary<int, Actor>();
-        public Actor(int id, string name, char symbol, int[] color, double hp, double mana, int speed, double physres, double magres):base(id, name, symbol, color)
+        public Actor(int id, string name, char symbol, int[] color, double hp, double mana, int speed, double physres, double magres, Type type):base(id, name, symbol, color, type)
         {
+            ObjectType = type;
             MaxHP = hp;
             HP = MaxHP;
             MaxMana = mana;

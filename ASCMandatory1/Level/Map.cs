@@ -117,7 +117,7 @@ namespace ASCMandatory1
         #region UpdateMap
         public void Update()
         {
-            foreach(Entity entity in GetEntitiesFromPlayableMap(this))
+            foreach(Entity entity in GetEntitiesFromPlayableMap())
             {
                 if(entity is Actor)
                 {
@@ -351,7 +351,7 @@ namespace ASCMandatory1
             PlayableMap[position.X, position.Y] = null;
             PlayableMap[position.X, position.Y] = Clone<Tile>.CloneObject(Tile.tileIndex[0]);
         }
-        public List<Entity> GetEntitiesFromPlayableMap(Map level)
+        public List<Entity> GetEntitiesFromPlayableMap()
         {
             List<Entity> entities = new List<Entity>();
             for (int i = 0; i < Bounds.X; i++)

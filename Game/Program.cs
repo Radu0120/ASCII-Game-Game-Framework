@@ -56,23 +56,24 @@ namespace Game
         }
         public static void StartDesigner()
         {
-            Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0);
-            cursor.Attributes.Add("Phase");
-            cursor.Attributes.Add("Designer");
+            
 
             string input = "";
-            Level chosenlevel = new Level();
-            while (input != "close")
+            Level chosenlevel = null;
+            while (input != "close" && chosenlevel==null)
             {
                 Console.Clear();
                 Console.WriteLine("Pick one of the levels below to edit, or type 'new' to create a new level, or 'close' to exit the game");
                 for(int i = 0; i < Level.levelIndex.Count; i++)
                 {
-                    Console.WriteLine(Level.levelIndex[i]);
+                    Console.WriteLine(Level.levelIndex[i].Name);
                 }
                 input = Console.ReadLine();
                 if(input == "new")
                 {
+                    Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0, Entity.Type.Actor);
+                    cursor.Attributes.Add("Phase");
+                    cursor.Attributes.Add("Designer");
                     Console.WriteLine("What should your level be named?");
                     input = Console.ReadLine();
                     chosenlevel = new Level(Level.levelIndex.Count, input, cursor);
@@ -86,7 +87,6 @@ namespace Game
                         if (input == level.Name)
                         {
                             chosenlevel = level;
-                            break;
                         }
                     }
                 }
@@ -98,7 +98,7 @@ namespace Game
 
             Designer.CurrentState = Designer.State.MainMenu;
 
-            RunGameLogic(cursor, true, chosenlevel);
+            RunGameLogic(chosenlevel.GetPlayer(), true, chosenlevel);
         }
         private static void RunGameLogic(Actor player, bool designer, Level level)
         {

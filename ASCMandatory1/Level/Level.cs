@@ -149,5 +149,16 @@ namespace ASCMandatory1
         {
             return levelIndex[CurrentLevel];
         }
+        public Actor GetPlayer()
+        {
+            foreach (var entity in GetCurrentMap().GetEntitiesFromPlayableMap())
+            {
+                if(entity.Name == "player")
+                {
+                    return (Actor)entity;
+                }
+            }
+            return null;
+        }
     }
 }
