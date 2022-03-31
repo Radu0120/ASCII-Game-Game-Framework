@@ -117,21 +117,17 @@ namespace ASCMandatory1
         #region UpdateMap
         public void Update()
         {
-            foreach(Entity entity in GetEntitiesFromPlayableMap())
+            foreach(Actor newentity in GetActorsFromPlayableMap())
             {
-                if(entity is Actor)
+                if (newentity.PendingMovement != null)
                 {
-                    Actor newentity = (Actor)entity;
-                    if (newentity.PendingMovement != null)
-                    {
-                        MoveEntity(newentity, newentity.PendingMovement);
-                        newentity.PendingMovement = null;
-                    }
-                    if (newentity.PendingAction != null)
-                    {
-                        DoAction(newentity, newentity.PendingAction);
-                        newentity.PendingAction = null;
-                    }
+                    MoveEntity(newentity, newentity.PendingMovement);
+                    newentity.PendingMovement = null;
+                }
+                if (newentity.PendingAction != null)
+                {
+                    DoAction(newentity, newentity.PendingAction);
+                    newentity.PendingAction = null;
                 }
             }
             frame++;
@@ -206,14 +202,35 @@ namespace ASCMandatory1
             if (PlayableMap[position.X, position.Y].Entities.Count>0) return PlayableMap[position.X, position.Y].Entities[0];
             else return null;
         }
+        public Actor GetActorFromPosition(Position position)
+        {
+            if (PlayableMap[position.X, position.Y].Entities.Count > 0)
+            {
+                if (PlayableMap[position.X, position.Y].Entities[0] is Actor)
+                    return (Actor)PlayableMap[position.X, position.Y].Entities[0];
+                else return null;
+            }
+            else return null;
+        }
         public void UpdateEntityPosition(Entity entity, Position position)
         {
+            Actor actor = GetActorFromPosition(position);
             if (entity.Attributes.Contains("Phase"))
             {
                 PlayableMap[entity.Position.X, entity.Position.Y].Entities.Remove(entity);
                 entity.Position = position;
                 PlayableMap[position.X, position.Y].Entities.Add(entity);
                 PlayableMap[position.X, position.Y].currententitytodraw = PlayableMap[position.X, position.Y].Entities.Count-1;
+            }
+            else if (actor!=null)
+            {
+                if (actor.Attributes.Contains("Phase"))
+                {
+                    PlayableMap[entity.Position.X, entity.Position.Y].Entities.Remove(entity);
+                    entity.Position = position;
+                    PlayableMap[position.X, position.Y].Entities.Add(entity);
+                    //PlayableMap[position.X, position.Y].currententitytodraw = PlayableMap[position.X, position.Y].Entities.Count - 1;
+                }
             }
             else
             {
@@ -358,17 +375,34 @@ namespace ASCMandatory1
             {
                 for (int j = 0; j < Bounds.Y; j++)
                 {
-                    if (PlayableMap[i, j].Entities.Count>0)
-                    {
-                        foreach(Entity entity in PlayableMap[i, j].Entities)
-                        {
-                            entities.Add(entity);
-                        }
-                    }
+                    //if (PlayableMap[i, j].Entities.Count>0)
+                    //{
+                    //    foreach(Entity entity in PlayableMap[i, j].Entities)
+                    //    {
+                    //        entities.Add(entity);
+                    //    }
+                    //}
+                    PlayableMap[i, j].Entities.ToList().ForEach(e => entities.Add((Entity)e));
                 }
             }
             return entities;
-        } 
+        }
+        public List<Actor> GetActorsFromPlayableMap()
+        {
+            List<Actor> actors = new List<Actor>();
+            for (int i = 0; i < Bounds.X; i++)
+            {
+                for (int j = 0; j < Bounds.Y; j++)
+                {
+                    //if (PlayableMap[i, j].Entities.Count > 0)
+                    //{
+                    //    PlayableMap[i, j].Entities.Where(entity => entity is Actor).ToList().ForEach(entity => actors.Add((Actor)entity));
+                    //}
+                    PlayableMap[i, j].Entities.Where(entity => entity is Actor).ToList().ForEach(entity => actors.Add((Actor)entity));
+                }
+            }
+            return actors;
+        }
         #endregion
     }
 }

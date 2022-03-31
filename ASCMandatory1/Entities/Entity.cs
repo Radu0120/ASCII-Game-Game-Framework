@@ -19,6 +19,7 @@ namespace ASCMandatory1
         public Position Position { get; set; }
         public List<string> Attributes { get; set; }
         public Type ObjectType { get; set; }
+        
         public Entity(int id, string name, char symbol, int[] color, Type type)
         {
             Attributes = new List<string>();

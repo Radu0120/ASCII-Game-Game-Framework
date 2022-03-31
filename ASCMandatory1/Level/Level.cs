@@ -10,6 +10,7 @@ namespace ASCMandatory1
     {
         public static int CurrentLevel { get; set; }
         public static Dictionary<int, Level> levelIndex = new Dictionary<int, Level>();
+        public static Actor Player { get; set; }
 
         public const int MapBoundHeight = 48;
 
@@ -153,7 +154,7 @@ namespace ASCMandatory1
         {
             foreach (var entity in GetCurrentMap().GetEntitiesFromPlayableMap())
             {
-                if(entity.Name == "player")
+                if(entity.Attributes.Contains("Player"))
                 {
                     return (Actor)entity;
                 }

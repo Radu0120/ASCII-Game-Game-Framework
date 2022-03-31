@@ -17,7 +17,8 @@ namespace ASCMandatory1
         public List<Item> Inventory { get; set; }
         public Position PendingMovement { get; set; }
         public Action PendingAction { get; set; }
-        
+        public AI AI { get; set; }
+
         public static Dictionary<int, Actor> actorIndex { get; set; } = new Dictionary<int, Actor>();
         public Actor(int id, string name, char symbol, int[] color, double hp, double mana, int speed, double physres, double magres, Type type):base(id, name, symbol, color, type)
         {

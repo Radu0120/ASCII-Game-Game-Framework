@@ -74,8 +74,10 @@ namespace Game
                     Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0, Entity.Type.Actor);
                     cursor.Attributes.Add("Phase");
                     cursor.Attributes.Add("Designer");
+                    cursor.Attributes.Add("Player");
                     Console.WriteLine("What should your level be named?");
                     input = Console.ReadLine();
+                    Level.Player = cursor;
                     chosenlevel = new Level(Level.levelIndex.Count, input, cursor);
                     Level.CurrentLevel = chosenlevel.ID;
                     break;
@@ -87,6 +89,7 @@ namespace Game
                         if (input == level.Name)
                         {
                             chosenlevel = level;
+                            Level.Player = chosenlevel.GetPlayer();
                         }
                     }
                 }
@@ -95,10 +98,8 @@ namespace Game
             {
                 return;
             }
-
             Designer.CurrentState = Designer.State.MainMenu;
-
-            RunGameLogic(chosenlevel.GetPlayer(), true, chosenlevel);
+            RunGameLogic(Level.Player, true, chosenlevel);
         }
         private static void RunGameLogic(Actor player, bool designer, Level level)
         {
@@ -114,7 +115,11 @@ namespace Game
             MovementThread.SetApartmentState(ApartmentState.STA);
             MovementThread.Start();
             Console.Clear();
-            
+            Thread AIThread = new Thread(() =>
+                        AI.Think()
+                );
+            AIThread.Start();
+
             int WindowHeight = level.GetCurrentMap().Bounds.X + 2;
             int WindowWidth = level.GetCurrentMap().Bounds.Y * 2 + 4 + 45;
             Console.WindowHeight = WindowHeight;
