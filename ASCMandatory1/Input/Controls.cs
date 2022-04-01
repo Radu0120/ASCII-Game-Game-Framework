@@ -106,30 +106,54 @@ namespace ASCMandatory1
             if (Keyboard.IsKeyDown(Key.Enter))
             {
                 action.Type = Action.ActionType.Build;
-                if (Designer.CurrentState == Designer.State.BuildMenu)
+                //if (Designer.CurrentState == Designer.State.BuildMenu)
+                //{
+                //    return;
+                //}
+                //if (Designer.Object == null)
+                //{
+                //    if (Designer.Tile == null)
+                //    {
+                //        return;
+                //    }
+                //}
+                //if (Designer.CurrentState == Designer.State.Tile)
+                //{
+                //    action.Tile = Clone<Tile>.CloneObject(Designer.Tile);
+                //    action.Position = actor.Position;
+                //    actor.PendingAction = action;
+                //    return;
+                //}
+                //else
+                //{
+                //    action.Entity = Designer.Object;
+                //    action.Position = actor.Position;
+                //    actor.PendingAction = action;
+                //    return;
+                //}
+                switch (Designer.CurrentState)
                 {
-                    return;
-                }
-                if (Designer.Object == null)
-                {
-                    if (Designer.Tile == null)
-                    {
+                    case Designer.State.BuildMenu:
+                    case Designer.State.Maps:
+                    case Designer.State.MainMenu:
                         return;
-                    }
-                }
-                if (Designer.CurrentState == Designer.State.Tile)
-                {
-                    action.Tile = Clone<Tile>.CloneObject(Designer.Tile);
-                    action.Position = actor.Position;
-                    actor.PendingAction = action;
-                    return;
-                }
-                else
-                {
-                    action.Entity = Designer.Object;
-                    action.Position = actor.Position;
-                    actor.PendingAction = action;
-                    return;
+                    case Designer.State.Tile:
+                        action.Tile = Clone<Tile>.CloneObject(Designer.Tile);
+                        action.Position = actor.Position;
+                        actor.PendingAction = action;
+                        return;
+                    case Designer.State.WorldOject:
+                        action.Entity = Designer.Object;
+                        action.Position = actor.Position;
+                        actor.PendingAction = action;
+                        return;
+                    case Designer.State.Item:
+                    case Designer.State.Actor:
+                        action.Entity = Designer.Object;
+                        action.Position = actor.Position;
+                        actor.PendingAction = action;
+                        while (Keyboard.IsKeyDown(Key.Enter)) { }
+                        return;
                 }
             }
         }

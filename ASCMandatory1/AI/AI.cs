@@ -53,38 +53,56 @@ namespace ASCMandatory1
             }
             else return false;
         }
-        public void Move(Actor actor, Actor player)
+        public static void Move(Actor actor, Actor player)
         {
-            
-            if (isActive)
+            while(actor.AI.isActive)
             {
-                if(CanSee(player, actor))
+                if(actor.AI.CanSee(player, actor))
                 {
                     actor.PendingMovement = Pathfinder.AStar(player, actor);
-                    //Level.GetCurrentLevel().GetCurrentMap().AddEntity(WorldObject.worldobjectIndex[0], Pathfinder.NextMove(player.Position, actor, Level.GetCurrentLevel().GetCurrentMap()));
                 }
+                int wait = Convert.ToInt32(1000 / actor.Speed);
+                Thread.Sleep(wait);
             }
-            int wait = Convert.ToInt32(1000 / actor.Speed);
-            Thread.Sleep(wait);
         }
         public static void Think()
         {
             while (true)
             {
-                foreach (Actor actor in Level.GetCurrentLevel().GetCurrentMap().GetActorsFromPlayableMap())
+                //Parallel.ForEach(Level.GetCurrentLevel().GetCurrentMap().GetActorsFromPlayableMap().Where(a => !a.Attributes.Contains("Player") && !a.AI.isActive),
+                //    actor => {
+                //        actor.AI.isActive = true;
+                //        Thread ai = new Thread(() =>
+                //            actor.AI.Move(actor, Level.Player)
+                //        );
+                //    });
+                //foreach(Actor actor in Level.GetCurrentLevel().GetCurrentMap().GetActorsFromPlayableMap().Where(a => !a.Attributes.Contains("Player") && !a.AI.isActive))
+                //{
+                //    actor.AI.isActive = true;
+                //    Task.Run(() =>
+                //    {
+                //        actor.AI.Move(actor, Level.Player);
+                //    });
+                //}
+                List<Actor> list = Level.GetCurrentLevel().GetCurrentMap().GetActorsFromPlayableMap().Where(a => !a.Attributes.Contains("Player") && !a.AI.isActive).ToList();
+                if(list.Count > 0)
                 {
 
-                    if (!actor.Attributes.Contains("Player"))
-                    {
-                        //Thread.Sleep(500);
-                        //actor.AI.isActive = true;
-                        actor.AI.Move(actor, Level.Player);
-                    }
-                    
                 }
-                //Thread.Sleep(32);
+                foreach (Actor actor in list)
+                {
+                    actor.AI.isActive = true;
+                    //Thread ai = new Thread(() =>
+                    //{
+                    //    Move(actor, Level.Player);
+                    //});
+                    Task.Run(() =>
+                    {
+                        Move(actor, Level.Player);
+                    });
+                }
             }
-            
+
         }
     }
 }

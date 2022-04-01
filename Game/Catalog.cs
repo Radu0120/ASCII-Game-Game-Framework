@@ -27,9 +27,9 @@ namespace Game
             bandit.Attributes.Add("Solid");
             chimera.Attributes.Add("Solid");
 
-            AI ai = new AI(0, "basic", 10, true, 5);
+            AI ai = new AI(0, "basic", 20, true, 5);
 
-            ai.isActive = true;
+            //ai.isActive = true;
 
             goblin.AI=ai;
             bandit.AI=ai;

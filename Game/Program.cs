@@ -77,9 +77,9 @@ namespace Game
                     cursor.Attributes.Add("Player");
                     Console.WriteLine("What should your level be named?");
                     input = Console.ReadLine();
-                    Level.Player = cursor;
                     chosenlevel = new Level(Level.levelIndex.Count, input, cursor);
                     Level.CurrentLevel = chosenlevel.ID;
+                    Level.Player = chosenlevel.GetPlayer();
                     break;
                 }
                 else

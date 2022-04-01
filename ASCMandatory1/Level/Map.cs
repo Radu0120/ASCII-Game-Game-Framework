@@ -202,6 +202,12 @@ namespace ASCMandatory1
             if (PlayableMap[position.X, position.Y].Entities.Count>0) return PlayableMap[position.X, position.Y].Entities[0];
             else return null;
         }
+        public List<Entity> GetEntitiesFromPosition(Position position)
+        {
+            List<Entity> entities = new List<Entity>();
+            PlayableMap[position.X, position.Y].Entities.Where(entity => entity is Entity).ToList().ForEach(entity => entities.Add((Entity)entity));
+            return entities;
+        }
         public Actor GetActorFromPosition(Position position)
         {
             if (PlayableMap[position.X, position.Y].Entities.Count > 0)
@@ -224,6 +230,7 @@ namespace ASCMandatory1
             }
             else if (actor!=null)
             {
+
                 if (actor.Attributes.Contains("Phase"))
                 {
                     PlayableMap[entity.Position.X, entity.Position.Y].Entities.Remove(entity);
@@ -270,13 +277,12 @@ namespace ASCMandatory1
                 }
                 else return false;
             }
-            if (this.GetEntityFromPosition(position) != null) //if there is an entity, check for phase
+            else if (entity.Attributes.Contains("Phase")) // if the moving entity has phase, it can move in
             {
-                Entity thisentity = (Entity)this.GetEntityFromPosition(position);
-                if (thisentity.Attributes.Contains("Phase") || entity.Attributes.Contains("Phase"))
-                {
-                    return true;
-                }
+                return true;
+            }
+            else if (this.GetEntitiesFromPosition(position).Where(e => e.Attributes.Contains("Solid")).Count() > 0) //check position for any solid entities
+            {
                 return false;
             }
             else // no entity, can move in
@@ -321,29 +327,45 @@ namespace ASCMandatory1
         }
         public void AddEntity(Entity entity, Position position)
         {
-            bool proceed;
-            entity.Position = Position.Create(position.X, position.Y);
-            if (entity.Attributes.Contains("Phase"))
+            Entity newentity = null;
+            if (entity.Attributes.Contains("Player"))
             {
-                GetTileFromPosition(position).Entities.Add(entity);
-                return;
-            }
-            if (GetTileFromPosition(position).Entities.Count > 0)
-            {
-                proceed = true;
-                foreach(Entity entityfromtile in GetTileFromPosition(position).Entities)
-                {
-                    if (entityfromtile.Attributes.Contains("Solid"))
-                    {
-                        proceed = false;
-                        break;
-                    }
-                }
-                if(proceed) GetTileFromPosition(position).Entities.Add(entity);
+                newentity = entity;
             }
             else
             {
-                GetTileFromPosition(position).Entities.Add(entity);
+                switch (entity)
+                {
+                    case Actor:
+                        newentity = Clone<Actor>.CloneObject((Actor)entity);
+                        break;
+                    case Item:
+                        newentity = Clone<Item>.CloneObject((Item)entity);
+                        break;
+                    case WorldObject:
+                        newentity = Clone<WorldObject>.CloneObject((WorldObject)entity);
+                        break;
+                }
+            }
+            newentity.Position = Position.Create(position.X, position.Y);
+            if (newentity.Attributes.Contains("Phase")) //if the entity has phase, it can always move in
+            {
+                PlayableMap[position.X, position.Y].Entities.Add(newentity);
+            }
+            else if(this.GetEntitiesFromPosition(position).Count>0) //if the tile has at least 1 entity, must check if its solid
+            {
+                if(this.GetEntitiesFromPosition(position).Where(e => e.Attributes.Contains("Solid")).ToList().Count() > 0)
+                {
+                    return;
+                }
+                else
+                {
+                    PlayableMap[position.X, position.Y].Entities.Add(newentity);
+                }
+            }
+            else // no entity, can move in
+            {
+                PlayableMap[position.X, position.Y].Entities.Add(newentity);
             }
         }
         public void RemoveEntity(Position position, Entity entity)

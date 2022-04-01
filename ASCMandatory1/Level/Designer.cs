@@ -25,11 +25,9 @@ namespace ASCMandatory1
         }
         public static void RemoveEntity(Map map, Position position)
         {
-            if(map.PlayableMap[position.X, position.Y].Entities.Count > 1)
-            {
-                 Entity actor = (Entity)map.PlayableMap[position.X, position.Y].Entities[0];
-                 map.RemoveEntity(position, actor);
-            }
+            List<Entity> entitytoremove = map.GetEntitiesFromPosition(position).Where(e => !e.Attributes.Contains("Player")).ToList(); 
+            if(entitytoremove.Count>0)
+            map.RemoveEntity(position,entitytoremove[0]);
         }
         public static void AddTile(Map map, Position position, Tile tile)
         {
