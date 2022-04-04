@@ -18,6 +18,7 @@ namespace ASCMandatory1
         public Position PendingMovement { get; set; }
         public Action PendingAction { get; set; }
         public AI AI { get; set; }
+        public List<StatusEffect> StatusEffects { get; set; }
 
         public static Dictionary<int, Actor> actorIndex { get; set; } = new Dictionary<int, Actor>();
         public Actor(int id, string name, char symbol, int[] color, double hp, double mana, int speed, double physres, double magres, Type type):base(id, name, symbol, color, type)
@@ -33,6 +34,7 @@ namespace ASCMandatory1
             Id = id;
             Name = name;
             Symbol = symbol;
+            StatusEffects = new List<StatusEffect>();
             PendingAction = null;
             PendingMovement = null;
             Color = ASCMandatory1.Color.Foreground(color);
@@ -63,6 +65,26 @@ namespace ASCMandatory1
         public Damage DealDamage()
         {
             return EquippedWeapon.Damage;
+        }
+        public bool HasStatusEffect(string name)
+        {
+            return StatusEffects.Find(s => s.Name == name) != null;
+        }
+        public bool HasStatusEffectExpired(string name)
+        {
+            if(HasStatusEffect(name)) return StatusEffects.Find(s => s.Name == name).HasExpired();
+            else return true;
+        }
+        public void AddStatusEffect(string name, int duration)
+        {
+            if (!this.HasStatusEffect(name))
+            {
+                StatusEffects.Add(StatusEffect.Create(name, duration));
+            }
+            else
+            {
+                StatusEffects.Find(s => s.Name == name).Duration = DateTime.Now.AddMilliseconds(duration);
+            }
         }
     }
 }

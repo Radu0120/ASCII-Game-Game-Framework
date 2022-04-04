@@ -10,12 +10,14 @@ namespace ASCMandatory1
     {
         public static Dictionary<int, Item> itemIndex { get; set; } = new Dictionary<int, Item>();
         public Damage Damage { get; set; }
-        public Item(int id, string name, char symbol, int[] color, Damage damage, Type type) : base(id, name, symbol, color, type)
+        public int AttackRange { get; set; }
+        public Item(int id, string name, char symbol, int[] color, Damage damage, int range, Type type) : base(id, name, symbol, color, type)
         {
             ObjectType = type;
             Id = id;
             Name = name;
             Symbol = symbol;
+            AttackRange = range;
             Color = ASCMandatory1.Color.Foreground(color);
             Damage = damage;
         }

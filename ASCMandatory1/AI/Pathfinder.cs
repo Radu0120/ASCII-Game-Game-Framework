@@ -2,88 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ASCMandatory1
 {
     public class Pathfinder
     {
-
-        public static Position NextMove(Position target, Actor actor, Map map)
+        public static Position Wander(Actor actor)
         {
-            Position currentposition = new Position(actor.Position.X, actor.Position.Y);
-            Position start = new Position(actor.Position.X, actor.Position.Y);
-            Position finish = new Position(target.X, target.Y);
-
-            List<Position> exploredtiles = new List<Position>();
-
-            return PotentialMoves(start, start, target, map, actor, ref exploredtiles);
-        }
-        public static Position PotentialMoves(Position start, Position previousposition, Position target, Map map, Actor actor, ref List<Position> exploredtiles)
-        {
-            if (Position.AreEqual(previousposition, target)) return previousposition;
-
-            List<Position> potentialmoves = new List<Position>();
-            potentialmoves.Add(new Position(previousposition.X + 1, previousposition.Y));
-            potentialmoves.Add(new Position(previousposition.X - 1, previousposition.Y));
-            potentialmoves.Add(new Position(previousposition.X, previousposition.Y + 1));
-            potentialmoves.Add(new Position(previousposition.X, previousposition.Y - 1));
-
-            List<Position> validmoves = new List<Position>();
-            foreach (Position move in potentialmoves)
+            if (actor.HasStatusEffectExpired("Waiting"))
             {
-                if (exploredtiles.Contains(move)) continue;
-                if (Position.AreEqual(start, move))
-                {
-                    continue;
-                }
-                if (move.X == target.X && move.Y == target.Y)
-                {
-                    return move;
-                }
-                if (move.X > map.Bounds.X - 1 || move.X < 0 || move.Y > map.Bounds.Y - 1 || move.Y < 0) // check the map boundaries
-                {
-                    continue;
-                }
-                if (map.GetEntityFromPosition(move) != null) //if there is an entity, check for phase
-                {
-                    Entity thisentity = (Entity)map.GetEntityFromPosition(move);
-                    if (thisentity.Attributes.Contains("Phase") || actor.Attributes.Contains("Phase"))
-                    {
-                        validmoves.Add(move);
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                else // no entity, can move in
-                {
-                    validmoves.Add(move);
-                }
-                exploredtiles.Add(move);
-            }
+                Random random = new Random();
+                int X = actor.Position.X + random.Next(-5, 6);
+                int Y = actor.Position.Y + random.Next(-5, 6);
 
-            List<List<Position>> pathlist = new List<List<Position>>();
-            foreach (Position move in validmoves)
+                actor.AddStatusEffect("Waiting", random.Next(1000, 5000));
+
+                return new Position(X, Y);
+            }
+            else
             {
-                List<Position> path = new List<Position>();
-                path.Add(move);
-                pathlist.Add(path);
+                return null;
             }
-            return null;
+            
         }
-        public static Position AStar(Actor target, Actor actor)
+        public static Position AStar(Position target, Actor actor)
         {
-
             var start = new Square();
             start.Y = actor.Position.Y;
             start.X = actor.Position.X;
 
 
             var finish = new Square();
-            finish.Y = target.Position.Y;
-            finish.X = target.Position.X;
+            finish.Y = target.Y;
+            finish.X = target.X;
 
             start.SetDistance(finish.X, finish.Y);
 
@@ -100,37 +53,11 @@ namespace ASCMandatory1
                     //We found the destination and we can be sure (Because the the OrderBy above)
                     //That it's the most low cost option. 
                     var tile = checkSquare;
-                    //Console.WriteLine("Retracing steps backwards...");
                     List<Square> tileTree = new List<Square>();
                     while (tile != null)
                     {
-                        //Console.WriteLine($"{tile.X} : {tile.Y}");
-                        //if (map[tile.Y][tile.X] == ' ')
-                        //{
-                        //    var newMapRow = map[tile.Y].ToCharArray();
-                        //    newMapRow[tile.X] = '*';
-                        //    map[tile.Y] = new string(newMapRow);
-                        //}
-
                         tileTree.Add(tile);
                         tile = tile.Parent;
-
-                        //if(tile.Parent == null)
-                        //{
-                        //    return new Position(tile.X, tile.Y);
-                        //}
-                        //else
-                        //{
-                        //    tile = tile.Parent;
-                        //}
-
-                        //if (tile == null)
-                        //{
-                        //    Console.WriteLine("Map looks like :");
-                        //    map.ForEach(x => Console.WriteLine(x));
-                        //    Console.WriteLine("Done!");
-                        //    return;
-                        //}
                     }
                     int index = tileTree.Count() - 2;
                     if(index < 0) { index = 0; }
@@ -178,6 +105,10 @@ namespace ASCMandatory1
                 new Square { X = currentSquare.X, Y = currentSquare.Y + 1, Parent = currentSquare, Cost = currentSquare.Cost + 1},
                 new Square { X = currentSquare.X - 1, Y = currentSquare.Y, Parent = currentSquare, Cost = currentSquare.Cost + 1 },
                 new Square { X = currentSquare.X + 1, Y = currentSquare.Y, Parent = currentSquare, Cost = currentSquare.Cost + 1 },
+                new Square { X = currentSquare.X + 1, Y = currentSquare.Y + 1, Parent = currentSquare, Cost = currentSquare.Cost + 1 },
+                new Square { X = currentSquare.X + 1, Y = currentSquare.Y - 1, Parent = currentSquare, Cost = currentSquare.Cost + 1 },
+                new Square { X = currentSquare.X - 1, Y = currentSquare.Y + 1, Parent = currentSquare, Cost = currentSquare.Cost + 1 },
+                new Square { X = currentSquare.X - 1, Y = currentSquare.Y - 1, Parent = currentSquare, Cost = currentSquare.Cost + 1 },
             };
 
             possibleSquares.ForEach(tile => tile.SetDistance(targetSquare.X, targetSquare.Y));

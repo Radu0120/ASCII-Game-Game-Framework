@@ -241,7 +241,7 @@ namespace ASCMandatory1
             }
             else
             {
-                PlayableMap[entity.Position.X, entity.Position.Y].Entities.Clear(); //setting old tile's entity to null
+                PlayableMap[entity.Position.X, entity.Position.Y].Entities.Remove(entity); //setting old tile's entity to null
                 entity.Position = position;
                 PlayableMap[position.X, position.Y].Entities.Add(entity);
             }
