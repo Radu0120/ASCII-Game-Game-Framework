@@ -70,6 +70,7 @@ namespace ASCMandatory1
             if (entry.Accepted)
             {
                 Designer.CurrentState = entry.NextState;
+                if(input == Key.Escape) { Designer.RemoveDesignerObject(); }
             }
         }
 

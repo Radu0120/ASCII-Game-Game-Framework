@@ -10,6 +10,7 @@ namespace ASCMandatory1
 {
     public class Controls
     {
+        public static List<Key> MenuKeys = new List<Key>() { Key.Z, Key.X, Key.C, Key.V, Key.Escape };
         public static void CheckInput(ref Actor player, ref bool playing)
         {
             if (player.Attributes.Contains("Designer"))
@@ -18,16 +19,12 @@ namespace ASCMandatory1
                 {
                     if (IsAnyKeyDown())
                     {
-                        if(Designer.CurrentState == Designer.State.MainMenu)
+                        DoDesignerAction(ref player, ref playing);
+
+                        if(GetPressedKeys().Where(k => MenuKeys.Contains(k)).FirstOrDefault() != Key.None)
                         {
-                            NavigateMainMenu(ref playing);
+                            NavigateMenu(GetPressedKeys().Where(k => MenuKeys.Contains(k)).FirstOrDefault());
                         }
-                        else if(Designer.CurrentState != Designer.State.Maps)
-                        {
-                            NavigateBuildMenu();
-                            ChooseDesignerItem();
-                        }
-                        DoDesignerAction(ref player);
                         Thread.Sleep(16);
                     }
                 }
@@ -76,7 +73,7 @@ namespace ASCMandatory1
             }
             actor.PendingMovement = newposition;
         }
-        public static void DoDesignerAction(ref Actor actor)
+        public static void DoDesignerAction(ref Actor actor, ref bool playing)
         {
             Action action = new Action();
             if (Keyboard.IsKeyDown(Key.Back))
@@ -92,10 +89,22 @@ namespace ASCMandatory1
                 case Designer.State.Item:
                 case Designer.State.WorldOject:
                 case Designer.State.Tile:
+                    ChooseDesignerItem();
                     Build(ref actor, ref action);
                     break;
                 case Designer.State.Maps:
                     BuildMap();
+                    break;
+                case Designer.State.MainMenu:
+                    if (Keyboard.IsKeyDown(Key.Escape)) //exiting the game
+                    {
+                        playing = false;
+                    }
+                    else if(Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S)) //saving
+                    {
+                        Save<Level>.SaveToJson(Level.GetCurrentLevel());
+                        while (Keyboard.IsKeyDown(Key.S) && Keyboard.IsKeyDown(Key.LeftCtrl)) { }
+                    }
                     break;
                 default:
                     break;
@@ -106,31 +115,6 @@ namespace ASCMandatory1
             if (Keyboard.IsKeyDown(Key.Enter))
             {
                 action.Type = Action.ActionType.Build;
-                //if (Designer.CurrentState == Designer.State.BuildMenu)
-                //{
-                //    return;
-                //}
-                //if (Designer.Object == null)
-                //{
-                //    if (Designer.Tile == null)
-                //    {
-                //        return;
-                //    }
-                //}
-                //if (Designer.CurrentState == Designer.State.Tile)
-                //{
-                //    action.Tile = Clone<Tile>.CloneObject(Designer.Tile);
-                //    action.Position = actor.Position;
-                //    actor.PendingAction = action;
-                //    return;
-                //}
-                //else
-                //{
-                //    action.Entity = Designer.Object;
-                //    action.Position = actor.Position;
-                //    actor.PendingAction = action;
-                //    return;
-                //}
                 switch (Designer.CurrentState)
                 {
                     case Designer.State.BuildMenu:
@@ -157,6 +141,11 @@ namespace ASCMandatory1
                 }
             }
         }
+        public static void NavigateMenu(Key key)
+        {
+            Designer.StateTable.ChangeState(key);
+            while (Keyboard.IsKeyDown(key)) { }
+        }
         public static void BuildMap()
         {
             Position position = Clone<Position>.CloneObject(Level.levelIndex[Level.CurrentLevel].CurrentMap);
@@ -179,58 +168,6 @@ namespace ASCMandatory1
             {
                 position.Y++;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
-            }
-            else if (Keyboard.IsKeyDown(Key.Escape))
-            {
-                while (Keyboard.IsKeyDown(Key.Escape)) { }
-                Designer.CurrentState = Designer.State.MainMenu;
-            }
-        }
-        public static void NavigateBuildMenu()
-        {
-            if(Designer.CurrentState != Designer.State.BuildMenu)
-            {
-                if (Keyboard.IsKeyDown(Key.Escape))
-                {
-                    Designer.CurrentState = Designer.State.BuildMenu;
-                    Designer.RemoveDesignerObject();
-                    while (Keyboard.IsKeyDown(Key.Escape)) { }
-                    return;
-                }
-            }
-            else
-            {
-                if (Keyboard.IsKeyDown(Key.Escape))
-                {
-                    Designer.CurrentState = Designer.State.MainMenu;
-                    Designer.RemoveDesignerObject();
-                    while (Keyboard.IsKeyDown(Key.Escape)) { }
-                    return;
-                }
-            }
-            if (Keyboard.IsKeyDown(Key.Z))
-            {
-                Designer.CurrentState = Designer.State.Actor;
-                Designer.RemoveDesignerObject();
-                return;
-            }
-            else if (Keyboard.IsKeyDown(Key.X))
-            {
-                Designer.CurrentState = Designer.State.Item;
-                Designer.RemoveDesignerObject();
-                return;
-            }
-            else if (Keyboard.IsKeyDown(Key.C))
-            {
-                Designer.CurrentState = Designer.State.WorldOject;
-                Designer.RemoveDesignerObject();
-                return;
-            }
-            else if (Keyboard.IsKeyDown(Key.V))
-            {
-                Designer.CurrentState = Designer.State.Tile;
-                Designer.RemoveDesignerObject();
-                return;
             }
         }
         public static void ChooseDesignerItem()
@@ -282,37 +219,6 @@ namespace ASCMandatory1
                 }
             }
         }
-        public static void NavigateMainMenu(ref bool playing)
-        {
-            if(Designer.CurrentState == Designer.State.MainMenu)
-            {
-                if (Keyboard.IsKeyDown(Key.Z))
-                {
-                    Designer.CurrentState = Designer.State.BuildMenu;
-                    Designer.RemoveDesignerObject();
-                    while (Keyboard.IsKeyDown(Key.Z)) { }
-                    return;
-                }
-                else if (Keyboard.IsKeyDown(Key.X))
-                {
-                    Designer.CurrentState = Designer.State.Maps;
-                    Designer.RemoveDesignerObject();
-                    while (Keyboard.IsKeyDown(Key.X)) { }
-                    return;
-                }
-                else if (Keyboard.IsKeyDown(Key.S) && Keyboard.IsKeyDown(Key.LeftCtrl))
-                {
-                    Save<Level>.SaveToJson(Level.GetCurrentLevel());
-                    while (Keyboard.IsKeyDown(Key.S) && Keyboard.IsKeyDown(Key.LeftCtrl)) { }
-                    return;
-                }
-                else if (Keyboard.IsKeyDown(Key.Escape))
-                {
-                    playing = false;
-                    return;
-                }
-            }
-        }
         public static bool IsAnyKeyDown()
         {
             var values = Enum.GetValues(typeof(Key));
@@ -322,6 +228,18 @@ namespace ASCMandatory1
                     return true;
 
             return false;
+        }
+        public static List<Key> GetPressedKeys()
+        {
+            List<Key> keys = new List<Key>();
+            foreach (var key in Enum.GetValues(typeof(Key)))
+            {
+                if (((Key)key) != Key.None && Keyboard.IsKeyDown((Key)key))
+                {
+                    keys.Add((Key)key);
+                }  
+            }
+            return keys;
         }
     }
 }

@@ -15,6 +15,7 @@ namespace ASCMandatory1
         public static object Object { get; set; }
         public static Tile Tile { get; set; }
         public static State CurrentState { get; set; }
+        public static StateTable StateTable = new StateTable();
         public static void AddSpawnPoint(Map map, Position position)
         {
             map.SpawnPoint = Position.Create(position.X, position.Y);
