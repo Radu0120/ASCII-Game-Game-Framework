@@ -49,15 +49,38 @@ namespace Game
         }
         public static void StartGame()
         {
-            //Actor player = new Actor(1, "pedritu", 'P', Color.Red, 105, 100, 10, 0, 0);
-            //Map map = new Map(80, 48, 10, 10, player, 1);
-
-            //RunGameLogic(map, player, false);
+            Actor player = new Actor(1, "player", 'P', Color.Red, 105, 100, 15, 0, 0, Entity.Type.Actor);
+            player.Attributes.Add("Player");
+            string input = "";
+            Level chosenlevel = null;
+            while (input != "close" && chosenlevel == null)
+            {
+                Console.Clear();
+                Console.WriteLine("Pick one of the levels below to play, or 'close' to exit the game");
+                for (int i = 0; i < Level.levelIndex.Count; i++)
+                {
+                    Console.WriteLine(Level.levelIndex[i].Name);
+                }
+                input = Console.ReadLine();
+                foreach (Level level in Level.levelIndex.Values)
+                {
+                    if (input == level.Name)
+                    {
+                        chosenlevel = level;
+                        player.Position = Level.levelIndex[chosenlevel.ID].Maps[Level.levelIndex[chosenlevel.ID].StartingMap.X, Level.levelIndex[chosenlevel.ID].StartingMap.Y].SpawnPoint;
+                        Level.levelIndex[chosenlevel.ID].Maps[Level.levelIndex[chosenlevel.ID].StartingMap.X, Level.levelIndex[chosenlevel.ID].StartingMap.Y].AddEntity(player, player.Position);
+                        Level.Player = player;
+                    }
+                }
+            }
+            if (input == "close")
+            {
+                return;
+            }
+            RunGameLogic(player, false, chosenlevel);
         }
         public static void StartDesigner()
         {
-            
-
             string input = "";
             Level chosenlevel = null;
             while (input != "close" && chosenlevel==null)

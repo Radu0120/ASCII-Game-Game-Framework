@@ -13,6 +13,8 @@ namespace ASCMandatory1
         public int AttackRange { get; set; }
         public Item(int id, string name, char symbol, int[] color, Damage damage, int range, Type type) : base(id, name, symbol, color, type)
         {
+            Attributes = new List<string>();
+            Attributes.Add("Phase");
             ObjectType = type;
             Id = id;
             Name = name;

@@ -420,6 +420,7 @@ namespace ASCMandatory1
                     //{
                     //    PlayableMap[i, j].Entities.Where(entity => entity is Actor).ToList().ForEach(entity => actors.Add((Actor)entity));
                     //}
+                    if(PlayableMap[i, j].Entities.Where(entity => entity is Actor).ToList().Count > 0)
                     PlayableMap[i, j].Entities.Where(entity => entity is Actor).ToList().ForEach(entity => actors.Add((Actor)entity));
                 }
             }
