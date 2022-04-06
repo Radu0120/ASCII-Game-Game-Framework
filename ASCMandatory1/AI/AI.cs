@@ -9,6 +9,11 @@ namespace ASCMandatory1
 {
     public class AI
     {
+        public enum Type
+        {
+            Enemy, Projectile, Friendly
+        }
+        public Type AIType { get; set; }
         public int ID { get; set; }
         public string Name { get; set; }
         public int SightRadius { get; set; }
@@ -17,13 +22,14 @@ namespace ASCMandatory1
         public bool isActive { get; set; }
         public int WarmUp { get; set; }
         public Position RandomTarget { get; set; }
-        public AI(int id, string name, int sightradius, bool hostile, int agression)
+        public AI(int id, string name, int sightradius, bool hostile, int agression, Type type)
         {
             ID = id;
             Name = name;
             SightRadius = sightradius;
             Hostile = hostile;
             Agression = agression;
+            AIType = type;
         }
         public bool CanSee(Actor target, Actor actor)
         {
@@ -39,7 +45,7 @@ namespace ASCMandatory1
             }
             else return false;
         }
-        public static void Move(Actor actor, Actor player)
+        public static void Target(Actor actor, Actor player) //used for enemies
         {
             while(actor.AI.isActive)
             {
@@ -60,6 +66,13 @@ namespace ASCMandatory1
                 Thread.Sleep(wait);
             }
         }
+        public static void Propagate(Actor projectile) // used for projectiles
+        {
+            while (projectile.AI.isActive)
+            {
+
+            }
+        }
         public static void Think()
         {
             while (true)
@@ -68,10 +81,21 @@ namespace ASCMandatory1
                 foreach (Actor actor in list)
                 {
                     actor.AI.isActive = true;
-                    Task.Run(() =>
+                    switch (actor.AI.AIType)
                     {
-                        Move(actor, Level.Player);
-                    });
+                        case Type.Enemy:
+                            Task.Run(() =>
+                            {
+                                Target(actor, Level.Player);
+                            });
+                            break;
+                        case Type.Projectile:
+                            Task.Run(() =>
+                            {
+                                Propagate();
+                            });
+                            break;
+                    }
                 }
             }
 

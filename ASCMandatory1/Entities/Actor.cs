@@ -5,6 +5,11 @@ namespace ASCMandatory1
 {
     public class Actor:Entity
     {
+        public enum Direction
+        {
+            Up, Down, Left, Right, UpLeft, DownLeft, UpRight, DownRight
+        }
+        public Direction CurrentDirection { get; set; }
         public double HP { get; set; }
         public double MaxHP { get; set; }
         public int Speed { get; set; }
@@ -84,6 +89,44 @@ namespace ASCMandatory1
             else
             {
                 StatusEffects.Find(s => s.Name == name).Duration = DateTime.Now.AddMilliseconds(duration);
+            }
+        }
+        public static void SetDirection(Position newposition, Actor actor)
+        {
+            int changeX = actor.Position.X - newposition.X;
+            int changeY = actor.Position.Y - newposition.Y;
+
+            if(changeX > 0 && changeY == 0)
+            {
+                actor.CurrentDirection = Direction.Down;
+            }
+            else if (changeX < 0 && changeY == 0)
+            {
+                actor.CurrentDirection = Direction.Up;
+            }
+            else if(changeX == 0 && changeY < 0)
+            {
+                actor.CurrentDirection = Direction.Left;
+            }
+            else if (changeX == 0 && changeY > 0)
+            {
+                actor.CurrentDirection = Direction.Right;
+            }
+            else if (changeX > 0 && changeY < 0)
+            {
+                actor.CurrentDirection = Direction.DownLeft;
+            }
+            else if (changeX > 0 && changeY > 0)
+            {
+                actor.CurrentDirection = Direction.DownRight;
+            }
+            else if (changeX < 0 && changeY > 0)
+            {
+                actor.CurrentDirection = Direction.UpRight;
+            }
+            else if (changeX < 0 && changeY < 0)
+            {
+                actor.CurrentDirection = Direction.UpLeft;
             }
         }
     }

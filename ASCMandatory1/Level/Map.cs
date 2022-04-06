@@ -117,19 +117,24 @@ namespace ASCMandatory1
         #region UpdateMap
         public void Update()
         {
-            foreach(Actor newentity in GetActorsFromPlayableMap())
+            foreach(Actor actor in GetActorsFromPlayableMap().Where(a => a.isAlive))
             {
-                if (newentity.PendingMovement != null)
+                if (actor.PendingMovement != null)
                 {
-                    MoveEntity(newentity, newentity.PendingMovement);
-                    newentity.PendingMovement = null;
+                    MoveEntity(actor, actor.PendingMovement);
+                    actor.PendingMovement = null;
                 }
-                if (newentity.PendingAction != null)
+                if (actor.PendingAction != null)
                 {
-                    DoAction(newentity, newentity.PendingAction);
-                    newentity.PendingAction = null;
+                    DoAction(actor, actor.PendingAction);
+                    actor.PendingAction = null;
+                }
+                if(actor.HP <= 0)
+                {
+                    actor.isAlive = false;
                 }
             }
+            this.KillActors();
             frame++;
         }
         //tries to move the entity to the new position if the tile is empty
@@ -173,7 +178,7 @@ namespace ASCMandatory1
             }
             
         }
-        public void DoAction(Entity actor, Action action) //actor = entity doing the action
+        public void DoAction(Actor actor, Action action) //actor = entity doing the action
         {
             switch (action.Type)
             {
@@ -191,7 +196,14 @@ namespace ASCMandatory1
                         Designer.AddEntity(this, action.Position, entity);
                     }
                     break;
+                case Action.ActionType.Attack:
+                    this.GetActorFromPosition(action.Position).TakeDamage(actor.DealDamage());
+                    break;
             }
+        }
+        public void KillActors()
+        {
+            this.GetActorsFromPlayableMap().Where(a => !a.isAlive).ToList().ForEach(a => { this.RemoveEntity(a.Position, a); a = null; });
         }
         #endregion
 
@@ -220,6 +232,7 @@ namespace ASCMandatory1
         }
         public void UpdateEntityPosition(Entity entity, Position position)
         {
+            if(entity is Actor) Actor.SetDirection(position, (Actor)entity);
             Actor actor = GetActorFromPosition(position);
             if (entity.Attributes.Contains("Phase"))
             {
@@ -236,7 +249,6 @@ namespace ASCMandatory1
                     PlayableMap[entity.Position.X, entity.Position.Y].Entities.Remove(entity);
                     entity.Position = position;
                     PlayableMap[position.X, position.Y].Entities.Add(entity);
-                    //PlayableMap[position.X, position.Y].currententitytodraw = PlayableMap[position.X, position.Y].Entities.Count - 1;
                 }
             }
             else
@@ -245,7 +257,6 @@ namespace ASCMandatory1
                 entity.Position = position;
                 PlayableMap[position.X, position.Y].Entities.Add(entity);
             }
-            
         }
         public Position GetPositionFromTile(Tile tile)
         {

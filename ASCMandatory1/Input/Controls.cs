@@ -73,6 +73,18 @@ namespace ASCMandatory1
             }
             actor.PendingMovement = newposition;
         }
+        #region PlayerMethods
+        public static void DoAction(ref Actor player, ref bool playing)
+        {
+            Action action = new Action();
+            if (Keyboard.IsKeyDown(Key.I))
+            {
+
+            }
+            player.PendingAction = action;
+        }
+        #endregion
+        #region DesignerMethods
         public static void DoDesignerAction(ref Actor actor, ref bool playing)
         {
             Action action = new Action();
@@ -219,6 +231,7 @@ namespace ASCMandatory1
                 }
             }
         }
+        #endregion
         public static bool IsAnyKeyDown()
         {
             var values = Enum.GetValues(typeof(Key));
