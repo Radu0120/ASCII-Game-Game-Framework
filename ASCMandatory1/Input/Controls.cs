@@ -35,6 +35,7 @@ namespace ASCMandatory1
                 {
                     if (IsAnyKeyDown())
                     {
+                        DoAction(ref player, ref playing);
                         Thread.Sleep(16);
                     }
                 }
@@ -76,12 +77,32 @@ namespace ASCMandatory1
         #region PlayerMethods
         public static void DoAction(ref Actor player, ref bool playing)
         {
-            Action action = new Action();
+            Map map = Level.GetCurrentLevel().GetCurrentMap();
+            if (Keyboard.IsKeyDown(Key.E))
+            {
+                Player.PickUpItem(player, map);
+            }
+            if (Keyboard.IsKeyDown(Key.Q))
+            {
+                Player.DropItem(player, map);
+            }
             if (Keyboard.IsKeyDown(Key.I))
             {
-
+                Player.LaunchAttack(player, map);
+                while (Keyboard.IsKeyDown(Key.I)) ;
             }
-            player.PendingAction = action;
+            if (Keyboard.IsKeyDown(Key.J))
+            {
+                Player.SwapItemLeft(player);
+                while (Keyboard.IsKeyDown(Key.J)) { }
+            }
+            if (Keyboard.IsKeyDown(Key.L)) 
+            {
+                Player.SwapItemRight(player);
+                while (Keyboard.IsKeyDown(Key.L)) { }
+            }
+            
+
         }
         #endregion
         #region DesignerMethods

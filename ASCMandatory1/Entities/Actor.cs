@@ -43,6 +43,10 @@ namespace ASCMandatory1
             PendingAction = null;
             PendingMovement = null;
             Color = ASCMandatory1.Color.Foreground(color);
+            Inventory = new List<Item>();
+        }
+        protected Actor(int id, string name, char symbol, int[] color, Type type) : base(id, name, symbol, color, type)
+        {
         }
         public Actor() { }
         public double ComputeDamage(Damage damage)
@@ -91,10 +95,24 @@ namespace ASCMandatory1
                 StatusEffects.Find(s => s.Name == name).Duration = DateTime.Now.AddMilliseconds(duration);
             }
         }
+        public void AddToInventory(Item item)
+        {
+            if(Inventory.Count < 6)
+            Inventory.Add(item);
+        }
+        public void RemoveFromInventory(Item item)
+        {
+            if (EquippedWeapon == item) EquippedWeapon = Item.itemIndex[0];
+            if(Inventory.Contains(item)) Inventory.Remove(item);
+        }
+        public bool HasSpaceInInventory()
+        {
+            return Inventory.Count < 6;
+        }
         public static void SetDirection(Position newposition, Actor actor)
         {
-            int changeX = actor.Position.X - newposition.X;
-            int changeY = actor.Position.Y - newposition.Y;
+            int changeX = newposition.X - actor.Position.X;
+            int changeY = newposition.Y - actor.Position.Y;
 
             if(changeX > 0 && changeY == 0)
             {

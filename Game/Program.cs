@@ -51,6 +51,7 @@ namespace Game
         {
             Actor player = new Actor(1, "player", 'P', Color.Red, 105, 100, 15, 0, 0, Entity.Type.Actor);
             player.Attributes.Add("Player");
+            player.isAlive = true;
             string input = "";
             Level chosenlevel = null;
             while (input != "close" && chosenlevel == null)
@@ -95,6 +96,7 @@ namespace Game
                 if(input == "new")
                 {
                     Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0, Entity.Type.Actor);
+                    cursor.isAlive = true;
                     cursor.Attributes.Add("Phase");
                     cursor.Attributes.Add("Designer");
                     cursor.Attributes.Add("Player");

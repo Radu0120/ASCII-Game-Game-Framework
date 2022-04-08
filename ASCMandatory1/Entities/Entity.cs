@@ -10,7 +10,7 @@ namespace ASCMandatory1
     {
         public enum Type
         {
-            Actor, Item, WorldObject
+            Actor, Item, WorldObject, Projectile
         }
         public int Id { get; set; }
         public string Name { get; set; }

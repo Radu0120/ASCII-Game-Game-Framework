@@ -17,12 +17,13 @@ namespace ASCMandatory1
             UI.Add(3,Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.Red)+"Health: " +PrintBar(player.HP)+"           ");
             UI.Add(5,Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana)+"          ");
 
-            UI.Add(10, Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.White) + PrintHoveredItems(player));
+            UI.Add(10, Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.White) + PrintHoveredItems(player) + "        ");
 
             if (!designer)
             {
                 
                 UI.Add(15, Color.Background(Color.Black)+ PrintTiles(1) + Color.Foreground(Color.White) + PrintEquippedItem(player));
+                UI.Add(17, Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.White) + PrintInventory(player));
             }
             else
             {
@@ -80,31 +81,47 @@ namespace ASCMandatory1
         }
         private static string PrintEquippedItem(Actor player)
         {
-            if(player.EquippedWeapon != null)
+            if(player.EquippedWeapon != null && player.EquippedWeapon != Item.itemIndex[0])
             {
-                return player.EquippedWeapon.Name;
+                return "Equipped: " + player.EquippedWeapon.Name;
             }
             else
             {
                 return "No equipped item";
             }
         }
+        private static string PrintInventory(Actor player)
+        {
+            string inv = "Inventory: ";
+            if (player.Inventory.Count > 0)
+            {
+                foreach (Item item in player.Inventory)
+                {
+                    inv += ", " + item.Name;
+                }
+                inv = inv.Remove(10, 2);
+            }
+            else
+            {
+                inv += "Empty";
+            }
+            return inv;
+        }
         private static string PrintHoveredItems(Actor player)
         {
             Map map = Level.GetCurrentLevel().GetCurrentMap();
-            string items = "";
-            if (map.GetEntitiesFromPosition(player.Position).Where(e => !e.Attributes.Contains("Player")).ToList().Count() > 0)
+            string items = "Standing over: ";
+            if (map.GetEntitiesFromPosition(player.Position).Where(e => !e.Attributes.Contains("Player") && !(e is Projectile)).ToList().Count() > 0)
             {
                 foreach(Entity entity in map.GetEntitiesFromPosition(player.Position).Where(e => !e.Attributes.Contains("Player")).ToList())
                 {
                     items += ", " + entity.Name;
                 }
-                items = items.Remove(0, 2);
-                
+                items = items.Remove(15, 2);
             }
             else
             {
-                return map.GetTileFromPosition(player.Position).Name;
+                items = items + map.GetTileFromPosition(player.Position).Name;
             }
             return items;
         }

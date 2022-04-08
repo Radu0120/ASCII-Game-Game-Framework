@@ -31,6 +31,7 @@ namespace ASCMandatory1
             Agression = agression;
             AIType = type;
         }
+        public AI() { }
         public bool CanSee(Actor target, Actor actor)
         {
             int distance = Math.Abs(target.Position.X - actor.Position.X) + Math.Abs(target.Position.Y - actor.Position.Y);
@@ -66,11 +67,59 @@ namespace ASCMandatory1
                 Thread.Sleep(wait);
             }
         }
-        public static void Propagate(Actor projectile) // used for projectiles
+        public static void Propagate(Projectile projectile) // used for projectiles
         {
-            while (projectile.AI.isActive)
+            Thread.Sleep(36);
+            Map map = Level.GetCurrentLevel().GetCurrentMap();
+            while (projectile.Range > 0)
             {
-
+                if (projectile.CheckCollision(map))
+                {
+                    projectile.Range = 0;
+                    break;
+                }
+                Position pendingpos = new Position();
+                switch (projectile.CurrentDirection)
+                { 
+                    case Actor.Direction.Up:
+                        pendingpos = Position.Create(projectile.Position.X - 1, projectile.Position.Y);
+                        break;
+                    case Actor.Direction.Down:
+                        pendingpos = Position.Create(projectile.Position.X + 1, projectile.Position.Y);
+                        break;
+                    case Actor.Direction.Left:
+                        pendingpos = Position.Create(projectile.Position.X, projectile.Position.Y - 1);
+                        break;
+                    case Actor.Direction.Right:
+                        pendingpos = Position.Create(projectile.Position.X, projectile.Position.Y + 1);
+                        break;
+                    case Actor.Direction.UpLeft:
+                        pendingpos = Position.Create(projectile.Position.X - 1, projectile.Position.Y - 1);
+                        break;
+                    case Actor.Direction.UpRight:
+                        pendingpos = Position.Create(projectile.Position.X - 1, projectile.Position.Y + 1);
+                        break;
+                    case Actor.Direction.DownLeft:
+                        pendingpos = Position.Create(projectile.Position.X + 1, projectile.Position.Y - 1);
+                        break;
+                    case Actor.Direction.DownRight:
+                        pendingpos = Position.Create(projectile.Position.X + 1, projectile.Position.Y + 1);
+                        break;
+                }
+                projectile.PendingMovement = pendingpos;
+                if (projectile.CheckCollision(map))
+                {
+                    projectile.Range = 0;
+                    break;
+                }
+                projectile.Range--;
+                int wait = Convert.ToInt32(1000 / projectile.Speed); //determines ai walking speed
+                Thread.Sleep(wait);
+            }
+            if(projectile.Range <= 0)
+            {
+                map.RemoveEntity(projectile.Position, projectile);
+                projectile = null;
             }
         }
         public static void Think()
@@ -92,7 +141,7 @@ namespace ASCMandatory1
                         case Type.Projectile:
                             Task.Run(() =>
                             {
-                                Propagate();
+                                Propagate(actor as Projectile);
                             });
                             break;
                     }

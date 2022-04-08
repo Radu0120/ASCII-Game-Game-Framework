@@ -129,12 +129,12 @@ namespace ASCMandatory1
                     DoAction(actor, actor.PendingAction);
                     actor.PendingAction = null;
                 }
-                if(actor.HP <= 0)
-                {
-                    actor.isAlive = false;
-                }
+                //if(actor.HP <= 0)
+                //{
+                //    actor.isAlive = false;
+                //}
             }
-            this.KillActors();
+            //this.KillActors();
             frame++;
         }
         //tries to move the entity to the new position if the tile is empty
@@ -144,10 +144,13 @@ namespace ASCMandatory1
             int oldX;
             if (CheckCollision(newposition, entity, ref changemap))
             {
-                if (changemap)
+                if (entity.Attributes.Contains("Player"))
                 {
-                    GoToNextMap(entity, newposition);
-                    return;
+                    if (changemap)
+                    {
+                        GoToNextMap(entity, newposition);
+                        return;
+                    }
                 }
                 UpdateEntityPosition(entity, newposition);
                 return;
@@ -156,10 +159,13 @@ namespace ASCMandatory1
             newposition.X = entity.Position.X;
             if(CheckCollision(newposition, entity, ref changemap))
             {
-                if (changemap)
+                if (entity.Attributes.Contains("Player"))
                 {
-                    GoToNextMap(entity, newposition);
-                    return;
+                    if (changemap)
+                    {
+                        GoToNextMap(entity, newposition);
+                        return;
+                    }
                 }
                 UpdateEntityPosition(entity, newposition);
                 return;
@@ -168,10 +174,13 @@ namespace ASCMandatory1
             newposition.Y = entity.Position.Y;
             if (CheckCollision(newposition, entity, ref changemap))
             {
-                if (changemap)
+                if (entity.Attributes.Contains("Player"))
                 {
-                    GoToNextMap(entity, newposition);
-                    return;
+                    if (changemap)
+                    {
+                        GoToNextMap(entity, newposition);
+                        return;
+                    }
                 }
                 UpdateEntityPosition(entity, newposition);
                 return;
@@ -347,6 +356,9 @@ namespace ASCMandatory1
             {
                 switch (entity)
                 {
+                    case Projectile:
+                        newentity = Clone<Projectile>.CloneObject((Projectile)entity);
+                        break;
                     case Actor:
                         newentity = Clone<Actor>.CloneObject((Actor)entity);
                         break;
