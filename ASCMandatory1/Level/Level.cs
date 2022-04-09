@@ -161,5 +161,23 @@ namespace ASCMandatory1
             }
             return null;
         }
+        public void AddPlayer(Actor player)
+        {
+            Level.Player = player;
+            GetCurrentMap().AddEntity(player, new Position(5, 5));
+        }
+        public void StartAI()
+        {
+            for (int i = 0; i < MaxX; i++)
+            {
+                for (int j = 0; j < MaxY; j++)
+                {
+                    if(Maps[i, j] != null)
+                    {
+                        Maps[i, j].GetActorsFromPlayableMap().Where(a => !a.Attributes.Contains("Player")).ToList().ForEach(a => a.AI.isActive = false);
+                    }
+                }
+            }
+        }
     }
 }

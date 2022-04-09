@@ -11,7 +11,7 @@ namespace ASCMandatory1
         public static void LaunchAttack(Actor actor, Map map)
         {
             AI projectileAI = new AI(3, "ProjAI", 0, false, 0, AI.Type.Projectile);
-            Projectile projectile = new Projectile(0, $"{actor.Name}'s projectile", 'o', Color.White, 10, 10, Entity.Type.Projectile, projectileAI, actor.CurrentDirection);
+            Projectile projectile = new Projectile(0, $"{actor.Name}'s projectile", actor.EquippedWeapon, Entity.Type.Projectile, projectileAI, actor.CurrentDirection);
             projectile.isAlive = true;
             switch (projectile.CurrentDirection)
             {
@@ -45,11 +45,12 @@ namespace ASCMandatory1
         public static void PickUpItem(Actor player, Map map)
         {
             List<Item> items = new List<Item>();
+            List<Entity> varai = map.GetEntitiesFromPosition(player.Position);
             map.GetEntitiesFromPosition(player.Position).Where(i => i is Item).ToList().ForEach(i => items.Add(i as Item));
             if (items.Count > 0 && player.HasSpaceInInventory())
             {
-                player.EquippedWeapon = items[0];
-                player.AddToInventory(items[0]);
+                player.EquippedWeapon = Clone<Item>.CloneObject(items[0]);
+                player.AddToInventory(player.EquippedWeapon);
                 map.RemoveEntity(player.Position, items[0]);
             }
         }

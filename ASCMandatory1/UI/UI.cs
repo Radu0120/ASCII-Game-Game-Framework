@@ -44,14 +44,14 @@ namespace ASCMandatory1
             string bar = "";
             while (value != 0)
             {
-                if (value - AmountPerBar >= 0)
+                if (value - AmountPerBar > 0)
                 {
                     bar += "\u2588";
                     value -= AmountPerBar;
                 }
                 else
                 {
-                    bar += "\u258C";
+                    bar += "  ";
                     value = 0;
                 }
             }

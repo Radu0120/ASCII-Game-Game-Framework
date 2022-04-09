@@ -8,23 +8,24 @@ namespace ASCMandatory1
 {
     public class Projectile:Actor
     {
-        //public int Speed { get; set; }
-        //public AI AI { get; set; }
         //public Position PendingMovement { get; set; }
         //public Actor.Direction Direction { get; set; }
         public int Range { get; set; }
-        public Projectile(int id, string name, char symbol, int[] color, int speed, int range,Type type, AI ai, Actor.Direction direction) : base(id, name, symbol, color, type)
+        public Item Item { get; set; }
+        public Projectile(int id, string name, Item weapon, Type type, AI ai, Actor.Direction direction):base(id, name, type)
         {
             ObjectType = type;
-            Speed = speed;
+            Speed = weapon.ProjectileSpeed;
             Id = id;
             Name = name;
-            Range = range;
-            Symbol = symbol;
+            Range = weapon.AttackRange;
+            Symbol = weapon.ProjectileSymbol;
+            Item = weapon;
             PendingMovement = null;
             CurrentDirection = direction;
             AI = ai;
-            Color = ASCMandatory1.Color.Foreground(color);
+            Color = weapon.ProjectileColor;
+            Attributes = new List<string>();
             Attributes.Add("Phase");
         }
         public Projectile() { }
@@ -40,9 +41,18 @@ namespace ASCMandatory1
             List<Entity> list = map.GetEntitiesFromPosition(Position).Where(e => !(e is Projectile)).ToList();
             if (list.Count > 0)
             {
-                return true;
+                if (list.Any(e => e.Attributes.Contains("Solid")))
+                {
+                    list.Where(e => e is Actor && e.Attributes.Contains("Solid")).ToList().ForEach(e => DealDamage(e as Actor));
+                    return true;
+                }
+                else return false;
             }
             return false;
+        }
+        public void DealDamage(Actor target)
+        {
+            target.TakeDamage(Item.Damage);
         }
     }
 }

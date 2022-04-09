@@ -41,9 +41,9 @@ namespace Game
         }
         public static void CreateItems()
         {
-            Item unarmed = new Item(0, "Unarmed", ' ', Color.White, new Damage() { Amount = 3, DamageType = Damage.Type.Physical }, 1, Entity.Type.Item);
-            Item sword = new Item(1, "Sword", 'S', Color.White, new Damage() { Amount= 10, DamageType = Damage.Type.Physical}, 1, Entity.Type.Item);
-            Item wand = new Item(2, "Wand", '/', Color.White, new Damage() { Amount = 8, DamageType = Damage.Type.Magical }, 10, Entity.Type.Item);
+            Item unarmed = new Item(0, "Unarmed", ' ', ' ', Color.White, Color.White, 50, new Damage() { Amount = 3, DamageType = Damage.Type.Physical }, 1, Entity.Type.Item);
+            Item sword = new Item(1, "Sword", 'S', ',', Color.White, Color.White, 50, new Damage() { Amount = 10, DamageType = Damage.Type.Physical }, 1, Entity.Type.Item);
+            Item wand = new Item(2, "Wand", '/', 'o', Color.White, Color.Yellow, 14, new Damage() { Amount = 8, DamageType = Damage.Type.Magical }, 10, Entity.Type.Item);
 
             Item.itemIndex.Add(unarmed.Id, unarmed);
             Item.itemIndex.Add(sword.Id, sword);

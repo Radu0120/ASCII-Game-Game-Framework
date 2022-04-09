@@ -52,6 +52,7 @@ namespace Game
             Actor player = new Actor(1, "player", 'P', Color.Red, 105, 100, 15, 0, 0, Entity.Type.Actor);
             player.Attributes.Add("Player");
             player.isAlive = true;
+            player.EquippedWeapon = Item.itemIndex[0];
             string input = "";
             Level chosenlevel = null;
             while (input != "close" && chosenlevel == null)
@@ -84,6 +85,13 @@ namespace Game
         {
             string input = "";
             Level chosenlevel = null;
+
+            Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0, Entity.Type.Actor);
+            cursor.isAlive = true;
+            cursor.Attributes.Add("Phase");
+            cursor.Attributes.Add("Designer");
+            cursor.Attributes.Add("Player");
+
             while (input != "close" && chosenlevel==null)
             {
                 Console.Clear();
@@ -95,11 +103,7 @@ namespace Game
                 input = Console.ReadLine();
                 if(input == "new")
                 {
-                    Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0, Entity.Type.Actor);
-                    cursor.isAlive = true;
-                    cursor.Attributes.Add("Phase");
-                    cursor.Attributes.Add("Designer");
-                    cursor.Attributes.Add("Player");
+                    
                     Console.WriteLine("What should your level be named?");
                     input = Console.ReadLine();
                     chosenlevel = new Level(Level.levelIndex.Count, input, cursor);
@@ -114,7 +118,7 @@ namespace Game
                         if (input == level.Name)
                         {
                             chosenlevel = level;
-                            Level.Player = chosenlevel.GetPlayer();
+                            chosenlevel.AddPlayer(cursor);
                         }
                     }
                 }
@@ -129,6 +133,8 @@ namespace Game
         private static void RunGameLogic(Actor player, bool designer, Level level)
         {
             Level.CurrentLevel = level.ID;
+            level.StartAI();
+
             Thread ActionsThread = new Thread(() =>
                         Controls.CheckInput(ref player, ref playing)
                 );
@@ -140,10 +146,14 @@ namespace Game
             MovementThread.SetApartmentState(ApartmentState.STA);
             MovementThread.Start();
             Console.Clear();
-            Thread AIThread = new Thread(() =>
+
+            if (!designer)
+            {
+                Thread AIThread = new Thread(() =>
                         AI.Think()
                 );
-            AIThread.Start();
+                AIThread.Start();
+            }
 
             int WindowHeight = level.GetCurrentMap().Bounds.X + 2;
             int WindowWidth = level.GetCurrentMap().Bounds.Y * 2 + 4 + 45;

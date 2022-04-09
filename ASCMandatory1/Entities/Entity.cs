@@ -28,7 +28,7 @@ namespace ASCMandatory1
             Symbol = symbol;
             Color = ASCMandatory1.Color.Foreground(color);
         }
-        public Entity(int id, string name, char symbol, int[] color, List<string> attributes, Type type)
+        protected Entity(int id, string name, char symbol, int[] color, List<string> attributes, Type type)
         {
             Attributes = new List<string>();
             foreach (string attribute in attributes)
@@ -39,6 +39,12 @@ namespace ASCMandatory1
             Name = name;
             Symbol = symbol;
             Color = ASCMandatory1.Color.Foreground(color);
+        }
+        protected Entity(int id, string name, Type type)
+        {
+            Attributes = new List<string>();
+            Id = id;
+            Name = name;
         }
         public Entity()
         {

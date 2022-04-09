@@ -129,12 +129,12 @@ namespace ASCMandatory1
                     DoAction(actor, actor.PendingAction);
                     actor.PendingAction = null;
                 }
-                //if(actor.HP <= 0)
-                //{
-                //    actor.isAlive = false;
-                //}
+                if(actor.HP <= 0 && !(actor is Projectile))
+                {
+                    actor.isAlive = false;
+                }
             }
-            //this.KillActors();
+            this.KillActors();
             frame++;
         }
         //tries to move the entity to the new position if the tile is empty

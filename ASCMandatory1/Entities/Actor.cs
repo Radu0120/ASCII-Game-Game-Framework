@@ -28,6 +28,7 @@ namespace ASCMandatory1
         public static Dictionary<int, Actor> actorIndex { get; set; } = new Dictionary<int, Actor>();
         public Actor(int id, string name, char symbol, int[] color, double hp, double mana, int speed, double physres, double magres, Type type):base(id, name, symbol, color, type)
         {
+            isAlive = true;
             ObjectType = type;
             MaxHP = hp;
             HP = MaxHP;
@@ -45,8 +46,9 @@ namespace ASCMandatory1
             Color = ASCMandatory1.Color.Foreground(color);
             Inventory = new List<Item>();
         }
-        protected Actor(int id, string name, char symbol, int[] color, Type type) : base(id, name, symbol, color, type)
+        protected Actor(int id, string name, Type type) : base(id, name, type)
         {
+
         }
         public Actor() { }
         public double ComputeDamage(Damage damage)
@@ -58,7 +60,7 @@ namespace ASCMandatory1
                 else
                     return 0;
             }
-            else if (damage.DamageType == Damage.Type.Physical)
+            else if (damage.DamageType == Damage.Type.Magical)
             {
                 if (damage.Amount > MagRes)
                     return damage.Amount - MagRes;

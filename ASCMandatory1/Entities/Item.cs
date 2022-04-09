@@ -11,16 +11,22 @@ namespace ASCMandatory1
         public static Dictionary<int, Item> itemIndex { get; set; } = new Dictionary<int, Item>();
         public Damage Damage { get; set; }
         public int AttackRange { get; set; }
-        public Item(int id, string name, char symbol, int[] color, Damage damage, int range, Type type) : base(id, name, symbol, color, type)
+        public int ProjectileSpeed { get; set; }
+        public char ProjectileSymbol { get; set; }
+        public string ProjectileColor { get; set; }
+        public Item(int id, string name, char symbol, char projectileSymbol, int[] color, int[]projectileColor, int projectileSpeed, Damage damage, int range, Type type) : base(id, name, symbol, color, type)
         {
             Attributes = new List<string>();
             Attributes.Add("Phase");
             ObjectType = type;
             Id = id;
             Name = name;
+            ProjectileSpeed = projectileSpeed;
             Symbol = symbol;
+            ProjectileSymbol = projectileSymbol;
             AttackRange = range;
             Color = ASCMandatory1.Color.Foreground(color);
+            ProjectileColor = ASCMandatory1.Color.Foreground(projectileColor);
             Damage = damage;
         }
         public Item() { }

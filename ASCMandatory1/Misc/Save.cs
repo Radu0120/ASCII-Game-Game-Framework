@@ -52,10 +52,14 @@ namespace ASCMandatory1
                 List<Tile> tileList = new List<Tile>();
                 for (int j = 0; j < map.Bounds.Y; j++)
                 {
-                    tileList.Add(map.PlayableMap[i, j]);
-                    if(map.PlayableMap[i,j].Entities.Count > 0)
+                    if (map.ID == Level.GetCurrentLevel().GetCurrentMap().ID)
                     {
-
+                        map.RemoveEntity(Level.Player.Position, Level.Player);
+                        tileList.Add(map.PlayableMap[i, j]);
+                    }
+                    else
+                    {
+                        tileList.Add(map.PlayableMap[i, j]);
                     }
                 }
                 tiles.Add(tileList);
@@ -72,6 +76,8 @@ namespace ASCMandatory1
             string output = JsonSerializer.Serialize(intermediaryindex);
 
             File.WriteAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json", output);
+
+            map.AddEntity(Level.Player, Level.Player.Position);
         }
         public static void SaveLevel(Level level) //levels are complex objects with multidimensional arrays of other objects, need custom serialization
         {

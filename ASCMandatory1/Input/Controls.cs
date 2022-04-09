@@ -136,7 +136,7 @@ namespace ASCMandatory1
                     else if(Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S)) //saving
                     {
                         Save<Level>.SaveToJson(Level.GetCurrentLevel());
-                        while (Keyboard.IsKeyDown(Key.S) && Keyboard.IsKeyDown(Key.LeftCtrl)) { }
+                        while (Keyboard.IsKeyDown(Key.S) && Keyboard.IsKeyDown(Key.S)) { }
                     }
                     break;
                 default:
