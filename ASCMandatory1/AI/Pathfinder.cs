@@ -27,6 +27,114 @@ namespace ASCMandatory1
             }
             
         }
+        public static bool line(Position a, Position b)
+        {
+            Map map = Level.GetCurrentLevel().GetCurrentMap();
+
+
+            int w = b.X - a.X;
+            int h = b.Y - a.Y;
+
+            int x = a.X;
+            int y = a.Y;
+
+            int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+            if (w < 0) dx1 = -1; else if (w > 0) dx1 = 1;
+            if (h < 0) dy1 = -1; else if (h > 0) dy1 = 1;
+            if (w < 0) dx2 = -1; else if (w > 0) dx2 = 1;
+            int longest = Math.Abs(w);
+            int shortest = Math.Abs(h);
+            if (!(longest > shortest))
+            {
+                longest = Math.Abs(h);
+                shortest = Math.Abs(w);
+                if (h < 0) dy2 = -1; else if (h > 0) dy2 = 1;
+                dx2 = 0;
+            }
+            int numerator = longest >> 1;
+            for (int i = 0; i <= longest; i++)
+            {
+                
+                if (map.GetEntitiesFromPosition(new Position(x, y)).Where(e => e.Attributes.Contains("Solid") && !Position.AreEqual(e.Position, b)).ToList().Count > 0)
+                {
+                    return false;
+                }
+                numerator += shortest;
+                if (!(numerator < longest))
+                {
+                    numerator -= longest;
+                    x += dx1;
+                    y += dy1;
+                }
+                else
+                {
+                    x += dx2;
+                    y += dy2;
+                }
+                //map.AddEntity(Item.itemIndex[1], new Position(x, y));
+                //map.DrawMap(false);
+                //Thread.Sleep(16);
+            }
+            return true;
+        }
+        //public static bool CheckLineOfSight(Position a, Position b)
+        //{
+        //    Map map = Level.GetCurrentLevel().GetCurrentMap();
+
+        //    //y = mx + c
+        //    int changeX = a.X - b.X;
+        //    int changeY = a.Y - b.Y;
+
+        //    int m;
+
+        //    if (changeX == 0)
+        //    {
+        //        m = 0;
+        //    }
+        //    else
+        //    {
+        //        m = changeY / changeX;
+        //    }
+
+        //    int c = a.Y - (m * a.X);
+
+        //    int x;
+        //    double y;
+
+        //    if (a.X > b.X)
+        //    {
+        //        x = a.X;
+        //        while (x >= b.X)
+        //        {
+        //            y = m * x + c;
+        //            y = Math.Round(y);
+        //            Position position = new Position(x, (int)y);
+        //            map.AddEntity(Item.itemIndex[1], position);
+        //            if(map.GetEntitiesFromPosition(position).Where(e => e.Attributes.Contains("Solid")).ToList().Count > 0)
+        //            {
+        //                return false;
+        //            }
+        //            x--;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        x = b.X;
+        //        while (x >= a.X)
+        //        {
+        //            y = m * x + c;
+        //            y = Math.Round(y);
+        //            Position position = new Position(x, (int)y);
+        //            if (map.GetEntitiesFromPosition(position).Where(e => e.Attributes.Contains("Solid")).ToList().Count > 0)
+        //            {
+        //                return false;
+        //            }
+        //            x--;
+        //        }
+        //    }
+        //    return true;
+
+        //}
         public static Position AStar(Position target, Actor actor)
         {
             var start = new Square();

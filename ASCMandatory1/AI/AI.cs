@@ -37,8 +37,19 @@ namespace ASCMandatory1
             int distance = Math.Abs(target.Position.X - actor.Position.X) + Math.Abs(target.Position.Y - actor.Position.Y);
             if(distance <= SightRadius)
             {
-                actor.AddStatusEffect("Searching", 2000);
-                return true;
+                if (Pathfinder.line(target.Position, actor.Position))
+                {
+                    actor.AddStatusEffect("Searching", 2000);
+                    return true;
+                }
+                else
+                {
+                    if (actor.HasStatusEffect("Searching"))
+                    {
+                        return !actor.HasStatusEffectExpired("Searching");
+                    }
+                    else return false;
+                }
             }
             else if (actor.HasStatusEffect("Searching"))
             {
