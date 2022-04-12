@@ -136,7 +136,7 @@ namespace ASCMandatory1
                     else if(Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S)) //saving
                     {
                         Save<Level>.SaveToJson(Level.GetCurrentLevel());
-                        while (Keyboard.IsKeyDown(Key.S) && Keyboard.IsKeyDown(Key.S)) { }
+                        while (Keyboard.IsKeyDown(Key.S)) { }
                     }
                     break;
                 default:
@@ -145,7 +145,44 @@ namespace ASCMandatory1
         }
         public static void Build(ref Actor actor, ref Action action)
         {
-            if (Keyboard.IsKeyDown(Key.Enter))
+            if (Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Key.Enter))
+            {
+                Map map = Level.GetCurrentLevel().GetCurrentMap();
+
+                Position startingposition = Clone<Position>.CloneObject(actor.Position);
+
+                List<Position> alreadybuilt = new List<Position>();
+
+                while(Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Key.Enter))
+                {
+                    foreach(Position position in Designer.DrawRectangle(startingposition, actor.Position))
+                    {
+                        if (!alreadybuilt.Contains(position))
+                        {
+                            alreadybuilt.Add(position);
+                            switch (Designer.CurrentState)
+                            {
+                                case Designer.State.BuildMenu:
+                                case Designer.State.Maps:
+                                case Designer.State.MainMenu:
+                                case Designer.State.Actor:
+                                case Designer.State.Item:
+                                    break;
+                                case Designer.State.Tile:
+                                    Designer.AddTile(map, position, Designer.Tile);
+                                    break;
+                                case Designer.State.WorldOject:
+                                    Designer.AddEntity(map, position, Designer.Object as Entity);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+            }
+            else if (Keyboard.IsKeyDown(Key.Enter))
             {
                 action.Type = Action.ActionType.Build;
                 switch (Designer.CurrentState)

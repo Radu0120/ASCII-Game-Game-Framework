@@ -77,64 +77,6 @@ namespace ASCMandatory1
             }
             return true;
         }
-        //public static bool CheckLineOfSight(Position a, Position b)
-        //{
-        //    Map map = Level.GetCurrentLevel().GetCurrentMap();
-
-        //    //y = mx + c
-        //    int changeX = a.X - b.X;
-        //    int changeY = a.Y - b.Y;
-
-        //    int m;
-
-        //    if (changeX == 0)
-        //    {
-        //        m = 0;
-        //    }
-        //    else
-        //    {
-        //        m = changeY / changeX;
-        //    }
-
-        //    int c = a.Y - (m * a.X);
-
-        //    int x;
-        //    double y;
-
-        //    if (a.X > b.X)
-        //    {
-        //        x = a.X;
-        //        while (x >= b.X)
-        //        {
-        //            y = m * x + c;
-        //            y = Math.Round(y);
-        //            Position position = new Position(x, (int)y);
-        //            map.AddEntity(Item.itemIndex[1], position);
-        //            if(map.GetEntitiesFromPosition(position).Where(e => e.Attributes.Contains("Solid")).ToList().Count > 0)
-        //            {
-        //                return false;
-        //            }
-        //            x--;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        x = b.X;
-        //        while (x >= a.X)
-        //        {
-        //            y = m * x + c;
-        //            y = Math.Round(y);
-        //            Position position = new Position(x, (int)y);
-        //            if (map.GetEntitiesFromPosition(position).Where(e => e.Attributes.Contains("Solid")).ToList().Count > 0)
-        //            {
-        //                return false;
-        //            }
-        //            x--;
-        //        }
-        //    }
-        //    return true;
-
-        //}
         public static Position AStar(Position target, Actor actor)
         {
             var start = new Square();

@@ -26,9 +26,9 @@ namespace ASCMandatory1
         }
         public static void RemoveEntity(Map map, Position position)
         {
-            List<Entity> entitytoremove = map.GetEntitiesFromPosition(position).Where(e => !e.Attributes.Contains("Player")).ToList(); 
-            if(entitytoremove.Count>0)
-            map.RemoveEntity(position,entitytoremove[0]);
+            List<Entity> entitytoremove = map.GetEntitiesFromPosition(position).Where(e => !e.Attributes.Contains("Player")).ToList();
+            if (entitytoremove.Count > 0)
+                map.RemoveEntity(position, entitytoremove[0]);
         }
         public static void AddTile(Map map, Position position, Tile tile)
         {
@@ -60,5 +60,45 @@ namespace ASCMandatory1
             Object = null;
             Tile = null;
         }
+        public static List<Position> DrawRectangle(Position startingposition, Position currentposition)
+        {
+            Map map = Level.GetCurrentLevel().GetCurrentMap();
+
+            int x1 = startingposition.X;
+            int y1 = startingposition.Y;
+
+            int x2 = currentposition.X;
+            int y2 = currentposition.Y;
+
+            if (x1 < x2)
+            {
+                int aux = x1;
+                x1 = x2;
+                x2 = aux;
+            }
+
+            if (y1 < y2)
+            {
+                int aux = y1;
+                y1 = y2;
+                y2 = aux;
+            }
+
+            List<Position> list = new List<Position>();
+
+            for (int i = 0; i < map.Bounds.X; i++)
+            {
+                for (int j = 0; j < map.Bounds.Y; j++)
+                {
+                    if (i >= x2 && i <= x1 && j >= y2 && j <= y1)
+                    {
+                        list.Add(new Position(i, j));
+                    }
+                }
+            }
+            return list;
+        }
     }
 }
+    
+

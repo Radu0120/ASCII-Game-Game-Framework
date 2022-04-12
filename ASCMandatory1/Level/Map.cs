@@ -21,10 +21,10 @@ namespace ASCMandatory1
         public Tile[,] PlayableMap { get; set; }
         public Position SpawnPoint { get; set; } = new Position();
         public Position Bounds { get; set; } = new Position();
-        public Map(int id, int maxWidth, int maxHeight, int spawnX, int spawnY, Actor player, int levelid, Position levelposition)
+        public Map(int maxWidth, int maxHeight, int spawnX, int spawnY, Actor player, int levelid, Position levelposition)
         {
             LevelPosition = Clone<Position>.CloneObject(levelposition);
-            ID = id;
+            ID = mapIndex.Count() + 1;
             LevelID = levelid;
             Bounds.X = maxHeight;
             Bounds.Y= maxWidth;
@@ -33,10 +33,10 @@ namespace ASCMandatory1
             SpawnPoint.Y=spawnY;
             this.Create(player);
         }
-        public Map(int id, int maxX, int maxY, int levelid, Position levelposition)
+        public Map(int maxX, int maxY, int levelid, Position levelposition)
         {
             LevelPosition = Clone<Position>.CloneObject(levelposition);
-            ID=id;
+            ID = mapIndex.Count() + 1;
             LevelID = levelid;
             Bounds.X = maxY;
             Bounds.Y = maxX;
@@ -371,7 +371,7 @@ namespace ASCMandatory1
                 }
             }
             newentity.Position = Position.Create(position.X, position.Y);
-            if (newentity.Attributes.Contains("Phase")) //if the entity has phase, it can always move in
+            if (newentity.Attributes.Contains("Phase") || newentity.Attributes.Contains("Player")) //if the entity has phase, it can always move in
             {
                 PlayableMap[position.X, position.Y].Entities.Add(newentity);
             }
@@ -401,12 +401,16 @@ namespace ASCMandatory1
         }
         public void AddTile(Tile tile, Position position)
         {
-            foreach (Entity entity in PlayableMap[position.X, position.Y].Entities)
-            {
-                tile.Entities.Add(entity);
-            }
-            PlayableMap[position.X, position.Y] = null;
-            PlayableMap[position.X, position.Y] = tile;
+            //foreach (Entity entity in PlayableMap[position.X, position.Y].Entities.ToList())
+            //{
+            //    tile.Entities.Add(entity);
+            //}
+            //PlayableMap[position.X, position.Y] = null;
+            //PlayableMap[position.X, position.Y] = tile;
+            PlayableMap[position.X, position.Y].Color = tile.Color;
+            PlayableMap[position.X, position.Y].Id = tile.Id;
+            PlayableMap[position.X, position.Y].Name = tile.Name;
+            PlayableMap[position.X, position.Y].Attributes = PlayableMap[position.X, position.Y].Attributes;
         }
         public void RemoveTile(Position position)
         {
