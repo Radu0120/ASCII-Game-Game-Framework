@@ -45,11 +45,12 @@ namespace Game
             Console.Clear();
             Console.WriteLine("Thank you for playing, press any key to exit.");
             Console.ReadLine();
+            Logger.ts.Close();
             Environment.Exit(0);
         }
         public static void StartGame()
         {
-            Actor player = new Actor(1, "player", 'P', Color.Red, 105, 100, 15, 0, 0, Entity.Type.Actor);
+            Actor player = new Actor(1, "player", 'P', Color.Red, 105, 100, 15, 0, 0);
             player.Attributes.Add("Player");
             player.isAlive = true;
             player.EquippedWeapon = Item.itemIndex[0];
@@ -69,8 +70,8 @@ namespace Game
                     if (input == level.Name)
                     {
                         chosenlevel = level;
-                        player.Position = Level.levelIndex[chosenlevel.ID].Maps[Level.levelIndex[chosenlevel.ID].StartingMap.X, Level.levelIndex[chosenlevel.ID].StartingMap.Y].SpawnPoint;
-                        Level.levelIndex[chosenlevel.ID].Maps[Level.levelIndex[chosenlevel.ID].StartingMap.X, Level.levelIndex[chosenlevel.ID].StartingMap.Y].AddEntity(player, player.Position);
+                        player.Position = Level.GetCurrentLevel().GetCurrentMap().SpawnPoint;
+                        Level.GetCurrentLevel().GetCurrentMap().AddEntity(player, player.Position);
                         Level.Player = player;
                     }
                 }
@@ -86,7 +87,7 @@ namespace Game
             string input = "";
             Level chosenlevel = null;
 
-            Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0, Entity.Type.Actor);
+            Actor cursor = new Actor(1, "player", 'X', Color.Red, 105, 100, 20, 0, 0);
             cursor.isAlive = true;
             cursor.Attributes.Add("Phase");
             cursor.Attributes.Add("Designer");

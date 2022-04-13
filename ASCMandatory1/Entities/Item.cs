@@ -14,11 +14,11 @@ namespace ASCMandatory1
         public int ProjectileSpeed { get; set; }
         public char ProjectileSymbol { get; set; }
         public string ProjectileColor { get; set; }
-        public Item(int id, string name, char symbol, char projectileSymbol, int[] color, int[]projectileColor, int projectileSpeed, Damage damage, int range, Type type) : base(id, name, symbol, color, type)
+        public Item(int id, string name, char symbol, char projectileSymbol, int[] color, int[]projectileColor, int projectileSpeed, Damage damage, int range) : base(id, name, symbol, color)
         {
             Attributes = new List<string>();
             Attributes.Add("Phase");
-            ObjectType = type;
+            ObjectType = Type.Item;
             Id = id;
             Name = name;
             ProjectileSpeed = projectileSpeed;

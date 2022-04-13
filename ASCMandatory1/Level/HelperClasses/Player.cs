@@ -11,7 +11,7 @@ namespace ASCMandatory1
         public static void LaunchAttack(Actor actor, Map map)
         {
             AI projectileAI = new AI(3, "ProjAI", 0, false, 0, AI.Type.Projectile);
-            Projectile projectile = new Projectile(0, $"{actor.Name}'s projectile", actor.EquippedWeapon, Entity.Type.Projectile, projectileAI, actor.CurrentDirection);
+            Projectile projectile = new Projectile(0, $"{actor.Name}'s projectile", actor.EquippedWeapon, projectileAI, actor.CurrentDirection, actor);
             projectile.isAlive = true;
             switch (projectile.CurrentDirection)
             {

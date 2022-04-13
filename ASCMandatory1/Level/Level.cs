@@ -15,10 +15,6 @@ namespace ASCMandatory1
         public const int MapBoundHeight = 48;
 
         public const int MapBoundWidth = 80;
-        public enum Direction
-        {
-            Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight
-        }
         public int ID { get; set; }
         public Map[,] Maps { get; set; }
         public Position CurrentMap { get; set; }
@@ -53,9 +49,6 @@ namespace ASCMandatory1
             StartingMap.Y = MaxY / 2;
             CurrentMap.X = 0;
             CurrentMap.Y = MaxY / 2;
-            Maps[0, (MaxY / 2) +1] = new Map(MapBoundWidth, MapBoundHeight, this.ID, new Position(0, (MaxY / 2) + 1));
-            Maps[1, (MaxY / 2) + 1] = new Map(MapBoundWidth, MapBoundHeight, this.ID, new Position(1, (MaxY / 2) + 1));
-            Maps[0, (MaxY / 2) - 1] = new Map(MapBoundWidth, MapBoundHeight, this.ID, new Position(0, (MaxY / 2) - 1));
         }
         public void AddMap(Position position)
         {

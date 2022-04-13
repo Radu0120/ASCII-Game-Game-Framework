@@ -16,12 +16,14 @@ namespace Game
             CreateTiles();
             CreateWorldItems();
             ReadLevels();
+
+            ASCMandatory1.Logger logger = new ASCMandatory1.Logger();
         }
         public static void CreateActors()
         {
-            Actor bandit = new Actor(0, "Bandit", 'B', Color.Yellow, 50, 10, 7, 2, 2, Entity.Type.Actor);
-            Actor goblin = new Actor(1, "Goblin", 'G', Color.LawnGreen, 30, 20, 8, 1, 1, Entity.Type.Actor);
-            Actor chimera = new Actor(2, "Chimera", 'C', Color.Cyan, 150, 100, 9, 10, 20, Entity.Type.Actor);
+            Actor bandit = new Actor(0, "Bandit", 'B', Color.Yellow, 50, 10, 7, 2, 2);
+            Actor goblin = new Actor(1, "Goblin", 'G', Color.LawnGreen, 30, 20, 8, 1, 1);
+            Actor chimera = new Actor(2, "Chimera", 'C', Color.Cyan, 150, 100, 9, 10, 20);
 
             goblin.Attributes.Add("Phase");
             bandit.Attributes.Add("Solid");
@@ -41,9 +43,9 @@ namespace Game
         }
         public static void CreateItems()
         {
-            Item unarmed = new Item(0, "Unarmed", ' ', ' ', Color.White, Color.White, 50, new Damage() { Amount = 3, DamageType = Damage.Type.Physical }, 1, Entity.Type.Item);
-            Item sword = new Item(1, "Sword", 'S', ',', Color.White, Color.White, 50, new Damage() { Amount = 10, DamageType = Damage.Type.Physical }, 1, Entity.Type.Item);
-            Item wand = new Item(2, "Wand", '/', 'o', Color.White, Color.Yellow, 14, new Damage() { Amount = 8, DamageType = Damage.Type.Magical }, 10, Entity.Type.Item);
+            Item unarmed = new Item(0, "Unarmed", ' ', ' ', Color.White, Color.White, 50, new Damage() { Amount = 3, DamageType = Damage.Type.Physical }, 1);
+            Item sword = new Item(1, "Sword", 'S', ',', Color.White, Color.White, 50, new Damage() { Amount = 10, DamageType = Damage.Type.Physical }, 1);
+            Item wand = new Item(2, "Wand", '/', 'o', Color.White, Color.Yellow, 14, new Damage() { Amount = 8, DamageType = Damage.Type.Magical }, 10);
 
             Item.itemIndex.Add(unarmed.Id, unarmed);
             Item.itemIndex.Add(sword.Id, sword);

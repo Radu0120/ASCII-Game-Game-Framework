@@ -101,7 +101,11 @@ namespace ASCMandatory1
                 Player.SwapItemRight(player);
                 while (Keyboard.IsKeyDown(Key.L)) { }
             }
-            
+            if (Keyboard.IsKeyDown(Key.Escape))
+            {
+                playing = false;
+                while (Keyboard.IsKeyDown(Key.Escape)) { }
+            }
 
         }
         #endregion

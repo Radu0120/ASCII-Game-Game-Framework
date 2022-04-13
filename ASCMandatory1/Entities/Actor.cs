@@ -26,10 +26,10 @@ namespace ASCMandatory1
         public List<StatusEffect> StatusEffects { get; set; }
 
         public static Dictionary<int, Actor> actorIndex { get; set; } = new Dictionary<int, Actor>();
-        public Actor(int id, string name, char symbol, int[] color, double hp, double mana, int speed, double physres, double magres, Type type):base(id, name, symbol, color, type)
+        public Actor(int id, string name, char symbol, int[] color, double hp, double mana, int speed, double physres, double magres):base(id, name, symbol, color)
         {
+            ObjectType = Type.Actor;
             isAlive = true;
-            ObjectType = type;
             MaxHP = hp;
             HP = MaxHP;
             MaxMana = mana;
@@ -46,9 +46,9 @@ namespace ASCMandatory1
             Color = ASCMandatory1.Color.Foreground(color);
             Inventory = new List<Item>();
         }
-        protected Actor(int id, string name, Type type) : base(id, name, type)
+        protected Actor(int id, string name) : base(id, name)
         {
-
+            ObjectType = Type.Actor;
         }
         public Actor() { }
         public double ComputeDamage(Damage damage)

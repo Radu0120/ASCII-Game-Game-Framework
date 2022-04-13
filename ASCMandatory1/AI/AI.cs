@@ -20,7 +20,6 @@ namespace ASCMandatory1
         public bool Hostile { get; set; }
         public int Agression { get; set; }
         public bool isActive { get; set; }
-        public int WarmUp { get; set; }
         public Position RandomTarget { get; set; }
         public AI(int id, string name, int sightradius, bool hostile, int agression, Type type)
         {

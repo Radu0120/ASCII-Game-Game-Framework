@@ -20,7 +20,7 @@ namespace ASCMandatory1
         public List<string> Attributes { get; set; }
         public Type ObjectType { get; set; }
         
-        public Entity(int id, string name, char symbol, int[] color, Type type)
+        public Entity(int id, string name, char symbol, int[] color)
         {
             Attributes = new List<string>();
             Id = id;
@@ -28,7 +28,7 @@ namespace ASCMandatory1
             Symbol = symbol;
             Color = ASCMandatory1.Color.Foreground(color);
         }
-        protected Entity(int id, string name, char symbol, int[] color, List<string> attributes, Type type)
+        protected Entity(int id, string name, char symbol, int[] color, List<string> attributes)
         {
             Attributes = new List<string>();
             foreach (string attribute in attributes)
@@ -40,7 +40,7 @@ namespace ASCMandatory1
             Symbol = symbol;
             Color = ASCMandatory1.Color.Foreground(color);
         }
-        protected Entity(int id, string name, Type type)
+        protected Entity(int id, string name)
         {
             Attributes = new List<string>();
             Id = id;

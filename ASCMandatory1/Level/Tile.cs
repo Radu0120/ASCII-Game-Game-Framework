@@ -21,7 +21,6 @@ namespace ASCMandatory1
             Id= id;
             Name= name;
             Color = ASCMandatory1.Color.Background(color);
-            //Symbol= symbol;
             Entities = new List<object>();
             Attributes = new List<string> { "None" };
         }

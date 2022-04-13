@@ -8,14 +8,14 @@ namespace ASCMandatory1
 {
     public class Projectile:Actor
     {
-        //public Position PendingMovement { get; set; }
-        //public Actor.Direction Direction { get; set; }
         public int Range { get; set; }
         public Item Item { get; set; }
-        public Projectile(int id, string name, Item weapon, Type type, AI ai, Actor.Direction direction):base(id, name, type)
+        public Actor Owner { get; set; }
+        public Projectile(int id, string name, Item weapon, AI ai, Actor.Direction direction, Actor owner):base(id, name)
         {
-            ObjectType = type;
+            ObjectType = Type.Projectile;
             Speed = weapon.ProjectileSpeed;
+            Owner = owner;
             Id = id;
             Name = name;
             Range = weapon.AttackRange;
@@ -52,6 +52,9 @@ namespace ASCMandatory1
         }
         public void DealDamage(Actor target)
         {
+            Logger.ts.TraceEvent(System.Diagnostics.TraceEventType.Information, 10, $"[{DateTime.Now.ToString("G")}] {Owner.Name} dealt {Item.Damage.Amount} {Item.Damage.DamageType.ToString()} damage to {target.Name}");
+            Logger.ts.Flush();
+
             target.TakeDamage(Item.Damage);
         }
     }
