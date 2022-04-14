@@ -17,6 +17,7 @@ namespace Game
         {
             Console.Clear();
             Catalog.Populate();
+            Configuration.ReadConfiguration();
             string message = "Type 1 to start the game, or 2 to start the level designer";
             Console.WriteLine(message);
 

@@ -19,7 +19,6 @@ namespace ASCMandatory1
             // setting the overall switch
             ts.Switch = new SourceSwitch("Log", "All");
 
-
             TraceListener fileLog = new TextWriterTraceListener(new StreamWriter("LogFile.txt"));
             ts.Listeners.Add(fileLog);
         }

@@ -10,7 +10,7 @@ namespace ASCMandatory1
 {
     public class Controls
     {
-        public static List<Key> MenuKeys = new List<Key>() { Key.Z, Key.X, Key.C, Key.V, Key.Escape };
+        public static List<Key> MenuKeys = new List<Key>() { Keybinds.MenuOption1, Keybinds.MenuOption2, Keybinds.MenuOption3, Keybinds.MenuOption4, Keybinds.Exit };
         public static void CheckInput(ref Actor player, ref bool playing)
         {
             if (player.Attributes.Contains("Designer"))
@@ -56,19 +56,19 @@ namespace ASCMandatory1
         public static void Move(ref Actor actor)
         {
             Position newposition = new Position() { X = actor.Position.X, Y = actor.Position.Y};
-            if (Keyboard.IsKeyDown(Key.W))
+            if (Keyboard.IsKeyDown(Keybinds.MoveUp))
             {
                 newposition.X--;
             }
-            if (Keyboard.IsKeyDown(Key.S))
+            if (Keyboard.IsKeyDown(Keybinds.MoveDown))
             {
                 newposition.X++;
             }
-            if (Keyboard.IsKeyDown(Key.D))
+            if (Keyboard.IsKeyDown(Keybinds.MoveRight))
             {
                 newposition.Y++;
             }
-            if (Keyboard.IsKeyDown(Key.A))
+            if (Keyboard.IsKeyDown(Keybinds.MoveLeft))
             {
                 newposition.Y--;
             }
@@ -78,33 +78,33 @@ namespace ASCMandatory1
         public static void DoAction(ref Actor player, ref bool playing)
         {
             Map map = Level.GetCurrentLevel().GetCurrentMap();
-            if (Keyboard.IsKeyDown(Key.E))
+            if (Keyboard.IsKeyDown(Keybinds.PickUpItem))
             {
                 Player.PickUpItem(player, map);
             }
-            if (Keyboard.IsKeyDown(Key.Q))
+            if (Keyboard.IsKeyDown(Keybinds.DropItem))
             {
                 Player.DropItem(player, map);
             }
-            if (Keyboard.IsKeyDown(Key.I))
+            if (Keyboard.IsKeyDown(Keybinds.UseItem))
             {
                 Player.LaunchAttack(player, map);
-                while (Keyboard.IsKeyDown(Key.I)) ;
+                while (Keyboard.IsKeyDown(Keybinds.UseItem)) ;
             }
-            if (Keyboard.IsKeyDown(Key.J))
+            if (Keyboard.IsKeyDown(Keybinds.SwapItemLeft))
             {
                 Player.SwapItemLeft(player);
-                while (Keyboard.IsKeyDown(Key.J)) { }
+                while (Keyboard.IsKeyDown(Keybinds.SwapItemLeft)) { }
             }
-            if (Keyboard.IsKeyDown(Key.L)) 
+            if (Keyboard.IsKeyDown(Keybinds.SwapItemRight)) 
             {
                 Player.SwapItemRight(player);
-                while (Keyboard.IsKeyDown(Key.L)) { }
+                while (Keyboard.IsKeyDown(Keybinds.SwapItemRight)) { }
             }
-            if (Keyboard.IsKeyDown(Key.Escape))
+            if (Keyboard.IsKeyDown(Keybinds.Exit))
             {
                 playing = false;
-                while (Keyboard.IsKeyDown(Key.Escape)) { }
+                while (Keyboard.IsKeyDown(Keybinds.Exit)) { }
             }
 
         }
@@ -113,7 +113,7 @@ namespace ASCMandatory1
         public static void DoDesignerAction(ref Actor actor, ref bool playing)
         {
             Action action = new Action();
-            if (Keyboard.IsKeyDown(Key.Back))
+            if (Keyboard.IsKeyDown(Keybinds.Delete))
             {
                 action.Type = Action.ActionType.Destroy;
                 action.Position = Clone<Position>.CloneObject(actor.Position);
@@ -133,7 +133,7 @@ namespace ASCMandatory1
                     BuildMap();
                     break;
                 case Designer.State.MainMenu:
-                    if (Keyboard.IsKeyDown(Key.Escape)) //exiting the game
+                    if (Keyboard.IsKeyDown(Keybinds.Exit)) //exiting the game
                     {
                         playing = false;
                     }
@@ -149,7 +149,7 @@ namespace ASCMandatory1
         }
         public static void Build(ref Actor actor, ref Action action)
         {
-            if (Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Key.Enter))
+            if (Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Keybinds.Build))
             {
                 Map map = Level.GetCurrentLevel().GetCurrentMap();
 
@@ -157,7 +157,7 @@ namespace ASCMandatory1
 
                 List<Position> alreadybuilt = new List<Position>();
 
-                while(Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Key.Enter))
+                while(Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Keybinds.Build))
                 {
                     foreach(Position position in Designer.DrawRectangle(startingposition, actor.Position))
                     {
@@ -186,7 +186,7 @@ namespace ASCMandatory1
                 }
 
             }
-            else if (Keyboard.IsKeyDown(Key.Enter))
+            else if (Keyboard.IsKeyDown(Keybinds.Build))
             {
                 action.Type = Action.ActionType.Build;
                 switch (Designer.CurrentState)
@@ -210,7 +210,7 @@ namespace ASCMandatory1
                         action.Entity = Designer.Object;
                         action.Position = actor.Position;
                         actor.PendingAction = action;
-                        while (Keyboard.IsKeyDown(Key.Enter)) { }
+                        while (Keyboard.IsKeyDown(Keybinds.Build)) { }
                         return;
                 }
             }
@@ -223,22 +223,22 @@ namespace ASCMandatory1
         public static void BuildMap()
         {
             Position position = Clone<Position>.CloneObject(Level.levelIndex[Level.CurrentLevel].CurrentMap);
-            if (Keyboard.IsKeyDown(Key.I))
+            if (Keyboard.IsKeyDown(Keybinds.BuildMapUp))
             {
                 position.X--;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
             }
-            else if (Keyboard.IsKeyDown(Key.K))
+            else if (Keyboard.IsKeyDown(Keybinds.BuildMapDown))
             {
                 position.X++;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
             }
-            else if (Keyboard.IsKeyDown(Key.J))
+            else if (Keyboard.IsKeyDown(Keybinds.BuildMapLeft))
             {
                 position.Y--;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
             }
-            else if (Keyboard.IsKeyDown(Key.L))
+            else if (Keyboard.IsKeyDown(Keybinds.BuildMapRight))
             {
                 position.Y++;
                 Designer.AddMap(Level.levelIndex[Level.CurrentLevel], position);
