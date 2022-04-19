@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ASCMandatory1\ASCMandatory1.csproj" />
+    <ProjectReference Include="..\ASCMandatory1\GameFramework.csproj" />
   </ItemGroup>
 
 </Project>

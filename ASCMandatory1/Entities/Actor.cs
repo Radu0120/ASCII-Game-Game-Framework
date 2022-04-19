@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public class Actor:Entity
     {
@@ -43,7 +43,7 @@ namespace ASCMandatory1
             StatusEffects = new List<StatusEffect>();
             PendingAction = null;
             PendingMovement = null;
-            Color = ASCMandatory1.Color.Foreground(color);
+            Color = GameFramework.Color.Foreground(color);
             Inventory = new List<Item>();
         }
         protected Actor(int id, string name) : base(id, name)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public class Player
     {

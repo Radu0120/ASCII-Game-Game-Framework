@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ASCMandatory1;
+using GameFramework;
 
 namespace Game
 {
@@ -179,7 +179,7 @@ namespace Game
         {
             Console.CursorVisible = false;
             Console.SetCursorPosition(2, 1);
-            Dictionary<int,string> UI = ASCMandatory1.UI.DrawUI(player, designer, map.Bounds.X);
+            Dictionary<int,string> UI = GameFramework.UI.DrawUI(player, designer, map.Bounds.X);
             int UILine = 0;
             foreach(string line in map.DrawMap(designer))
             {

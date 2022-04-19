@@ -1,4 +1,4 @@
-﻿using ASCMandatory1;
+﻿using GameFramework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public class Save<T> where T : class
     {

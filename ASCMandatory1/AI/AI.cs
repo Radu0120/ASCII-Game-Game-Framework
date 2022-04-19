@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public class AI
     {

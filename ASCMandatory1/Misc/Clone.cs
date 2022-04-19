@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public class Clone<T> where T : class
     {

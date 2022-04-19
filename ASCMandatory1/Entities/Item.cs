@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public class Item:Entity
     {
@@ -25,8 +25,8 @@ namespace ASCMandatory1
             Symbol = symbol;
             ProjectileSymbol = projectileSymbol;
             AttackRange = range;
-            Color = ASCMandatory1.Color.Foreground(color);
-            ProjectileColor = ASCMandatory1.Color.Foreground(projectileColor);
+            Color = GameFramework.Color.Foreground(color);
+            ProjectileColor = GameFramework.Color.Foreground(projectileColor);
             Damage = damage;
         }
         public Item() { }

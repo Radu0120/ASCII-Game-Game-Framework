@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     [Serializable]
     public class Tile
@@ -15,12 +15,12 @@ namespace ASCMandatory1
         public int Id { get; set; }
         public List<string> Attributes { get; set; }
         public List<object> Entities { get; set; }
-        public static Dictionary<int, Tile> tileIndex { get; set; } = new Dictionary<int, Tile>() { { 0, new Tile(0, "Void", ASCMandatory1.Color.Gray) } };
+        public static Dictionary<int, Tile> tileIndex { get; set; } = new Dictionary<int, Tile>() { { 0, new Tile(0, "Void", GameFramework.Color.Gray) } };
         public Tile(int id, string name, int[] color)
         {
             Id= id;
             Name= name;
-            Color = ASCMandatory1.Color.Background(color);
+            Color = GameFramework.Color.Background(color);
             Entities = new List<object>();
             Attributes = new List<string> { "None" };
         }
@@ -28,7 +28,7 @@ namespace ASCMandatory1
         {
             Id= id;
             Name = name;
-            Color = ASCMandatory1.Color.Background(color);
+            Color = GameFramework.Color.Background(color);
             Entities = new List<object>();
             foreach (string attribute in attributes)
             {

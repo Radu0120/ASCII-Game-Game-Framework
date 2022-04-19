@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public class Entity
     {
@@ -26,7 +26,7 @@ namespace ASCMandatory1
             Id = id;
             Name = name;
             Symbol = symbol;
-            Color = ASCMandatory1.Color.Foreground(color);
+            Color = GameFramework.Color.Foreground(color);
         }
         protected Entity(int id, string name, char symbol, int[] color, List<string> attributes)
         {
@@ -38,7 +38,7 @@ namespace ASCMandatory1
             Id = id;
             Name = name;
             Symbol = symbol;
-            Color = ASCMandatory1.Color.Foreground(color);
+            Color = GameFramework.Color.Foreground(color);
         }
         protected Entity(int id, string name)
         {
@@ -49,7 +49,7 @@ namespace ASCMandatory1
         public Entity()
         {
             Symbol = 'W';
-            Color = ASCMandatory1.Color.Foreground(ASCMandatory1.Color.Black);
+            Color = GameFramework.Color.Foreground(GameFramework.Color.Black);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using ASCMandatory1;
+﻿using GameFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace Game
             CreateWorldItems();
             ReadLevels();
 
-            ASCMandatory1.Logger logger = new ASCMandatory1.Logger();
+            GameFramework.Logger logger = new GameFramework.Logger();
         }
         public static void CreateActors()
         {

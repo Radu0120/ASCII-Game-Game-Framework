@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public  class StateTable
     {

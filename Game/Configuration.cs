@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
-using ASCMandatory1;
+using GameFramework;
 
 namespace Game
 {
     public class Configuration
     {
-        const string ConfigFilePath = @"Config.xml";
+        static string ConfigFilePath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName + "/Config/Config.xml";
         public static void ReadConfiguration()
         {
             XmlDocument configDoc = new XmlDocument();

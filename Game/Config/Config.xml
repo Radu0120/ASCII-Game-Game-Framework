@@ -1,0 +1,30 @@
+<Keybinds>
+	<Movement>
+		<MoveUp>W</MoveUp>
+		<MoveDown>S</MoveDown>
+		<MoveLeft>A</MoveLeft>
+		<MoveRight>D</MoveRight>
+	</Movement>
+	<Inventory>
+		<PickUpItem>E</PickUpItem>
+		<DropItem>Q</DropItem>
+		<UseItem>I</UseItem>
+		<SwapItemLeft>J</SwapItemLeft>
+		<SwapItemRight>L</SwapItemRight>
+	</Inventory>
+	<Misc>
+		<Exit>Escape</Exit>
+	</Misc>
+	<Designer>
+		<MenuOption1>Z</MenuOption1>
+		<MenuOption2>X</MenuOption2>
+		<MenuOption3>C</MenuOption3>
+		<MenuOption4>V</MenuOption4>
+		<Build>Enter</Build>
+		<Delete>Back</Delete>
+		<BuildMapUp>I</BuildMapUp>
+		<BuildMapDown>K</BuildMapDown>
+		<BuildMapLeft>J</BuildMapLeft>
+		<BuildMapRight>L</BuildMapRight>
+	</Designer>
+</Keybinds>

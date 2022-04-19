@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ASCMandatory1
+namespace GameFramework
 {
     public class Controls
     {
