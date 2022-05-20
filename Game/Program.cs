@@ -16,19 +16,22 @@ namespace Game
             Configuration.ReadConfiguration();
             Unmanaged.SetWindowTextA(Unmanaged.ThisConsole, "Game");
 
-            //int result = Unmanaged.MessageBoxA(Unmanaged.ThisConsole, "Start the program in fullscreen?", "Fullscreen", Unmanaged.MB_YESNO | Unmanaged.MB_ICONQUESTION);
+            int result = Unmanaged.MessageBoxA(Unmanaged.ThisConsole, "Start the program in fullscreen?", "Fullscreen", Unmanaged.MB_YESNO | Unmanaged.MB_ICONQUESTION);
 
-            //if (result == Unmanaged.IDYES)
-            //{
-            //    Unmanaged.SetWindowLongPtr(Unmanaged.ThisConsole, Unmanaged.GWL_STYLE, Unmanaged.WS_POPUP);
-            //    Unmanaged.ShowWindow(Unmanaged.ThisConsole, 3);
+            if (result == Unmanaged.IDYES)
+            {
+                Unmanaged.SetWindowLongPtr(Unmanaged.ThisConsole, Unmanaged.GWL_STYLE, Unmanaged.WS_POPUP);
+                Unmanaged.ShowWindow(Unmanaged.ThisConsole, 3);
 
-            //    Console.BufferWidth = Console.WindowWidth;
-            //    Console.BufferHeight = Console.WindowHeight;
-            //}
+                Console.BufferWidth = Console.WindowWidth;
+                Console.BufferHeight = Console.WindowHeight;
+            }
+            else
+            {
+                Console.WindowWidth = 208;
+                Console.WindowHeight = 50;
+            }
 
-            Console.WindowWidth = 208;
-            Console.WindowHeight = 50;
 
             string message = "Type 1 to start the game, or 2 to start the level designer";
             Console.WriteLine(message);
@@ -185,7 +188,7 @@ namespace Game
                 //}
                 level.GetCurrentMap().Update();
                 DrawGame(level.GetCurrentMap(), designer, player);
-                Thread.Sleep(8);
+                Thread.Sleep(16);
             }
         }
         private static void DrawGame(Map map, bool designer, Actor player)
