@@ -15,7 +15,7 @@ namespace GameFramework
         public int Id { get; set; }
         public string Name { get; set; }
         public char Symbol { get; set; }
-        public string Color { get; set; }
+        public int[] Color { get; set; }
         public Position Position { get; set; }
         public List<string> Attributes { get; set; }
         public Type ObjectType { get; set; }

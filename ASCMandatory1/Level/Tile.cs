@@ -11,7 +11,7 @@ namespace GameFramework
     {
         public int currententitytodraw = 0;
         public string Name { get; set; }
-        public string Color { get; set; }
+        public int[] Color { get; set; }
         public int Id { get; set; }
         public List<string> Attributes { get; set; }
         public List<object> Entities { get; set; }

@@ -78,34 +78,76 @@ namespace GameFramework
                 }
             }
         }
-        public List<string> DrawMap(bool designer)
+        //public List<string> DrawMap(bool designer)
+        //{
+        //    List<string> map = new List<string>();
+        //    for (int i = 0; i < Bounds.X; i++)
+        //    {
+        //        string line = "";
+        //        for (int j = 0; j < Bounds.Y; j++)
+        //        {
+        //            if (PlayableMap[i, j].Entities.Count >0)
+        //            {
+        //                if(PlayableMap[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively, newest first
+        //                {
+        //                    if(PlayableMap[i, j].currententitytodraw>= PlayableMap[i, j].Entities.Count)
+        //                    {
+        //                        PlayableMap[i, j].currententitytodraw = PlayableMap[i, j].Entities.Count - 1;
+        //                    }
+        //                    Entity entity = (Entity)PlayableMap[i, j].Entities[PlayableMap[i, j].currententitytodraw];
+        //                    PlayableMap[i, j].Blink(blinkingtime, frame);
+        //                    line += PlayableMap[i, j].Color + entity.Color + entity.Symbol + " ";
+        //                }
+        //                else // no extra entities present on the tile
+        //                {
+        //                    Entity entity = (Entity)PlayableMap[i, j].Entities[0];
+        //                    line += PlayableMap[i, j].Color + entity.Color + entity.Symbol + " ";
+        //                }
+        //            }
+        //            else line += PlayableMap[i, j].Color + " " + " ";
+
+        //        }
+        //        map.Add(line);
+        //    }
+        //    return map;
+        //}
+        public List<List<Pixel>> DrawMap(bool designer)
         {
-            List<string> map = new List<string>();
+            List<List<Pixel>> map = new List<List<Pixel>>();
             for (int i = 0; i < Bounds.X; i++)
             {
-                string line = "";
+                List<Pixel> line = new List<Pixel>();
                 for (int j = 0; j < Bounds.Y; j++)
                 {
-                    if (PlayableMap[i, j].Entities.Count >0)
+                    if (PlayableMap[i, j].Entities.Count > 0)
                     {
-                        if(PlayableMap[i, j].Entities.Count>1) // extra entities on the tile, must show them alternatively, newest first
+                        if (PlayableMap[i, j].Entities.Count > 1) // extra entities on the tile, must show them alternatively, newest first
                         {
-                            if(PlayableMap[i, j].currententitytodraw>= PlayableMap[i, j].Entities.Count)
+                            if (PlayableMap[i, j].currententitytodraw >= PlayableMap[i, j].Entities.Count)
                             {
                                 PlayableMap[i, j].currententitytodraw = PlayableMap[i, j].Entities.Count - 1;
                             }
                             Entity entity = (Entity)PlayableMap[i, j].Entities[PlayableMap[i, j].currententitytodraw];
                             PlayableMap[i, j].Blink(blinkingtime, frame);
-                            line += PlayableMap[i, j].Color + entity.Color + entity.Symbol + " ";
+                            line.Add(new Pixel() { B_Color = Pixel.ConvertColor(PlayableMap[i, j].Color, true), F_Color = Pixel.Black, Char = ' ' });
+                            line.Add(new Pixel() { B_Color = Pixel.ConvertColor(PlayableMap[i, j].Color, true), F_Color = Pixel.ConvertColor(entity.Color, false), Char = entity.Symbol });
+                            //line += PlayableMap[i, j].Color + entity.Color + entity.Symbol + " ";
                         }
                         else // no extra entities present on the tile
                         {
                             Entity entity = (Entity)PlayableMap[i, j].Entities[0];
-                            line += PlayableMap[i, j].Color + entity.Color + entity.Symbol + " ";
+                            line.Add(new Pixel() { B_Color = Pixel.ConvertColor(PlayableMap[i, j].Color, true), F_Color = Pixel.Black, Char = ' ' });
+                            line.Add(new Pixel() { B_Color = Pixel.ConvertColor(PlayableMap[i, j].Color, true), F_Color = Pixel.ConvertColor(entity.Color, false), Char = entity.Symbol });
+                            //line += PlayableMap[i, j].Color + entity.Color + entity.Symbol + " ";
                         }
                     }
-                    else line += PlayableMap[i, j].Color + " " + " ";
-                    
+                    else
+                    {
+                        //line += PlayableMap[i, j].Color + " " + " ";
+                        line.Add(new Pixel() { B_Color = Pixel.ConvertColor(PlayableMap[i, j].Color, true), F_Color = Pixel.Black, Char = ' ' });
+                        line.Add(new Pixel() { B_Color = Pixel.ConvertColor(PlayableMap[i, j].Color, true), F_Color = Pixel.Black, Char = ' ' });
+                    }
+
                 }
                 map.Add(line);
             }

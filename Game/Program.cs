@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using GameFramework;
 
 namespace Game
@@ -18,6 +14,22 @@ namespace Game
             Console.Clear();
             Catalog.Populate();
             Configuration.ReadConfiguration();
+            Unmanaged.SetWindowTextA(Unmanaged.ThisConsole, "Game");
+
+            //int result = Unmanaged.MessageBoxA(Unmanaged.ThisConsole, "Start the program in fullscreen?", "Fullscreen", Unmanaged.MB_YESNO | Unmanaged.MB_ICONQUESTION);
+
+            //if (result == Unmanaged.IDYES)
+            //{
+            //    Unmanaged.SetWindowLongPtr(Unmanaged.ThisConsole, Unmanaged.GWL_STYLE, Unmanaged.WS_POPUP);
+            //    Unmanaged.ShowWindow(Unmanaged.ThisConsole, 3);
+
+            //    Console.BufferWidth = Console.WindowWidth;
+            //    Console.BufferHeight = Console.WindowHeight;
+            //}
+
+            Console.WindowWidth = 208;
+            Console.WindowHeight = 50;
+
             string message = "Type 1 to start the game, or 2 to start the level designer";
             Console.WriteLine(message);
 
@@ -45,7 +57,7 @@ namespace Game
             }
             Console.Clear();
             Console.WriteLine("Thank you for playing, press any key to exit.");
-            Console.ReadLine();
+            Console.ReadKey();
             Logger.ts.Close();
             Environment.Exit(0);
         }
@@ -71,9 +83,10 @@ namespace Game
                     if (input == level.Name)
                     {
                         chosenlevel = level;
-                        player.Position = Level.GetCurrentLevel().GetCurrentMap().SpawnPoint;
-                        Level.GetCurrentLevel().GetCurrentMap().AddEntity(player, player.Position);
+                        player.Position = level.GetCurrentMap().SpawnPoint;
+                        level.GetCurrentMap().AddEntity(player, player.Position);
                         Level.Player = player;
+                        break;
                     }
                 }
             }
@@ -157,39 +170,73 @@ namespace Game
                 AIThread.Start();
             }
 
-            int WindowHeight = level.GetCurrentMap().Bounds.X + 2;
-            int WindowWidth = level.GetCurrentMap().Bounds.Y * 2 + 4 + 45;
-            Console.WindowHeight = WindowHeight;
-            Console.WindowWidth = WindowWidth;
+            //int WindowHeight = level.GetCurrentMap().Bounds.X + 2;
+            //int WindowWidth = level.GetCurrentMap().Bounds.Y * 2 + 4 + 45;
+            //Console.WindowHeight = WindowHeight;
+            //Console.WindowWidth = WindowWidth;
 
             while (playing)
             {
-                if (Console.WindowHeight != WindowHeight || Console.WindowWidth != WindowWidth)
-                {
-                    WindowHeight = Console.WindowHeight;
-                    WindowWidth = Console.WindowWidth;
-                    Console.Clear();
-                }
+                //if (Console.WindowHeight != WindowHeight || Console.WindowWidth != WindowWidth)
+                //{
+                //    WindowHeight = Console.WindowHeight;
+                //    WindowWidth = Console.WindowWidth;
+                //    Console.Clear();
+                //}
                 level.GetCurrentMap().Update();
                 DrawGame(level.GetCurrentMap(), designer, player);
-                Thread.Sleep(16);
+                Thread.Sleep(8);
             }
         }
         private static void DrawGame(Map map, bool designer, Actor player)
         {
+            //Console.CursorVisible = false;
+            //Console.SetCursorPosition(2, 1);
+            //Dictionary<int, string> UI = GameFramework.UI.DrawUI(player, designer, map.Bounds.X);
+            //int UILine = 0;
+            //foreach (string line in map.DrawMap(designer))
+            //{
+            //    Console.Write(line);
+            //    if (UILine <= UI.Count - 1)
+            //    {
+            //        Console.Write(UI[UILine] + "   ");
+            //        UILine++;
+            //    }
+            //    Console.Write(Color.Background(Color.Black) + "\n" + "  ");
+            //}
+
             Console.CursorVisible = false;
-            Console.SetCursorPosition(2, 1);
-            Dictionary<int,string> UI = GameFramework.UI.DrawUI(player, designer, map.Bounds.X);
-            int UILine = 0;
-            foreach(string line in map.DrawMap(designer))
+            //Dictionary<int, string> UI = GameFramework.UI.DrawUI(player, designer, map.Bounds.X);
+            List<List<Pixel>> frame = map.DrawMap(designer);
+            CharInfo[] image = new CharInfo[2*48*80];
+            int counter = 0;
+            for(int i = 0; i < frame.Count; i++)
             {
-                Console.Write(line);
-                if (UILine <= UI.Count-1)
+                for(int j = 1; j<frame[i].Count; j++)
                 {
-                    Console.Write(UI[UILine]+"   ");
-                    UILine++;
+                    CharInfo charInfo = new CharInfo
+                    {
+                        Char = frame[i][j].Char,
+                        Attributes = (short)(frame[i][j].B_Color | frame[i][j].F_Color)
+                    };
+                    image[counter++] = charInfo;
                 }
-                Console.Write(Color.Background(Color.Black) + "\n" + "  ");
+            }
+            Unmanaged.RegionWrite(image, 1, 1, 2*80-1, 48);
+
+            counter = 0;
+            Console.CursorVisible = false;
+            Dictionary<int, string> UI = GameFramework.UI.DrawUI(player, designer, map.Bounds.X);
+            int UILine = 0;
+            while (UILine < UI.Count - 1)
+            {
+                Console.SetCursorPosition(2 * 80 + 1, UILine);
+                while (UI[UILine].Length < 70)
+                {
+                    UI[UILine] += "   ";
+                }
+                Console.Write(UI[UILine] + " ");
+                UILine++;
             }
         }
     }

@@ -16,6 +16,7 @@ namespace Game
             CreateTiles();
             CreateWorldItems();
             ReadLevels();
+            SetColors();
 
             GameFramework.Logger logger = new GameFramework.Logger();
         }
@@ -69,6 +70,37 @@ namespace Game
         {
             Map.mapIndex = Save<Map>.ReadJsonMap(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json");
             Level.levelIndex = Save<Level>.ReadJsonLevel(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Levels.json");
+        }
+
+        public static void SetColors()
+        {
+        //    internal COLORREF black;
+        //internal COLORREF darkBlue;
+        //internal COLORREF darkGreen;
+        //internal COLORREF darkCyan;
+        //internal COLORREF darkRed;
+        //internal COLORREF darkMagenta;
+        //internal COLORREF darkYellow;
+        //internal COLORREF gray;
+        //internal COLORREF darkGray;
+        //internal COLORREF blue;
+        //internal COLORREF green;
+        //internal COLORREF cyan;
+        //internal COLORREF red;
+        //internal COLORREF magenta;
+        //internal COLORREF yellow;
+        //internal COLORREF white;
+            
+            Unmanaged.SetColor(ConsoleColor.Black, (uint)GameFramework.Color.Black[0], (uint)GameFramework.Color.Black[1], (uint)GameFramework.Color.Black[2]);
+            Unmanaged.SetColor(ConsoleColor.White, (uint)GameFramework.Color.White[0], (uint)GameFramework.Color.White[1], (uint)GameFramework.Color.White[2]);
+            Unmanaged.SetColor(ConsoleColor.Red, (uint)GameFramework.Color.Red[0], (uint)GameFramework.Color.Red[1], (uint)GameFramework.Color.Red[2]);
+            Unmanaged.SetColor(ConsoleColor.DarkBlue, (uint)GameFramework.Color.Blue[0], (uint)GameFramework.Color.Blue[1], (uint)GameFramework.Color.Blue[2]);
+            Unmanaged.SetColor(ConsoleColor.Green, (uint)GameFramework.Color.LawnGreen[0], (uint)GameFramework.Color.LawnGreen[1], (uint)GameFramework.Color.LawnGreen[2]);
+            Unmanaged.SetColor(ConsoleColor.DarkGreen, (uint)GameFramework.Color.Green[0], (uint)GameFramework.Color.Green[1], (uint)GameFramework.Color.Green[2]);
+            Unmanaged.SetColor(ConsoleColor.Gray, (uint)GameFramework.Color.Gray[0], (uint)GameFramework.Color.Gray[1], (uint)GameFramework.Color.Gray[2]);
+            Unmanaged.SetColor(ConsoleColor.Cyan, (uint)GameFramework.Color.Cyan[0], (uint)GameFramework.Color.Cyan[1], (uint)GameFramework.Color.Cyan[2]);
+            Unmanaged.SetColor(ConsoleColor.Yellow, (uint)GameFramework.Color.Yellow[0], (uint)GameFramework.Color.Yellow[1], (uint)GameFramework.Color.Yellow[2]);
+            Unmanaged.SetColor(ConsoleColor.Blue, (uint)GameFramework.Color.LightBlue[0], (uint)GameFramework.Color.LightBlue[1], (uint)GameFramework.Color.LightBlue[2]);
         }
     }
 }

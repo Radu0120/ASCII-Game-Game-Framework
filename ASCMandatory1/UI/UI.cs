@@ -13,21 +13,21 @@ namespace GameFramework
         public static Dictionary<int, string> DrawUI(Actor player, bool designer, int mapend)
         {
             Dictionary<int, string> UI = new Dictionary<int, string>();
-            UI.Add(1,Color.Background(Color.Black) + PrintTiles(2) + Color.Foreground(Color.Yellow) + $" {player.Name}       ");
-            UI.Add(3,Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.Red)+"Health: " +PrintBar(player.HP)+"           ");
-            UI.Add(5,Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana)+"          ");
+            UI.Add(1, Color.UIBackground(Color.Black) + PrintTiles(2) + Color.UIForeground(Color.Yellow) + $" {player.Name}");
+            UI.Add(3, Color.UIBackground(Color.Black) + PrintTiles(1) + Color.UIForeground(Color.Red) + "Health: " + PrintBar(player.HP) + "");
+            UI.Add(5, Color.UIBackground(Color.Black) + PrintTiles(1) + Color.UIForeground(Color.LightBlue) + "Mana: " + PrintTiles(1) + PrintBar(player.Mana) + "");
 
-            UI.Add(10, Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.White) + PrintHoveredItems(player) + "        ");
+            UI.Add(10, Color.UIBackground(Color.Black) + PrintTiles(1) + Color.UIForeground(Color.White) + PrintHoveredItems(player) + "");
 
             if (!designer)
             {
-                
-                UI.Add(15, Color.Background(Color.Black)+ PrintTiles(1) + Color.Foreground(Color.White) + PrintEquippedItem(player));
-                UI.Add(17, Color.Background(Color.Black) + PrintTiles(1) + Color.Foreground(Color.White) + PrintInventory(player));
+
+                UI.Add(15, Color.UIBackground(Color.Black) + PrintTiles(1) + Color.UIForeground(Color.White) + PrintEquippedItem(player));
+                UI.Add(17, Color.UIBackground(Color.Black) + PrintTiles(1) + Color.UIForeground(Color.White) + PrintInventory(player));
             }
             else
             {
-                int position = mapend/2;
+                int position = mapend / 2;
                 PrintDesignerObject(UI, position);
                 PrintDesignerUI(UI, position);
             }
@@ -59,7 +59,7 @@ namespace GameFramework
         }
         private static void FillUI(Dictionary<int, string> UI)
         {
-            for(int i = 0; i < 41 ; i++)
+            for (int i = 0; i < 41; i++)
             {
                 if (!UI.ContainsKey(i))
                 {
@@ -68,20 +68,20 @@ namespace GameFramework
                 else if (UI[i].Length < MaxUILenght)
                 {
                     int amount = MaxUILenght - UI[i].Length;
-                    for(int j = 0; j <= amount; j++)
+                    for (int j = 0; j <= amount; j++)
                     {
-                        UI[i] += " "; 
+                        UI[i] += " ";
                     }
                 }
             }
         }
         private static void PrintLines(Dictionary<int, string> UI, int position)
         {
-            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + "                          ");
+            UI.Add(position, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + " ");
         }
         private static string PrintEquippedItem(Actor player)
         {
-            if(player.EquippedWeapon != null && player.EquippedWeapon != Item.itemIndex[0])
+            if (player.EquippedWeapon != null && player.EquippedWeapon != Item.itemIndex[0])
             {
                 return "Equipped: " + player.EquippedWeapon.Name;
             }
@@ -113,7 +113,7 @@ namespace GameFramework
             string items = "Standing over: ";
             if (map.GetEntitiesFromPosition(player.Position).Where(e => !e.Attributes.Contains("Player") && !(e is Projectile)).ToList().Count() > 0)
             {
-                foreach(Entity entity in map.GetEntitiesFromPosition(player.Position).Where(e => !e.Attributes.Contains("Player")).ToList())
+                foreach (Entity entity in map.GetEntitiesFromPosition(player.Position).Where(e => !e.Attributes.Contains("Player")).ToList())
                 {
                     items += ", " + entity.Name;
                 }
@@ -156,63 +156,63 @@ namespace GameFramework
         }
         private static void PrintDesignerObject(Dictionary<int, string> UI, int position)
         {
-            if(Designer.CurrentState != Designer.State.BuildMenu && Designer.CurrentState != Designer.State.Maps && Designer.CurrentState != Designer.State.MainMenu)
+            if (Designer.CurrentState != Designer.State.BuildMenu && Designer.CurrentState != Designer.State.Maps && Designer.CurrentState != Designer.State.MainMenu)
             {
                 if (Designer.Object == null)
                 {
                     if (Designer.Tile == null)
                     {
-                        UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: None    ");
+                        UI.Add(position, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Building: None");
                         return;
                     }
-                    UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + Designer.Tile.Name + "    ");
+                    UI.Add(position, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Building: " + Designer.Tile.Name );
                     return;
                 }
                 Entity entity = (Entity)Designer.Object;
-                UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Building: " + entity.Name + "    ");
+                UI.Add(position, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Building: " + entity.Name);
             }
         }
         private static void PrintDesignerBuildMenu(Dictionary<int, string> UI, int position)
         {
-            UI.Add(position + 2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Z : Actor menu    ");
-            UI.Add(position + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "X : Item menu    ");
-            UI.Add(position + 4, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "C : WorldObject menu    ");
-            UI.Add(position + 5, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "V : Tile menu    ");
-            UI.Add(position + 7, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back    ");
+            UI.Add(position + 2, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Z : Actor menu");
+            UI.Add(position + 3, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "X : Item menu");
+            UI.Add(position + 4, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "C : WorldObject menu");
+            UI.Add(position + 5, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "V : Tile menu");
+            UI.Add(position + 7, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Esc : Go back");
         }
         private static void PrintDesignerItemIndex<T>(Dictionary<int, T> index, Dictionary<int, string> UI, int position)
         {
             int end = index.Count;
-            if(index.Count>0)
+            if (index.Count > 0)
             {
                 switch (index[0])
                 {
                     case Actor:
                         for (int i = 1; i <= end; i++)
                         {
-                            Actor a = (Actor)(object)index[i-1];
-                            UI.Add(position + 2 + i - 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + $"{i} : {a.Name}         "); ;
+                            Actor a = (Actor)(object)index[i - 1];
+                            UI.Add(position + 2 + i - 1, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + $"{i} : {a.Name}"); ;
                         }
                         break;
                     case Item:
                         for (int i = 1; i <= end; i++)
                         {
-                            Item a = (Item)(object)index[i-1];
-                            UI.Add(position + 2 + i - 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + $"{i} : {a.Name}         "); ;
+                            Item a = (Item)(object)index[i - 1];
+                            UI.Add(position + 2 + i - 1, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + $"{i} : {a.Name}"); ;
                         }
                         break;
                     case WorldObject:
                         for (int i = 1; i <= end; i++)
                         {
-                            WorldObject a = (WorldObject)(object)index[i-1];
-                            UI.Add(position + 2 + i - 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + $"{i} : {a.Name}         "); ;
+                            WorldObject a = (WorldObject)(object)index[i - 1];
+                            UI.Add(position + 2 + i - 1, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + $"{i} : {a.Name}"); ;
                         }
                         break;
                     case Tile:
                         for (int i = 1; i <= end; i++)
                         {
-                            Tile a = (Tile)(object)index[i-1];
-                            UI.Add(position + 2 + i - 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + $"{i} : {a.Name}         "); ;
+                            Tile a = (Tile)(object)index[i - 1];
+                            UI.Add(position + 2 + i - 1, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + $"{i} : {a.Name}"); ;
                         }
                         break;
                     default:
@@ -220,30 +220,30 @@ namespace GameFramework
 
                 }
             }
-            UI.Add(position + end + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back      ");
+            UI.Add(position + end + 3, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Esc : Go back");
 
         }
         private static void PrintDesignerMainMenu(Dictionary<int, string> UI, int position)
         {
-            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Z : Build menu      ");
-            UI.Add(position + 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "X : Maps menu      ");
-            UI.Add(position + 2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Ctrl + S : Save level      ");
-            UI.Add(position + 4, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Exit      ");
+            UI.Add(position, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Z : Build menu");
+            UI.Add(position + 1, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "X : Maps menu");
+            UI.Add(position + 2, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Ctrl + S : Save level");
+            UI.Add(position + 4, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Esc : Exit");
         }
         private static void PrintDesignerMapsMenu(Dictionary<int, string> UI, int position)
         {
-            UI.Add(position, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "I : Add map up      ");
-            UI.Add(position + 1, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "K : Add map down      ");
-            UI.Add(position + 2, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "J : Add map left      ");
-            UI.Add(position + 3, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "L : Add map right      ");
-            UI.Add(position + 5, Color.Background(Color.Black) + Color.Foreground(Color.White) + PrintTiles(2) + "Esc : Go back      ");
+            UI.Add(position, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "I : Add map up");
+            UI.Add(position + 1, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "K : Add map down");
+            UI.Add(position + 2, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "J : Add map left");
+            UI.Add(position + 3, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "L : Add map right");
+            UI.Add(position + 5, Color.UIBackground(Color.Black) + Color.UIForeground(Color.White) + PrintTiles(2) + "Esc : Go back");
         }
         private static int MaxKey(Dictionary<int, string> dict)
         {
             int max = 0;
-            foreach(var keyValuePair in dict)
+            foreach (var keyValuePair in dict)
             {
-                if(keyValuePair.Key>max) max = keyValuePair.Key;
+                if (keyValuePair.Key > max) max = keyValuePair.Key;
             }
             return max;
         }

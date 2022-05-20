@@ -8,21 +8,21 @@ namespace GameFramework
 {
     public static class Color
     {
-        public static string Foreground(int red, int green, int blue)
-        {
-            return "\x1b[38;2;" + red + ";" + green + ";" + blue + "m";
-        }
-        public static string Foreground(int[]rgb)
+        public static string UIForeground(int[] rgb)
         {
             return "\x1b[38;2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m";
         }
-        public static string Background(int red, int green, int blue)
-        {
-            return "\x1b[48;2;" + red + ";" + green + ";" + blue + "m";
-        }
-        public static string Background(int[] rgb)
+        public static string UIBackground(int[] rgb)
         {
             return "\x1b[48;2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m";
+        }
+        public static int[] Foreground(int[] rgb)
+        {
+            return rgb;
+        }
+        public static int[] Background(int[] rgb)
+        {
+            return rgb;
         }
         public static int[] Red
         {

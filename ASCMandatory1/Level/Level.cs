@@ -44,7 +44,9 @@ namespace GameFramework
                     Maps[i, j] = null;
                 }
             }
-            Maps[0, MaxY/2] = new Map(MapBoundWidth, MapBoundHeight, 10, 10, player, this.ID, new Position(0, MaxY/2));
+            Map map = new Map(MapBoundWidth, MapBoundHeight, 10, 10, player, this.ID, new Position(0, MaxY / 2));
+            Maps[0, MaxY/2] = map;
+            Map.mapIndex.Add(map.ID, map);
             StartingMap.X = 0;
             StartingMap.Y = MaxY / 2;
             CurrentMap.X = 0;
@@ -57,7 +59,12 @@ namespace GameFramework
                 return;
             }
             if(Maps[position.X, position.Y] == null)
-            Maps[position.X, position.Y] = new Map(MapBoundWidth, MapBoundHeight, this.ID, position);
+            {
+                Map map = new Map(MapBoundWidth, MapBoundHeight, this.ID, position);
+                Maps[position.X, position.Y] = map;
+                Map.mapIndex.Add(map.ID, map);
+            }
+            
         }
         public void RemoveMap(Position position)
         {

@@ -13,7 +13,7 @@ namespace GameFramework
         public int AttackRange { get; set; }
         public int ProjectileSpeed { get; set; }
         public char ProjectileSymbol { get; set; }
-        public string ProjectileColor { get; set; }
+        public int[] ProjectileColor { get; set; }
         public Item(int id, string name, char symbol, char projectileSymbol, int[] color, int[]projectileColor, int projectileSpeed, Damage damage, int range) : base(id, name, symbol, color)
         {
             Attributes = new List<string>();
