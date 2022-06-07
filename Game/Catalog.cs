@@ -74,22 +74,6 @@ namespace Game
 
         public static void SetColors()
         {
-        //    internal COLORREF black;
-        //internal COLORREF darkBlue;
-        //internal COLORREF darkGreen;
-        //internal COLORREF darkCyan;
-        //internal COLORREF darkRed;
-        //internal COLORREF darkMagenta;
-        //internal COLORREF darkYellow;
-        //internal COLORREF gray;
-        //internal COLORREF darkGray;
-        //internal COLORREF blue;
-        //internal COLORREF green;
-        //internal COLORREF cyan;
-        //internal COLORREF red;
-        //internal COLORREF magenta;
-        //internal COLORREF yellow;
-        //internal COLORREF white;
             
             Unmanaged.SetColor(ConsoleColor.Black, (uint)GameFramework.Color.Black[0], (uint)GameFramework.Color.Black[1], (uint)GameFramework.Color.Black[2]);
             Unmanaged.SetColor(ConsoleColor.White, (uint)GameFramework.Color.White[0], (uint)GameFramework.Color.White[1], (uint)GameFramework.Color.White[2]);

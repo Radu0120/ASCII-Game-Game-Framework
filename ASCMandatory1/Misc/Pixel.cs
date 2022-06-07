@@ -31,7 +31,7 @@ namespace GameFramework
             {
                 if (background)
                 {
-                    if (rgb[0] == 255)
+                    if (rgb[0] > 128)
                     {
                         color |= B_Intensity;
                     }
@@ -39,7 +39,7 @@ namespace GameFramework
                 }
                 else
                 {
-                    if (rgb[0] == 255)
+                    if (rgb[0] > 128)
                     {
                         color |= F_Intensity;
                     }
@@ -50,7 +50,7 @@ namespace GameFramework
             {
                 if (background)
                 {
-                    if (rgb[1] == 255)
+                    if (rgb[1] > 128)
                     {
                         color |= B_Intensity;
                     }
@@ -58,7 +58,7 @@ namespace GameFramework
                 }
                 else
                 {
-                    if (rgb[1] == 255)
+                    if (rgb[1] > 128)
                     {
                         color |= F_Intensity;
                     }
@@ -69,7 +69,7 @@ namespace GameFramework
             {
                 if (background)
                 {
-                    if (rgb[2] == 255)
+                    if (rgb[2] > 128)
                     {
                         color |= B_Intensity;
                     }
@@ -77,7 +77,7 @@ namespace GameFramework
                 }
                 else
                 {
-                    if (rgb[2] == 255)
+                    if (rgb[2] > 128)
                     {
                         color |= F_Intensity;
                     }

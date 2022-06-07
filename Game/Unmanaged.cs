@@ -12,13 +12,25 @@ namespace Game
 {
     public class Unmanaged
     {
+        public const Int32 STD_INPUT_HANDLE = -10;
+
+        public const Int32 ENABLE_MOUSE_INPUT = 0x0010;
+        public const Int32 ENABLE_QUICK_EDIT_MODE = 0x0040;
+        public const Int32 ENABLE_EXTENDED_FLAGS = 0x0080;
+
+        public const Int32 KEY_EVENT = 1;
+        public const Int32 MOUSE_EVENT = 2;
+
+
         public const short SWP_NOMOVE = 0X2;
         public const short SWP_NOSIZE = 1;
         public const short SWP_NOZORDER = 0X4;
         public const int SWP_SHOWWINDOW = 0x0040;
+
         public const int GWL_STYLE = -16;
-        public const long WS_VISIBLE = 0x10000000L;
         public const long WS_POPUP = 0x80000000L;
+
+        public const long WS_VISIBLE = 0x10000000L;
 
         //
         public const int MF_BYCOMMAND = 0x00000000;
@@ -29,19 +41,21 @@ namespace Game
         public const int SC_HSCROLL = 0xF080;
 
         //
+
         public const long MB_ICONQUESTION = 0x00000020L;
         public const long MB_YESNO = 0x00000004L;
+
         public const long IDYES = 6;
         public const long IDNO = 7;
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern int MessageBoxA(IntPtr hWnd, string message, string title, long type);
 
         [DllImport("user32.dll")]
         public static extern bool SetWindowTextA(IntPtr hWnd, string text);
 
         [DllImport("user32.dll")]
-        public static extern bool ShowWindow(IntPtr hWnd, int mode);
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll")]
         public static extern bool SetWindowPos(IntPtr HWnd, int insertAfter, int x, int y, int cx, int xy, int flags);
@@ -54,6 +68,7 @@ namespace Game
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetConsoleWindow();
+
         public static readonly IntPtr ThisConsole = GetConsoleWindow();
 
         //
@@ -67,18 +82,38 @@ namespace Game
         private static extern SafeFileHandle CreateFile(string filename, uint fileaccess, uint fileshare,
             IntPtr securityAttributes, FileMode creationDisposition, int flags, IntPtr template);
 
-        private static readonly SafeFileHandle FileHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+        private static readonly SafeFileHandle FileHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, 
+            FileMode.Open, 0, IntPtr.Zero);
 
         [DllImport("kernel32.dll")]
-        private static extern bool WriteConsoleOutput(SafeFileHandle hConsoleOutput, CharInfo[] lpBuffer, SmallCoord dwBufferSize,
-            SmallCoord dwBufferCoord, ref SmallRect lpWriteRegion);
+        private static extern bool WriteConsoleOutput(SafeFileHandle hConsoleOutput, CharInfo[] lpBuffer,
+            Coord dwBufferSize, Coord dwBufferCoord, ref SmallRect lpWriteRegion);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool GetConsoleScreenBufferInfoEx(IntPtr hConsoleOutput, ref CONSOLE_SCREEN_BUFFER_INFO_EX csbe);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleScreenBufferInfoEx(IntPtr hConsoleOutput, ref CONSOLE_SCREEN_BUFFER_INFO_EX csbe);
+
         [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr GetStdHandle(int nStdHandle);
+        public static extern IntPtr GetStdHandle(int nStdHandle);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool SetConsoleTextAttribute(IntPtr hWnd, int attributes);
+        [DllImportAttribute("kernel32.dll", SetLastError = true)]
+        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        public static extern Boolean GetConsoleMode(IntPtr hConsoleHandle, ref Int32 lpMode);
+
+        [DllImportAttribute("kernel32.dll", SetLastError = true)]
+        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        public static extern Boolean ReadConsoleInput(IntPtr hConsoleInput, ref INPUT_RECORD lpBuffer, UInt32 nLength, ref UInt32 lpNumberOfEventsRead);
+
+        [DllImportAttribute("kernel32.dll", SetLastError = true)]
+        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        public static extern Boolean SetConsoleMode(IntPtr hConsoleHandle, Int32 dwMode);
+
+
+
         public static int SetColor(ConsoleColor consoleColor, Color targetColor)
         {
             return SetColor(consoleColor, targetColor.R, targetColor.G, targetColor.B);
@@ -87,8 +122,10 @@ namespace Game
         public static int SetColor(ConsoleColor color, uint r, uint g, uint b)
         {
             CONSOLE_SCREEN_BUFFER_INFO_EX csbe = new CONSOLE_SCREEN_BUFFER_INFO_EX();
-            csbe.cbSize = (int)Marshal.SizeOf(csbe);                    // 96 = 0x60
-            IntPtr hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);    // 7
+            csbe.cbSize = (int)Marshal.SizeOf(csbe);                    
+
+            IntPtr hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);    
+
             bool brc = GetConsoleScreenBufferInfoEx(hConsoleOutput, ref csbe);
             if (!brc)
             {
@@ -168,10 +205,9 @@ namespace Game
                 short sheight = (short)height;
 
                 // Make a buffer size out our dimensions
-                SmallCoord bufferSize = new SmallCoord(swidth, sheight);
+                Coord bufferSize = new Coord(swidth, sheight);
 
-                // Not really sure what this is but its probably important
-                SmallCoord pos = new SmallCoord(0, 0);
+                Coord pos = new Coord(0, 0);
 
                 // Where do we place this?
                 SmallRect rect = new SmallRect() { Left = sx, Top = sy, Right = (short)(sx + swidth), Bottom = (short)(sy + sheight) };
@@ -184,13 +220,14 @@ namespace Game
             }
 
         }
+
     }
-    public struct SmallCoord
+    public struct Coord
     {
         public short X;
         public short Y;
 
-        public SmallCoord(short x, short y)
+        public Coord(short x, short y)
         {
             X = x; Y = y;
         }
@@ -215,36 +252,20 @@ namespace Game
     {
         internal uint ColorDWORD;
 
-        internal COLORREF(Color color)
-        {
-            ColorDWORD = (uint)color.R + (((uint)color.G) << 8) + (((uint)color.B) << 16);
-        }
-
         internal COLORREF(uint r, uint g, uint b)
         {
             ColorDWORD = r + (g << 8) + (b << 16);
-        }
-
-        internal Color GetColor()
-        {
-            return Color.FromArgb((int)(0x000000FFU & ColorDWORD),
-               (int)(0x0000FF00U & ColorDWORD) >> 8, (int)(0x00FF0000U & ColorDWORD) >> 16);
-        }
-
-        internal void SetColor(Color color)
-        {
-            ColorDWORD = (uint)color.R + (((uint)color.G) << 8) + (((uint)color.B) << 16);
         }
     }
     [StructLayout(LayoutKind.Sequential)]
     internal struct CONSOLE_SCREEN_BUFFER_INFO_EX
     {
         internal int cbSize;
-        internal SmallCoord dwSize;
-        internal SmallCoord dwCursorPosition;
+        internal Coord dwSize;
+        internal Coord dwCursorPosition;
         internal ushort wAttributes;
         internal SmallRect srWindow;
-        internal SmallCoord dwMaximumWindowSize;
+        internal Coord dwMaximumWindowSize;
         internal ushort wPopupAttributes;
         internal bool bFullscreenSupported;
         internal COLORREF black;
@@ -264,4 +285,43 @@ namespace Game
         internal COLORREF yellow;
         internal COLORREF white;
     }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct INPUT_RECORD
+    {
+        [FieldOffset(0)]
+        public Int16 EventType;
+        [FieldOffset(4)]
+        public KEY_EVENT_RECORD KeyEvent;
+        [FieldOffset(4)]
+        public MOUSE_EVENT_RECORD MouseEvent;
+    }
+
+    public struct MOUSE_EVENT_RECORD
+    {
+        public Coord dwMousePosition;
+        public Int32 dwButtonState;
+        public Int32 dwControlKeyState;
+        public Int32 dwEventFlags;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct KEY_EVENT_RECORD
+    {
+        [FieldOffset(0)]
+        [MarshalAsAttribute(UnmanagedType.Bool)]
+        public Boolean bKeyDown;
+        [FieldOffset(4)]
+        public UInt16 wRepeatCount;
+        [FieldOffset(6)]
+        public UInt16 wVirtualKeyCode;
+        [FieldOffset(8)]
+        public UInt16 wVirtualScanCode;
+        [FieldOffset(10)]
+        public Char UnicodeChar;
+        [FieldOffset(10)]
+        public Byte AsciiChar;
+        [FieldOffset(12)]
+        public Int32 dwControlKeyState;
+    };
 }
