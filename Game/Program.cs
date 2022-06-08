@@ -48,7 +48,7 @@ namespace Game
             Unmanaged.GetConsoleMode(handle, ref mode);
 
             mode |= Unmanaged.ENABLE_MOUSE_INPUT;
-            mode &= ~Unmanaged.ENABLE_QUICK_EDIT_MODE;
+            mode &= ~Unmanaged.ENABLE_QUICK_EDIT_MODE;  //disable quick edit mode
             mode |= Unmanaged.ENABLE_EXTENDED_FLAGS;
 
             Unmanaged.SetConsoleMode(handle, mode);

@@ -197,8 +197,6 @@ namespace Game
         {
             if (!FileHandle.IsInvalid)
             {
-                int length = width * height;
-
                 short sx = (short)x;
                 short sy = (short)y;
                 short swidth = (short)width;
