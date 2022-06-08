@@ -12,6 +12,7 @@ namespace GameFramework
 {
     public class Save<T> where T : class
     {
+        public static string FolderFilePath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
         public static void SaveToJson(T value)
         {
             string JsonFileName = "";
@@ -42,7 +43,7 @@ namespace GameFramework
         }
         public static void SaveMap(Map map) //maps are complex objects with multidimensional arrays of other objects, need custom serialization
         {
-            string serializedmapindex = File.ReadAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json");
+            string serializedmapindex = File.ReadAllText(FolderFilePath + "/Game/Assets/Maps.json");
             Dictionary<int, SerializableMap> intermediaryindex = JsonSerializer.Deserialize<Dictionary<int, SerializableMap>>(serializedmapindex);
 
             //converting from matrix to list of lists so it can be serialized
@@ -75,13 +76,13 @@ namespace GameFramework
 
             string output = JsonSerializer.Serialize(intermediaryindex);
 
-            File.WriteAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json", output);
+            File.WriteAllText(FolderFilePath + "/Game/Assets/Maps.json", output);
 
             map.AddEntity(Level.Player, Level.Player.Position);
         }
         public static void SaveLevel(Level level) //levels are complex objects with multidimensional arrays of other objects, need custom serialization
         {
-            string serializedlevelindex = File.ReadAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Levels.json");
+            string serializedlevelindex = File.ReadAllText(FolderFilePath + "/Game/Assets/Levels.json");
             Dictionary<int, SerializableLevel> intermediaryindex = JsonSerializer.Deserialize<Dictionary<int, SerializableLevel>>(serializedlevelindex);
 
             List<List<int>> mapslist = new List<List<int>>();
@@ -113,7 +114,7 @@ namespace GameFramework
 
             string output = JsonSerializer.Serialize(intermediaryindex);
 
-            File.WriteAllText(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Levels.json", output);
+            File.WriteAllText(FolderFilePath + "/Game/Assets/Levels.json", output);
         }
 
         public static Dictionary<int, T> ReadJson(string JsonFileName)

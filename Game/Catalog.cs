@@ -1,6 +1,7 @@
 ﻿using GameFramework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Game
 {
     public class Catalog
     {
+        public static string FolderFilePath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
         public static void Populate()
         {
             CreateActors();
@@ -68,8 +70,8 @@ namespace Game
         }
         public static void ReadLevels()
         {
-            Map.mapIndex = Save<Map>.ReadJsonMap(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Maps.json");
-            Level.levelIndex = Save<Level>.ReadJsonLevel(@"C:\Users\radue\source\repos\ASCMandatory1\Game\Assets\Levels.json");
+            Map.mapIndex = Save<Map>.ReadJsonMap(FolderFilePath + "/Game/Assets/Maps.json");
+            Level.levelIndex = Save<Level>.ReadJsonLevel(FolderFilePath + "/Game/Assets/Levels.json");
         }
 
         public static void SetColors()
